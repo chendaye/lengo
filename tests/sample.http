@@ -1,0 +1,13 @@
+GET https://example.com/comments/1 HTTP/1.1
+
+###
+GET http://gysmh_local.bmmyou.com/server/Suprecharge/index?page=1&limit=10
+
+###
+
+POST http://gysmh_local.bmmyou.com/server/Suprecharge/del HTTP/1.1
+content-type: application/json
+
+{
+    "id": 1
+}
