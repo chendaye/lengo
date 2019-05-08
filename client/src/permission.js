@@ -25,7 +25,7 @@ router.beforeEach(async(to, from, next) => {
     if (to.path === '/login') {
       // 如果是访问登录页面 重定向到 /
       next({ path: '/' })
-      NProgress.done()  // 进度条结束
+      NProgress.done() // 进度条结束
     } else {
       // 如果是访问其他路由 从store中取用户信息
       const hasGetUserInfo = store.getters.name
@@ -33,12 +33,12 @@ router.beforeEach(async(to, from, next) => {
         next()
       } else {
         try {
-          // get user info
+          // 获取用户信息
           await store.dispatch('user/getInfo')
 
           next()
         } catch (error) {
-          // remove token and go to login page to re-login
+          // 删除token 并重新登录
           await store.dispatch('user/resetToken')
           Message.error(error || 'Has Error')
           next(`/login?redirect=${to.path}`)
