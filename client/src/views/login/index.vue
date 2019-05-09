@@ -54,20 +54,22 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Login',
   data() {
+    // 自定义账号姓名验证
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error('请输入正确的姓名！'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('密码不少于6个字符！'))
       } else {
         callback()
       }
@@ -87,6 +89,7 @@ export default {
     }
   },
   watch: {
+    // 监听路由
     $route: {
       handler: function(route) {
         this.redirect = route.query && route.query.redirect
@@ -95,6 +98,13 @@ export default {
     }
   },
   methods: {
+    ...mapActions('user', [
+      'login', // -> this.login()
+      'logout',
+      'getInfo',
+      'resetToken'
+    ]),
+    // 展示密码
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -105,11 +115,13 @@ export default {
         this.$refs.password.focus()
       })
     },
+    // 登录
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
+          // 处理登录  store admin/base/user
+          this.login(this.loginForm).then(() => {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(() => {

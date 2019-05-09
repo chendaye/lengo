@@ -2,14 +2,44 @@
 <!-- TOC -->
 
 - [Vuex](#vuex)
-    - [创建一个 Store](#创建一个-store)
-    - [State](#state)
-    - [Getter](#getter)
-    - [Mutation](#mutation)
-    - [Action](#action)
-    - [Module](#module)
-    - [项目结构](#项目结构)
-    - [热重载](#热重载)
+  - [创建一个 Store](#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA-store)
+  - [State](#state)
+    - [**mapState 辅助函数**](#mapstate-%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0)
+  - [Getter](#getter)
+    - [**为什么要 Getter**](#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-getter)
+    - [**访问 Getter**](#%E8%AE%BF%E9%97%AE-getter)
+      - [通过属性访问](#%E9%80%9A%E8%BF%87%E5%B1%9E%E6%80%A7%E8%AE%BF%E9%97%AE)
+      - [**通过方法访问**](#%E9%80%9A%E8%BF%87%E6%96%B9%E6%B3%95%E8%AE%BF%E9%97%AE)
+      - [**mapGetters 辅助函数**](#mapgetters-%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0)
+  - [Mutation](#mutation)
+    - [**why mutation?**](#why-mutation)
+    - [**提交载荷**](#%E6%8F%90%E4%BA%A4%E8%BD%BD%E8%8D%B7)
+    - [**Mutation 需遵守 Vue 的响应规则**](#mutation-%E9%9C%80%E9%81%B5%E5%AE%88-vue-%E7%9A%84%E5%93%8D%E5%BA%94%E8%A7%84%E5%88%99)
+    - [**使用常量替代 Mutation 事件类型**](#%E4%BD%BF%E7%94%A8%E5%B8%B8%E9%87%8F%E6%9B%BF%E4%BB%A3-mutation-%E4%BA%8B%E4%BB%B6%E7%B1%BB%E5%9E%8B)
+    - [**Mutation 必须是同步函数**](#mutation-%E5%BF%85%E9%A1%BB%E6%98%AF%E5%90%8C%E6%AD%A5%E5%87%BD%E6%95%B0)
+    - [**在组件中提交 Mutation**](#%E5%9C%A8%E7%BB%84%E4%BB%B6%E4%B8%AD%E6%8F%90%E4%BA%A4-mutation)
+  - [Action](#action)
+    - [**mutation 与 action 的区别**](#mutation-%E4%B8%8E-action-%E7%9A%84%E5%8C%BA%E5%88%AB)
+    - [**注册 action**](#%E6%B3%A8%E5%86%8C-action)
+    - [**分发 action**](#%E5%88%86%E5%8F%91-action)
+    - [**在组件中分发 Action**](#%E5%9C%A8%E7%BB%84%E4%BB%B6%E4%B8%AD%E5%88%86%E5%8F%91-action)
+    - [**组合 Action**](#%E7%BB%84%E5%90%88-action)
+    - [async / await](#async--await)
+      - [async](#async)
+      - [await](#await)
+      - [总结](#%E6%80%BB%E7%BB%93)
+  - [Module](#module)
+    - [**why**](#why)
+    - [**模块的局部状态**](#%E6%A8%A1%E5%9D%97%E7%9A%84%E5%B1%80%E9%83%A8%E7%8A%B6%E6%80%81)
+    - [**命名空间**](#%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4)
+    - [**在带命名空间的模块内访问全局内容（Global Assets）**](#%E5%9C%A8%E5%B8%A6%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E7%9A%84%E6%A8%A1%E5%9D%97%E5%86%85%E8%AE%BF%E9%97%AE%E5%85%A8%E5%B1%80%E5%86%85%E5%AE%B9global-assets)
+    - [**带命名空间的模块注册全局 action**](#%E5%B8%A6%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E7%9A%84%E6%A8%A1%E5%9D%97%E6%B3%A8%E5%86%8C%E5%85%A8%E5%B1%80-action)
+    - [**带命名空间的绑定函数**](#%E5%B8%A6%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E7%9A%84%E7%BB%91%E5%AE%9A%E5%87%BD%E6%95%B0)
+    - [**插件开发者的注意事项**](#%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9)
+    - [**模块动态注册**](#%E6%A8%A1%E5%9D%97%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C)
+    - [**模块重用**](#%E6%A8%A1%E5%9D%97%E9%87%8D%E7%94%A8)
+  - [项目结构](#%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84)
+  - [热重载](#%E7%83%AD%E9%87%8D%E8%BD%BD)
 
 <!-- /TOC -->
 
@@ -62,7 +92,7 @@ const Counter = {
 };
 ```
 
-- **mapState 辅助函数**
+### **mapState 辅助函数**
 
 > 当一个组件需要获取多个状态时候，将这些状态都声明为计算属性会有些重复和冗余。为了解决这个问题，我们可以使用 mapState 辅助函数帮助我们生成计算属性
 
@@ -108,7 +138,7 @@ computed: {
 
 ## Getter
 
-- **为什么要 Getter**
+### **为什么要 Getter**
 
 > Vuex 允许我们在 store 中定义“getter”（可以认为是 store 的计算属性）。就像计算属性一样，getter 的返回值会根据它的依赖被缓存起来，且只有当它的依赖值发生了改变才会被重新计算
 
@@ -142,9 +172,9 @@ const store = new Vuex.Store({
 
 <br>
 
-- **访问 Getter**
+### **访问 Getter**
 
-* 通过属性访问
+#### 通过属性访问
 
 ```js
 store.getters.doneTodos; // -> [{ id: 1, text: '...', done: true }]
@@ -154,7 +184,7 @@ store.getters.doneTodos; // -> [{ id: 1, text: '...', done: true }]
 
 <br>
 
-- **通过方法访问**
+#### **通过方法访问**
 
 > 通过让 getter 返回一个函数，来实现给 getter 传参。在你对 store 里的数组进行查询时非常有用。
 
@@ -166,7 +196,7 @@ store.getters.getTodoById(2); // -> { id: 2, text: '...', done: false }
 
 <br>
 
-- **mapGetters 辅助函数**
+#### **mapGetters 辅助函数**
 
 ```js
 // mapGetters 辅助函数仅仅是将 store 中的 getter 映射到局部计算属性
@@ -197,7 +227,7 @@ mapGetters({
 
 ## Mutation
 
-- **why mutation?**
+### **why mutation?**
 
 > 更改 Vuex 的 store 中的状态的唯一方法是提交 mutation。Vuex 中的 mutation 非常类似于事件：每个 mutation 都有一个字符串的 事件类型 (type) 和 一个 回调函数 (handler)。这个回调函数就是我们实际进行状态更改的地方，并且它会接受 state 作为第一个参数
 
@@ -223,7 +253,7 @@ store.commit("increment");
 
 <br>
 
-- **提交载荷**
+### **提交载荷**
 
 ```js
 // 可以向 store.commit 传入额外的参数，即 mutation 的 载荷（payload）
@@ -266,7 +296,8 @@ mutations: {
 
 <br>
 
-- **Mutation 需遵守 Vue 的响应规则**
+### **Mutation 需遵守 Vue 的响应规则**
+
 
 > 既然 Vuex 的 store 中的状态是响应式的，那么当我们变更状态时，监视状态的 Vue 组件也会自动更新。这也意味着 Vuex 中的 mutation 也需要与使用 Vue 一样遵守一些注意事项
 
@@ -277,7 +308,7 @@ mutations: {
 
 <br>
 
-- **使用常量替代 Mutation 事件类型**
+### **使用常量替代 Mutation 事件类型**
 
 > 使用常量替代 mutation 事件类型在各种 Flux 实现中是很常见的模式。这样可以使 linter 之类的工具发挥作用，同时把这些常量放在单独的文件中可以让你的代码合作者对整个 app 包含的 mutation 一目了然
 > 用不用常量取决于你——在需要多人协作的大型项目中，这会很有帮助
@@ -303,7 +334,7 @@ const store = new Vuex.Store({
 
 <br>
 
-- **Mutation 必须是同步函数**
+### **Mutation 必须是同步函数**
 
 > 重要的原则就是要记住 mutation 必须是同步函数
 
@@ -321,7 +352,7 @@ mutations: {
 
 <br>
 
-- **在组件中提交 Mutation**
+### **在组件中提交 Mutation**
 
 > 可以在组件中使用 this.\$store.commit('xxx') 提交 mutation，或者使用 mapMutations 辅助函数将组件中的 methods 映射为 store.commit 调用（需要在根节点注入 store）
 
@@ -350,7 +381,7 @@ export default {
 
 ## Action
 
-- **mutation 与 action 的区别**
+### **mutation 与 action 的区别**
 
 > mutation 都是同步事务
 > Action 提交的是 mutation，而不是直接变更状态
@@ -358,9 +389,9 @@ export default {
 
 <br>
 
-- **注册 action**
+### **注册 action**
 
-> Action 函数接受一个与 store 实例具有相同方法和属性的 context 对象，因此你可以调用 context.commit 提交一个 mutation，或者通过 context.state 和 context.getters 来获取 state 和 getters。当我们在之后介绍到 Modules 时，你就知道 context 对象为什么不是 store 实例本身了。
+> Action 函数接受一个**与 store 实例具有相同方法和属性的 context 对象**，因此你可以调用 context.commit 提交一个 mutation，或者通过 context.state 和 context.getters 来获取 state 和 getters。当我们在之后介绍到 Modules 时，你就知道 **context 对象为什么不是 store 实例本身了**。
 
 ```js
 const store = new Vuex.Store({
@@ -392,7 +423,8 @@ actions: {
 
 <br>
 
-- **分发 action**
+
+### **分发 action**
 
 > Action 通过 store.dispatch 方法触发
 
@@ -441,7 +473,7 @@ actions: {
 
 <br>
 
-- **在组件中分发 Action**
+### **在组件中分发 Action**
 
 > 在组件中使用 this.\$store.dispatch('xxx') 分发 action，或者使用 mapActions 辅助函数将组件的 methods 映射为 store.dispatch 调用（需要先在根节点注入 store）
 
@@ -466,7 +498,7 @@ export default {
 
 <br>
 
-- **组合 Action**
+### **组合 Action**
 
 > Action 通常是异步的，那么如何知道 action 什么时候结束呢？更重要的是，我们如何才能组合多个 action，以处理更加复杂的异步流程？
 > 首先，你需要明白 store.dispatch 可以处理 action 返回的 Promise，并且 store.dispatch 仍旧返回 Promise
@@ -517,13 +549,80 @@ actions: {
 
 > 一个 store.dispatch 在不同模块中可以触发多个 action 函数。在这种情况下，只有当所有触发函数完成后，返回的 Promise 才会执行
 
+### async / await
+
+#### async
+
+>Async functions async关键字被放置在一个函数前
+函数前面的async一词意味着一个简单的事情：这个函数总是返回一个promise，如果代码中有return <非promise>语句，JavaScript会自动把返回的这个value值包装成promise的resolved值
+
+```js
+// 返回resolved值为1的promis
+async function f() {
+    return 1
+}
+
+async function f() {
+    return 1
+}
+f().then(alert) // 1
+
+
+// 可以显式的返回一个promise
+async function f() {
+    return Promise.resolve(1)
+}
+f().then(alert) // 1
+```
+
+>async确保了函数返回一个promise，即使其中包含非promise。够简单了吧？但是不仅仅只是如此，还有另一个关键词await，只能在async函数里使用
+
+
+#### await
+
+> 关键词await可以让JavaScript进行等待，直到一个promise执行并返回它的结果，JavaScript才会继续往下执行
+
+```js
+// 只能在async函数内部使用
+let value = await promise
+
+// 一个promise在1s之后resolve的例子
+// 函数执行到（*）行会‘暂停’，当promise处理完成后重新恢复运行， resolve的值成了最终的result，所以上面的代码会在1s后输出'done!'
+async function f() {
+    let promise = new Promise((resolve, reject) => {
+        setTimeout(() => resolve('done!'), 1000)
+    })
+    let result = await promise // 直到promise返回一个resolve值（*）
+    alert(result) // 'done!' 
+}
+f()
+```
+
+>我们强调一下：await字面上使得JavaScript等待，直到promise处理完成，
+然后将结果继续下去。这并不会花费任何的cpu资源，因为引擎能够同时做其他工作：执行其他脚本，处理事件等等。
+>>这只是一个更优雅的得到promise值的语句，它比promise更加容易阅读和书写。
+
+
+#### 总结
+
+- async
+
+   - 使函数总是返回一个promise
+   - 允许在这其中使用await
+
+- await
+
+   - promise前面的await关键字能够使JavaScript等待，直到promise处理结束
+   - 如果它是一个错误，异常就产生了，就像在那个地方调用了throw error一样
+   - 否则，它会返回一个结果，我们可以将它分配给一个值
+
 <br>
 
 ---
 
 ## Module
 
-- **why**
+### **why**
 
 > 由于使用单一状态树，应用的所有状态会集中到一个比较大的对象。当应用变得非常复杂时，store 对象就有可能变得相当臃肿
 
@@ -556,7 +655,7 @@ store.state.b // -> moduleB 的状态
 
 <br>
 
-- **模块的局部状态**
+### **模块的局部状态**
 
 > 对于模块内部的 mutation 和 getter，接收的第一个参数是模块的局部状态对象
 
@@ -608,7 +707,7 @@ const moduleA = {
 
 <br>
 
-- **命名空间**
+### **命名空间**
 
 > 默认情况下，模块内部的 action、mutation 和 getter 是注册在全局命名空间的——这样使得多个模块能够对同一 mutation 或 action 作出响应
 
@@ -661,7 +760,7 @@ const store = new Vuex.Store({
 
 <br>
 
-- **在带命名空间的模块内访问全局内容（Global Assets）**
+### **在带命名空间的模块内访问全局内容（Global Assets）**
 
 > 如果你希望使用全局 state 和 getter，rootState 和 rootGetter 会作为第三和第四参数传入 getter，也会通过 context 对象的属性传入 action。
 > 若需要在全局命名空间内分发 action 或提交 mutation，将 { root: true } 作为第三参数传给 dispatch 或 commit 即可。
@@ -702,7 +801,7 @@ modules: {
 
 <br>
 
-- **带命名空间的模块注册全局 action**
+### **带命名空间的模块注册全局 action**
 
 > 若需要在带命名空间的模块注册全局 action，你可添加 root: true，并将这个 action 的定义放在函数 handler 中
 
@@ -730,7 +829,7 @@ modules: {
 
 <br>
 
-- **带命名空间的绑定函数**
+### **带命名空间的绑定函数**
 
 > 当使用 mapState, mapGetters, mapActions 和 mapMutations 这些函数来绑定带命名空间的模块时，写起来可能比较繁琐
 
@@ -790,7 +889,7 @@ export default {
 
 <br>
 
-- **插件开发者的注意事项**
+### **插件开发者的注意事项**
 
 > 如果你开发的插件（Plugin）提供了模块并允许用户将其添加到 Vuex store，可能需要考虑模块的空间名称问题。对于这种情况，你可以通过插件的参数对象来允许用户指定空间名称
 
@@ -808,7 +907,7 @@ export function createPlugin(options = {}) {
 
 <br>
 
-- **模块动态注册**
+### **模块动态注册**
 
 > 在 store 创建之后，你可以使用 store.registerModule 方法注册模块
 
@@ -842,7 +941,7 @@ _保留 state_
 
 <br>
 
-- **模块重用**
+### **模块重用**
 
 > 有时我们可能需要创建一个模块的多个实例
 >
