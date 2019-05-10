@@ -8,7 +8,7 @@ import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // 进度条配置
 
-const whiteList = ['/login'] // 无需重定向（权限检查）的路由
+const whiteList = ['/admin/login', '/login'] // 无需重定向（权限检查）的路由
 
 router.beforeEach(async(to, from, next) => {
   // 开始进度条
@@ -22,9 +22,9 @@ router.beforeEach(async(to, from, next) => {
 
   // 已经登录
   if (hasToken) {
-    if (to.path === '/login') {
+    if (to.path === '/admin/login') {
       // 如果是访问登录页面 重定向到 /
-      next({ path: '/' })
+      next({ path: '/admin' })
       NProgress.done() // 进度条结束
     } else {
       // 如果是访问其他路由 从store中取用户信息
@@ -47,20 +47,19 @@ router.beforeEach(async(to, from, next) => {
       }
     }
   } else {
-    /* has no token*/
-
+    // 没有登录，没有token
     if (whiteList.indexOf(to.path) !== -1) {
-      // in the free login whitelist, go directly
+      // 在白名单中 直接访问
       next()
     } else {
-      // other pages that do not have permission to access are redirected to the login page.
-      next(`/login?redirect=${to.path}`)
-      NProgress.done()
+      // 如果不在白名单中， 重定向到登录页面
+      next(`/admin/login?redirect=${to.path}`)
+      NProgress.done()  // 开启进度条
     }
   }
 })
 
 router.afterEach(() => {
-  // finish progress bar
+  // 进度条结束
   NProgress.done()
 })

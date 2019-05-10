@@ -58,7 +58,7 @@ module.exports = {
     name: name,
     resolve: {
       alias: {
-        '@': resolve('src')
+        '@': resolve('src') // 别名
       }
     }
   },
