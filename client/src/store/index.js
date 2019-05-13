@@ -6,10 +6,13 @@ import getters from './getters'
 import actions from './actions'
 import mutations from './mutations'
 
-// 不同的 store 模块
+// 后台的 store 模块
 import app from './admin/base/app'
 import settings from './admin/base/settings'
 import user from './admin/base/user'
+import routers from './admin/base/routers'
+
+// 前台的
 
 Vue.use(Vuex)
 
@@ -18,7 +21,8 @@ const store = new Vuex.Store({
   modules: {
     app,
     settings,
-    user
+    user,
+    routers
   },
   getters,
   actions,

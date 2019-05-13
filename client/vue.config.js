@@ -10,7 +10,7 @@ const name = defaultSettings.title || 'Lengo' // page title
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
 // For example, Mac: sudo npm run
-const port = 9528 // dev port
+const port = 9532 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -33,32 +33,15 @@ module.exports = {
       'www.chendaye666.top',
       'www.lengo.top'
     ]
-    // port: port,
-    // open: true,
-    // overlay: {
-    //   warnings: false,
-    //   errors: true
-    // },
-    // proxy: {
-    //   // change xxx-api/login => mock/login
-    //   // detail: https://cli.vuejs.org/config/#devserver-proxy
-    //   [process.env.VUE_APP_BASE_API]: {
-    //     target: `http://localhost:${port}/mock`,
-    //     changeOrigin: true,
-    //     pathRewrite: {
-    //       ['^' + process.env.VUE_APP_BASE_API]: ''
-    //     }
-    //   }
-    // },
-    // after: require('./mock/mock-server.js')
   },
+
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
     name: name,
     resolve: {
       alias: {
-        '@': resolve('src') // 别名
+        '@': resolve('src')
       }
     }
   },
