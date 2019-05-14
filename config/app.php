@@ -175,6 +175,15 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        // laravel-debugbar
+        Barryvdh\Debugbar\ServiceProvider::class,
+
+        // laravel-ide-helper
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+
+        // RBAC  laravel-permission
+        Spatie\Permission\PermissionServiceProvider::class,
+
     ],
 
     /*
@@ -225,6 +234,16 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+
+        // laravel-debugbar
+        'Debugbar' => Barryvdh\Debugbar\Facade::class,
+
+        // laravel-ide-helper
+        'IdeHelper' => Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+        
+        // laravel-permission
+        'RBAC' => Spatie\Permission\PermissionServiceProvider::class,
+
 
     ],
 
