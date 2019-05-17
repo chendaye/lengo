@@ -240,9 +240,17 @@ return [
 
         // laravel-ide-helper
         'IdeHelper' => Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
-        
+
         // laravel-permission
         'RBAC' => Spatie\Permission\PermissionServiceProvider::class,
+
+        // JWT
+        'JWTAuth' => 'Tymon\JWTAuth\Facades\JWTAuth',
+        'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory',
+
+        // Dingo
+        'DingoApi' => 'Dingo\Api\Facade\API',
+        'DingoRoute' => 'Dingo\Api\Facade\Route',
 
 
     ],
