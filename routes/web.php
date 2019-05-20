@@ -12,10 +12,5 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return  view('welcome');
 });
-
-Route::get('first', function (){
-    return 'first route';
-});
-Route::get('long','\App\Http\Controllers\LongController@test');

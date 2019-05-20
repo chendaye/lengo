@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\V1;
+namespace App\Http\Controllers\Lori\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Validator;
-use App\User;
+use App\Models\Users;
 
 class AuthController extends Controller
 {
 
-    protected $guard = 'api'; //设置使用guard为api选项验证，请查看config/auth.php的guards设置项，重要！
+    protected $guard = 'api';
 
     /**
      * Create a new AuthController instance.
@@ -20,12 +20,12 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('refresh', ['except' => ['login', 'register']]);
+        $this->middleware('jwt.refresh', ['except' => ['login', 'register']]);
     }
 
     public function test()
     {
-        echo "test!!";
+        dd('test');
     }
 
     public function register(Request $request)
@@ -46,7 +46,7 @@ class AuthController extends Controller
         }
 
         // 创建用户
-        $result = User::create([
+        $result = Users::create([
             'name' => $payload['name'],
             'email' => $payload['email'],
             'password' => bcrypt($payload['password']),
@@ -68,6 +68,7 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+        dd(777);
         $credentials = $request->only('email', 'password');
 
         if ($token = $this->guard()->attempt($credentials)) {
