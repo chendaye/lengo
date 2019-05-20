@@ -1,3 +1,252 @@
 # dingo/api + JWT
 
+## [JWT](https://learnku.com/articles/10885/full-use-of-jwt)
 
+### 安装
+
+```php
+# 建议使用1.0以上版本
+composer require tymon/jwt-auth 1.*@rc
+```
+
+### 生成配置文件
+
+```php
+# 这条命令会在 config 下增加一个 jwt.php 的配置文件
+php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
+```
+
+###  生成加密密钥
+
+```php
+# 这条命令会在 .env 文件下生成一个加密密钥，如：JWT_SECRET=foobar
+php artisan jwt:secret
+```
+
+### 更新模型
+
+```php
+<?php
+
+namespace App;
+
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class User extends Authenticatable implements JWTSubject    # 这里别忘了加
+{
+    use Notifiable;
+
+    // Rest omitted for brevity
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+}
+```
+
+
+### 注册两个 Facade
+
+>这两个 Facade 并不是必须的，但是使用它们会给你的代码编写带来一点便利。 `config/app.php`
+
+```php
+'aliases' => [
+        ...
+        // 添加以下两行
+        'JWTAuth' => 'Tymon\JWTAuth\Facades\JWTAuth',
+        'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory',
+],
+```
+
+>如果你不使用这两个 Facade，你可以使用辅助函数 auth ()
+auth () 是一个辅助函数，返回一个 guard，暂时可以看成 Auth Facade。
+对于它有很多有必要说的，可以看我单独写的一篇文章 ——[Laravel 辅助函数 auth 与 JWT 扩展详解](https://learnku.com/articles/10889/detailed-implementation-of-jwt-extensions)
+
+```php
+// 如果你不用 Facade，你可以这么写
+auth('api')->refresh();
+// 用 JWTAuth Facade
+JWTAuth::parseToken()->refresh();
+```
+
+### 修改 auth.php  config/auth.php
+
+```php
+'guards' => [
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
+    ],
+
+    'api' => [
+        'driver' => 'jwt',      // 原来是 token 改成jwt
+        'provider' => 'users',
+    ],
+],
+```
+
+### 注册一些路由
+
+>注意：在 Laravel 下，route/api.php 中的路由默认都有前缀 api 。
+
+```php
+Route::group([
+
+    'prefix' => 'auth'
+
+], function ($router) {
+
+    Route::post('login', 'AuthController@login');
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::post('me', 'AuthController@me');
+
+});
+```
+
+### 创建控制器
+
+```php
+php artisan make:controller AuthController
+
+// AuthController 值得注意的是 Laravel 这要用 auth('api') ，至于为什么，我另一篇关于 JWT 扩展详解的文章里有讲。
+
+
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+
+class AuthController extends Controller
+{
+    /**
+     * Create a new AuthController instance.
+     * 要求附带email和password（数据来源users表）
+     * 
+     * @return void
+     */
+    public function __construct()
+    {
+        // 这里额外注意了：官方文档样例中只除外了『login』
+        // 这样的结果是，token 只能在有效期以内进行刷新，过期无法刷新
+        // 如果把 refresh 也放进去，token 即使过期但仍在刷新期以内也可刷新
+        // 不过刷新一次作废
+        $this->middleware('auth:api', ['except' => ['login']]);
+        // 另外关于上面的中间件，官方文档写的是『auth:api』
+        // 但是我推荐用 『jwt.auth』，效果是一样的，但是有更加丰富的报错信息返回
+    }
+
+    /**
+     * Get a JWT via given credentials.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login()
+    {
+        $credentials = request(['email', 'password']);
+
+        if (! $token = auth('api')->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        return $this->respondWithToken($token);
+    }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me()
+    {
+        return response()->json(auth('api')->user());
+    }
+
+    /**
+     * Log the user out (Invalidate the token).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout()
+    {
+        auth('api')->logout();
+
+        return response()->json(['message' => 'Successfully logged out']);
+    }
+
+    /**
+     * Refresh a token.
+     * 刷新token，如果开启黑名单，以前的token便会失效。
+     * 值得注意的是用上面的getToken再获取一次Token并不算做刷新，两次获得的Token是并行的，即两个都可用。
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        return $this->respondWithToken(auth('api')->refresh());
+    }
+
+    /**
+     * Get the token array structure.
+     *
+     * @param  string $token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth('api')->factory()->getTTL() * 60
+        ]);
+    }
+}
+```
+## [Dingo](https://learnku.com/docs/dingo-api/2.0.0) 
+
+
+### 安装
+
+```php
+composer require dingo/api
+
+// 或者
+
+"require": {
+    "dingo/api": "^2.2"
+}
+```
+
+### 生成配置文件
+
+```php
+php artisan vendor:publish --provider="Dingo\Api\Provider\LaravelServiceProvider"
+```
+
+###  Fadace
+
+```php
+// Dingo
+        'DingoApi' => 'Dingo\Api\Facade\API',
+        'DingoRoute' => 'Dingo\Api\Facade\Route',
+```
