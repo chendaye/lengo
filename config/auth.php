@@ -66,11 +66,14 @@ return [
     */
 
     'providers' => [
-        // 默认的用户验证表
+        // 默认的管理员验证表
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+
+        // 默认用户验证表
+        
 
         // 'users' => [
         //     'driver' => 'database',
