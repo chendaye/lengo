@@ -1,5 +1,4 @@
 import {
-  register,
   login,
   logout,
   getInfo
@@ -17,10 +16,7 @@ import {
 const state = {
   token: getToken(),
   name: '',
-  email: '',
-  remark: '',
-  avatar: '',
-  auth: false
+  avatar: ''
 }
 
 // 设置 state 内容（同步）
@@ -33,12 +29,6 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
-  },
-  SET_EMAIL: (state, email) => {
-    state.email = email
-  },
-  SET_REMARK: (state, remark) => {
-    state.remark = remark
   }
 }
 
@@ -50,14 +40,14 @@ const actions = {
   }, userInfo) {
     // 账户密码
     const {
-      email,
+      username,
       password
     } = userInfo
     // 登录
     return new Promise((resolve, reject) => {
-      // 登录 api/client/login
+      // 登录 api/user/login
       login({
-        email: email.trim(),
+        username: username.trim(),
         password: password
       }).then(response => {
         // 登录成功返回数据
@@ -65,8 +55,8 @@ const actions = {
           data
         } = response
         // 保存 token
-        commit('SET_TOKEN', data.access_token)
-        setToken(data.access_token)
+        commit('SET_TOKEN', data.token)
+        setToken(data.token)
         resolve()
       }).catch(error => {
         reject(error)

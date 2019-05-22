@@ -1,4 +1,6 @@
 const getters = {
+  // client
+  
   // admin
   sidebar: state => state.app.sidebar,
   device: state => state.app.device,
