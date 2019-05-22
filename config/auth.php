@@ -44,7 +44,11 @@ return [
         'api' => [
             'driver' => 'jwt',
             'provider' => 'users',
-            'hash' => false,
+        ],
+
+        'client' => [
+            'driver' => 'jwt',
+            'provider' => 'clients',
         ],
     ],
 
@@ -66,9 +70,16 @@ return [
     */
 
     'providers' => [
+        // 默认的管理员验证表
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model' => App\Models\User::class,
+        ],
+
+        // 默认用户验证表
+        'clients' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class,
         ],
 
         // 'users' => [

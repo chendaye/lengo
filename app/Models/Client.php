@@ -7,7 +7,12 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements JWTSubject
+/**
+ * 前端用户注册
+ *
+ * @author long
+ */
+class Client extends Authenticatable implements JWTSubject
 {
     use Notifiable, HasRoles;
 

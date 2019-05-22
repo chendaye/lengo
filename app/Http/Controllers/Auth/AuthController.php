@@ -1,44 +1,52 @@
 <?php
 
-namespace App\Http\Controllers\Lori\V1;
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Validator;
-use App\Models\Users;
+use App\Models\User;
 
 class AuthController extends Controller
 {
 
+    //设置使用 guard 为api选项验证
     protected $guard = 'api';
 
     /**
-     * Create a new AuthController instance.
+     * 权限验证
      *
      * @return void
      */
     public function __construct()
     {
-        $this->middleware('jwt.refresh', ['except' => ['login', 'register']]);
+        // $this->middleware('jwt.refresh', ['except' => ['login', 'register']]); // jwt 自带中间件
+        $this->middleware('refresh', ['except' => ['login', 'register']]); // 自定义中间件
     }
 
-    public function test()
-    {
-        dd('test');
-    }
 
+    /**
+     * 注册
+     */
     public function register(Request $request)
     {
-
+        // 验证规则
         $rules = [
             'name' => ['required'],
             'email' => ['required'],
             'password' => ['required', 'min:6', 'max:16'],
         ];
-
+        // 错误信息
+        $messages = [
+            'name.required' => '请填写正确的用户名',
+            'email.required' => '请填写正确的邮箱',
+            'password.required' => '请填写正确的密码',
+            'password.min' => '密码必须大于等于6个字符',
+            'password.max' => '密码最大不超过16个字符',
+        ];
         $payload = $request->only('name', 'email', 'password');
-        $validator = Validator::make($payload, $rules);
+        $validator = Validator::make($payload, $rules, $messages);
 
         // 验证格式
         if ($validator->fails()) {
@@ -46,64 +54,60 @@ class AuthController extends Controller
         }
 
         // 创建用户
-        $result = Users::create([
+        $result = User::create([
             'name' => $payload['name'],
             'email' => $payload['email'],
             'password' => bcrypt($payload['password']),
         ]);
 
         if ($result) {
-            return $this->response->array(['success' => '创建用户成功']);
+            return $this->response->array(['success' => '恭喜！注册成功']);
         } else {
-            return $this->response->array(['error' => '创建用户失败']);
+            return $this->response->array(['error' => 'Sorry！注册失败']);
         }
     }
 
     /**
-     * Get a JWT token via given credentials.
-     *
+     * 登录 guard:api 验证成功返回 jwt token
      * @param  \Illuminate\Http\Request  $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {
-        dd(777);
         $credentials = $request->only('email', 'password');
-
+        // guard:api  验证成功 返回token
         if ($token = $this->guard()->attempt($credentials)) {
             return $this->respondWithToken($token);
         }
-
-        return $this->response->errorUnauthorized('登录失败');
+        // 验证失败
+        return $this->response()->errorUnauthorized('登录失败');
     }
 
     /**
-     * Get the authenticated User
+     * 当前登录用户
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function me()
     {
-        //return response()->json($this->guard()->user());
         return $this->response->array($this->guard()->user());
     }
 
     /**
-     * Log the user out (Invalidate the token)
+     * 登出
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout()
     {
         $this->guard()->logout();
-
-        //return response()->json(['message' => 'Successfully logged out']);
-        return $this->response->array(['message' => '退出成功']);
+        // 登出
+        return $this->response->array(['message' => '退出成功！']);
     }
 
     /**
-     * Refresh a token.
+     * 刷新 返回新的 token.
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -113,7 +117,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Get the token array structure.
+     * 数组形式返回token.
      *
      * @param  string $token
      *
@@ -129,12 +133,13 @@ class AuthController extends Controller
     }
 
     /**
-     * Get the guard to be used during authentication.
+     * 获取权限验证的守卫 guard.
      *
      * @return \Illuminate\Contracts\Auth\Guard
      */
     public function guard()
     {
+        // api
         return Auth::guard($this->guard);
     }
 }
