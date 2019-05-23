@@ -14,10 +14,29 @@ use Illuminate\Http\Request;
 */
 
 $api = app('Dingo\Api\Routing\Router');
-$api->version('v1', ['namespace' => 'App\Http\Controllers\Auth'], function ($api) {
-    $api->post('register', 'AuthController@register');
-    $api->post('login', 'AuthController@login');
-    $api->post('logout', 'AuthController@logout');
-    $api->post('refresh', 'AuthController@refresh');
-    $api->get('me', 'AuthController@me');
+// 路由
+$api->version('v1', function ($api) {
+    // 客户端路由
+    $api->group(['prefix' => 'client'], function ($api) {
+        // 权限验证
+        $api->group(['namespace' => 'App\Http\Controllers\Auth'], function ($api) {
+            $api->post('register', 'ClientAuthController@register');
+            $api->post('login', 'ClientAuthController@login');
+            $api->post('logout', 'ClientAuthController@logout');
+            $api->post('refresh', 'ClientAuthController@refresh');
+            $api->get('me', 'ClientAuthController@me');
+        });
+    });
+
+    // 管理后台路由
+    $api->group(['prefix' => 'admin'], function ($api) {
+        // 权限路由
+        $api->group(['namespace' => 'App\Http\Controllers\Auth'], function($api){
+            $api->post('register', 'AuthController@register');
+            $api->post('login', 'AuthController@login');
+            $api->post('logout', 'AuthController@logout');
+            $api->post('refresh', 'AuthController@refresh');
+            $api->get('me', 'AuthController@me');
+        });
+    });
 });

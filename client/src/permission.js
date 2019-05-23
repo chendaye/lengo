@@ -17,9 +17,10 @@ NProgress.configure({
 })
 
 // 白名单
-const whiteList = ['/admin/login']
+const whiteList = ['/admin/login', '/admin/register', '/client/login', '/client/register']
 // 路由前置守卫
 router.beforeEach(async(to, from, next) => {
+  console.log(to.path,from.path, next.path)
   // 进度条
   NProgress.start()
 
@@ -28,7 +29,7 @@ router.beforeEach(async(to, from, next) => {
     document.title = getPageTitle(to.meta.title)
 
     // 检查token
-    const hasToken = getToken()
+    const hasToken = getToken('admin')
 
     // token 存在
     if (hasToken) {
@@ -50,7 +51,7 @@ router.beforeEach(async(to, from, next) => {
             // note: roles 必须是数组! 如: ['admin'] or ,['developer','editor']
             const {
               roles
-            } = await store.dispatch('user/getInfo')
+            } = await store.dispatch('admin/getInfo')
 
             // 基于角色生成动态路由
             const accessRoutes = await store.dispatch('permission/generateRoutes', roles)

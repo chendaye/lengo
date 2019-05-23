@@ -14,7 +14,7 @@ import {
 
 // 用户信息
 const state = {
-  token: getToken(),
+  token: getToken('client'),
   name: '',
   email: '',
   remark: '',
@@ -66,7 +66,7 @@ const actions = {
         } = response
         // 保存 token
         commit('SET_TOKEN', data.access_token)
-        setToken(data.access_token, 'admin')
+        setToken(data.access_token, 'client')
         resolve()
       }).catch(error => {
         reject(error)
@@ -120,7 +120,7 @@ const actions = {
         // state 中 token 置为空
         commit('SET_TOKEN', '')
         // cookie 中 token 删除
-        removeToken('admin')
+        removeToken('client')
         // 重置路由
         resetRouter()
         resolve()
@@ -136,18 +136,16 @@ const actions = {
   }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
-      removeToken('admin')
+      removeToken('client')
       resolve()
     })
   },
 
   // 刷新token
-  refreshToken({
-    commit
-  }, token) {
+  refreshToken({ commit }, token) {
     return new Promise(resolve => {
-      commit('SET_TOKEN', token)
-      setToken(token, 'admin')
+      commit('SET_TOKEN', token) // state
+      setToken(token, 'client') // cookie
       resolve()
     })
   }
