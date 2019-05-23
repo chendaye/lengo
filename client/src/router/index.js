@@ -1,12 +1,15 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
+// 管理后台路由
 import adminRoutes from './admin'
+// 
+import clientRoutes from './client'
 
 Vue.use(Router)
 
 // 前后台路由
-export const constantRoutes = [...adminRoutes]
+export const constantRoutes = [...adminRoutes, ...clientRoutes]
 
 /**
  * asyncRoutes
@@ -43,7 +46,7 @@ const createRouter = () => new Router({
 
 const router = createRouter()
 
-// 重置路由 see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
+// 重置路由
 export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher
