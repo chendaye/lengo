@@ -1,4 +1,5 @@
-import { asyncRoutes, constantRoutes } from '@/router'
+import constantRoutes from '@/router'
+import asyncRoutes from '@/router/admin/async'
 
 /**
  * 用 meta.role 检查当前用户是否有权限
