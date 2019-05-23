@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 用户注册
 export function register(data) {
   return request({
-    url: '/register',
+    url: '/client/register',
     method: 'post',
     data
   })
@@ -12,7 +12,7 @@ export function register(data) {
 // 用户登录
 export function login(data) {
   return request({
-    url: '/login',
+    url: '/client/login',
     method: 'post',
     data
   })
@@ -21,7 +21,7 @@ export function login(data) {
 // 获取用户信息
 export function getInfo(token) {
   return request({
-    url: '/me',
+    url: '/client/me',
     method: 'get',
     params: {
       token
@@ -32,7 +32,7 @@ export function getInfo(token) {
 // 用户登出
 export function logout() {
   return request({
-    url: '/logout',
+    url: '/client/logout',
     method: 'post'
   })
 }

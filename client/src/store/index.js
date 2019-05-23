@@ -13,7 +13,7 @@ import admin from './admin/base/user'
 import routers from './admin/base/routers'
 
 // 前台的
-import client from './admin/base/user'
+import client from './client/base/user'
 
 Vue.use(Vuex)
 

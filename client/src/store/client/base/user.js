@@ -14,13 +14,17 @@ import {
 
 // 用户信息
 const state = {
-  token: getToken(),
+  token: getToken('client'),
   name: '',
-  avatar: ''
+  email: '',
+  remark: '',
+  avatar: '',
+  auth: false
 }
 
 // 设置 state 内容（同步）
 const mutations = {
+  // 在 state 中保存 token
   SET_TOKEN: (state, token) => {
     state.token = token
   },
@@ -29,6 +33,12 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_EMAIL: (state, email) => {
+    state.email = email
+  },
+  SET_REMARK: (state, remark) => {
+    state.remark = remark
   }
 }
 
@@ -40,14 +50,14 @@ const actions = {
   }, userInfo) {
     // 账户密码
     const {
-      username,
+      email,
       password
     } = userInfo
     // 登录
     return new Promise((resolve, reject) => {
-      // 登录 api/user/login
+      // 登录 api/client/login
       login({
-        username: username.trim(),
+        email: email.trim(),
         password: password
       }).then(response => {
         // 登录成功返回数据
@@ -55,8 +65,8 @@ const actions = {
           data
         } = response
         // 保存 token
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        commit('SET_TOKEN', data.access_token)
+        setToken(data.access_token, 'client')
         resolve()
       }).catch(error => {
         reject(error)
@@ -70,7 +80,7 @@ const actions = {
     state
   }) {
     return new Promise((resolve, reject) => {
-      // api/user/getInfo
+      // /client/me
       getInfo(state.token).then(response => {
         // 返回的用户信息
         const {
@@ -83,11 +93,15 @@ const actions = {
         // 名称 头像
         const {
           name,
+          email,
+          remark,
           avatar
         } = data
         // 调用mutations 设置 state
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
+        commit('SET_EMAIL', email)
+        commit('SET_REMARK', remark)
         resolve(data)
       }).catch(error => {
         reject(error)
@@ -101,11 +115,12 @@ const actions = {
     state
   }) {
     return new Promise((resolve, reject) => {
-      // api/user/logout
+      // /client/logout
       logout(state.token).then(() => {
-        // token 置为空
+        // state 中 token 置为空
         commit('SET_TOKEN', '')
-        removeToken()
+        // cookie 中 token 删除
+        removeToken('client')
         // 重置路由
         resetRouter()
         resolve()
@@ -121,7 +136,16 @@ const actions = {
   }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
-      removeToken()
+      removeToken('client')
+      resolve()
+    })
+  },
+
+  // 刷新token
+  refreshToken({ commit }, token) {
+    return new Promise(resolve => {
+      commit('SET_TOKEN', token) // state
+      setToken(token, 'client') // cookie
       resolve()
     })
   }

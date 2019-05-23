@@ -1,5 +1,4 @@
 import {
-  register,
   login,
   logout,
   getInfo
@@ -25,6 +24,7 @@ const state = {
 
 // 设置 state 内容（同步）
 const mutations = {
+  // 在 state 中保存 token
   SET_TOKEN: (state, token) => {
     state.token = token
   },
@@ -66,7 +66,7 @@ const actions = {
         } = response
         // 保存 token
         commit('SET_TOKEN', data.access_token)
-        setToken(data.access_token)
+        setToken(data.access_token, 'admin')
         resolve()
       }).catch(error => {
         reject(error)
@@ -80,7 +80,7 @@ const actions = {
     state
   }) {
     return new Promise((resolve, reject) => {
-      // api/user/getInfo
+      // /client/me
       getInfo(state.token).then(response => {
         // 返回的用户信息
         const {
@@ -93,11 +93,15 @@ const actions = {
         // 名称 头像
         const {
           name,
+          email,
+          remark,
           avatar
         } = data
         // 调用mutations 设置 state
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
+        commit('SET_EMAIL', email)
+        commit('SET_REMARK', remark)
         resolve(data)
       }).catch(error => {
         reject(error)
@@ -111,11 +115,12 @@ const actions = {
     state
   }) {
     return new Promise((resolve, reject) => {
-      // api/user/logout
+      // /client/logout
       logout(state.token).then(() => {
-        // token 置为空
+        // state 中 token 置为空
         commit('SET_TOKEN', '')
-        removeToken()
+        // cookie 中 token 删除
+        removeToken('admin')
         // 重置路由
         resetRouter()
         resolve()
@@ -131,7 +136,18 @@ const actions = {
   }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
-      removeToken()
+      removeToken('admin')
+      resolve()
+    })
+  },
+
+  // 刷新token
+  refreshToken({
+    commit
+  }, token) {
+    return new Promise(resolve => {
+      commit('SET_TOKEN', token)
+      setToken(token, 'admin')
       resolve()
     })
   }
