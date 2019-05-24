@@ -2,39 +2,14 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 // 管理后台路由
-import adminRoutes from './admin'
-// 
-import clientRoutes from './client'
+import adminRoutes from './admin/index'
+// 客户端路由
+import clientRoutes from './client/index'
 
 Vue.use(Router)
 
 // 前后台路由
 export const constantRoutes = [...adminRoutes, ...clientRoutes]
-
-/**
- * asyncRoutes
- * 基于用户角色自动追加的动态路由
- */
-export const asyncRoutes = [
-  {
-    path: 'external-link',
-    component: '',
-    children: [{
-      path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-      meta: {
-        title: 'External Link',
-        icon: 'link'
-      }
-    }]
-  },
-
-  // 404 page must be placed at the end !!!
-  {
-    path: '*',
-    redirect: '/404',
-    hidden: true
-  }
-]
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support

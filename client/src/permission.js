@@ -20,7 +20,7 @@ NProgress.configure({
 const whiteList = ['/admin/login', '/admin/register', '/client/login', '/client/register']
 // 路由前置守卫
 router.beforeEach(async(to, from, next) => {
-  console.log(to.path,from.path, next.path)
+  console.log(to.path, from.path, next.path)
   // 进度条
   NProgress.start()
 
@@ -54,7 +54,7 @@ router.beforeEach(async(to, from, next) => {
             } = await store.dispatch('admin/getInfo')
 
             // 基于角色生成动态路由
-            const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+            const accessRoutes = await store.dispatch('routers/generateRoutes', roles)
 
             // 添加动态路由
             router.addRoutes(accessRoutes)
