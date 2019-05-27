@@ -31,6 +31,10 @@ export default [
           title: 'Dashboard',
           icon: 'dashboard'
         }
+      },
+      {
+        path: '/login',
+        component: () => import('@/views/admin/login/index')
       }
 
     ]

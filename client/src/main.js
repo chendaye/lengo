@@ -16,8 +16,17 @@ import '@/icons' // icon
 
 // 权限控制
 import '@/permission'
+
+// 路由前置守卫
+// router.beforeEach((to, from, next) => {
+//   console.log(to.path, from.path, next.path)
+//   next()
+// })
+
 // set ElementUI lang to EN
-Vue.use(ElementUI, { locale })
+Vue.use(ElementUI, {
+  locale
+})
 
 Vue.config.productionTip = false
 

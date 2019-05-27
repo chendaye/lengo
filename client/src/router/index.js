@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import App from '../App'
 import Router from 'vue-router'
 
 // 管理后台路由
@@ -8,15 +9,21 @@ import clientRoutes from './client/index'
 
 Vue.use(Router)
 
-// 前后台路由
-export const constantRoutes = [...adminRoutes, ...clientRoutes]
+// 客户端与后台路由路由
+export const CARouters = [...adminRoutes, ...clientRoutes]
+
+const allRoute = [{
+  path: '/', // 根路由
+  component: App, // 顶层路由，对应index.html
+  children: CARouters
+}]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // require service support
   scrollBehavior: () => ({
     y: 0
   }),
-  routes: constantRoutes
+  routes: allRoute
 })
 
 const router = createRouter()

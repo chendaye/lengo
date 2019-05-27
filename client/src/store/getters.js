@@ -12,6 +12,8 @@ const getters = {
   admin_avatar: state => state.admin.avatar,
   admin_name: state => state.admin.name,
   admin_remark: state => state.admin.remark,
-  admin_email: state => state.admin.email
+  admin_email: state => state.admin.email,
+  admin_roles: state => state.admin.roles,
+  permission_routes: state => state.routers.routes
 }
 export default getters

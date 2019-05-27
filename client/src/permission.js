@@ -18,9 +18,9 @@ NProgress.configure({
 
 // 白名单
 const whiteList = ['/admin/login', '/admin/register', '/client/login', '/client/register']
+
 // 路由前置守卫
 router.beforeEach(async(to, from, next) => {
-  console.log(to.path, from.path, next.path)
   // 进度条
   NProgress.start()
 
@@ -41,7 +41,7 @@ router.beforeEach(async(to, from, next) => {
         NProgress.done()
       } else {
         // 检查store是否有可访问动态路由
-        const hasRoles = store.getters.roles && store.getters.roles.length > 0
+        const hasRoles = store.getters.admin_roles && store.getters.admin_roles.length > 0
         if (hasRoles) {
           next()
         } else {
@@ -67,7 +67,7 @@ router.beforeEach(async(to, from, next) => {
             })
           } catch (error) {
             // 删掉token 回到登录页面
-            await store.dispatch('user/resetToken')
+            await store.dispatch('admin/resetToken')
             Message.error(error || 'Has Error')
             next(`/admin/login?redirect=${to.path}`)
             NProgress.done()
@@ -87,10 +87,38 @@ router.beforeEach(async(to, from, next) => {
     }
   } else if (to.path.startsWith('/client')) {
     // 前端路由
+    // 设置页面标题
+    document.title = getPageTitle(to.meta.title)
+
+    // 检查token
+    const hasToken = getToken('client')
+
+    // token 存在
+    if (hasToken) {
+      if (to.path === '/client/login') {
+        // 已经登录直接跳转到主页
+        next({
+          path: '/client'
+        })
+        NProgress.done()
+      } else {
+        next()
+      }
+    } else {
+      // 没有token
+      if (whiteList.indexOf(to.path) !== -1) {
+        // 访问的路由在白名单之内 直接访问
+        next()
+      } else {
+        // 不在白名单被，定向到登录页面.
+        next(`/client/login?redirect=${to.path}`)
+        NProgress.done()
+      }
+    }
   } else {
     // 既不是前端路由 也不是后端路由
     next({
-      path: '/404'
+      path: '/client/404'
     })
   }
 })
