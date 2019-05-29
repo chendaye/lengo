@@ -35,6 +35,7 @@ module.exports = {
     ]
   },
 
+  // 调整 webpack 配置最简单的方式就是在 vue.config.js 中的 configureWebpack https://cli.vuejs.org/zh/guide/webpack.html
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
