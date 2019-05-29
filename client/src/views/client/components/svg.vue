@@ -1,6 +1,5 @@
 <template>
   <body>
-    <RemoteCss href="https://fonts.googleapis.com/css?family=Montserrat:400,800,900" />
     <svg display="none">
       <symbol
         id="codepen"
@@ -56,24 +55,20 @@
 
       <canvas id="plane-canvas" class="plane-canvas" />
       <canvas id="main-canvas" class="main-canvas" />
-      <div id="mouse" class="mouse">Hold mouse1 button</div>
       <div class="plate">
         <h2 class="text-animation" data-js="text">Life is only inevitable, there is no chance.</h2>
         <p class="text-animation" data-js="text">By, chendaye !</p>
       </div>
 
     </main>
+
   </body>
 
 </template>
 
 <script>
-import RemoteCss from '@/components/Remote/remoteCss'
 export default {
   name: 'SvgBg',
-  components: {
-    RemoteCss
-  },
   props: {
     // iconClass: {
     //   type: String,
@@ -211,7 +206,7 @@ App = function () {
     {
       var callback = function callback() {
         // ui.social.classList.add('active');
-        ui.mouse.classList.add('active');
+        // ui.mouse.classList.add('active');
       };
       ui.textNodes.forEach(function (el, elIndex) {
         el.classList.add('active');
@@ -221,8 +216,8 @@ App = function () {
           var letter1 = letters[i];
           var letter2 = letters[letters.length - i];
           setTimeout(function () {
-            if (letter1) letter1.classList.add('active');
-            if (letter2) letter2.classList.add('active');
+            // if (letter1) letter1.classList.add('active');
+            // if (letter2) letter2.classList.add('active');
             if (i === length - 1 && elIndex === ui.textNodes.length - 1) callback();
           }, i * 100);};for (var i = 0; i < length; i++) {_loop(i);
         }
