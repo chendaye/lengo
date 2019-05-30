@@ -1,5 +1,6 @@
 import {
   login,
+  register,
   logout,
   getInfo
 } from '@/api/client'
@@ -68,6 +69,35 @@ const actions = {
         commit('SET_TOKEN', data.access_token)
         setToken(data.access_token, 'client')
         resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  // 用户注册
+  register({
+    commit
+  }, userInfo) {
+    // 账户密码
+    const {
+      username,
+      email,
+      password
+    } = userInfo
+    // 登录
+    return new Promise((resolve, reject) => {
+      // 登录 api/client/login
+      register({
+        name: username,
+        email: email.trim(),
+        password: password
+      }).then(response => {
+        // 登录成功返回数据
+        const {
+          data
+        } = response
+        resolve(data)
       }).catch(error => {
         reject(error)
       })

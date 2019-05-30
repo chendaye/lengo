@@ -101,9 +101,7 @@ export default {
   data() {
     // 自定义账号姓名验证
     const validateUsername = (rule, value, callback) => {
-      const reg = /^[a-zA-Z0-9]{6,12}$/
-      console.log(validUsername(value), reg.test(value))
-      if (!reg.test(value)) {
+      if (!validUsername(value)) {
         callback(new Error('用户名必须由6-12个字母或数字构成！'))
       } else {
         callback()
@@ -164,18 +162,15 @@ export default {
     }
   },
   methods: {
-    ...mapActions('user', [
-      'register', // -> this.register()
-      'logout',
-      'getInfo',
-      'resetToken'
+    ...mapActions('client', [
+      'register' // -> this.register()
     ]),
     // 展示密码
     showPwd() {
       if (this.passwordType === 'password') {
-        this.passwordType = '';
+        this.passwordType = ''
       } else {
-        this.passwordType = 'password';
+        this.passwordType = 'password'
       }
       this.$nextTick(() => {
         this.$refs.password.focus()
@@ -185,16 +180,24 @@ export default {
     handleregister() {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
-          this.loading = true
-          // 处理登录  store admin/base/user
-          this.register(this.registerForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/' })
-              this.loading = false
+          if (this.registerForm.password === this.registerForm.repassword) {
+            this.loading = true
+            // 处理登录  store client/base/user
+            this.register(this.registerForm)
+              .then((res) => {
+                console.log(res)
+                this.$router.push({ path: this.redirect || '/client/login' })
+                this.loading = false
+              })
+              .catch(() => {
+                this.loading = false
+              })
+          } else {
+            this.$message({
+              message: '两次输入的密码不一致！',
+              type: 'error'
             })
-            .catch(() => {
-              this.loading = false
-            })
+          }
         } else {
           console.log('error submit!!')
           return false

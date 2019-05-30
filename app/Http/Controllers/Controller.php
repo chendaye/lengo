@@ -12,4 +12,17 @@ use Dingo\Api\Routing\Helpers; // 定制化api响应
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests, Helpers;
+
+    // public function __construct()
+    // {
+    //     parent::__construct();
+    //     self::cross;
+    // }
+
+    // private function cross()
+    // {
+    //     // 跨域请求
+    //     header( 'Access-Control-Allow-Origin:*');
+    //     header( 'Access-Control-Allow-Methods:GET,POST,PATCH,PUT.OPTIONS');
+    // }
 }
