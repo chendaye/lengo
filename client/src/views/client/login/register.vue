@@ -1,6 +1,6 @@
 <template>
   <div class="register-container">
-    <svgBg />
+    <coordinateBg />
     <el-form
       ref="registerForm"
       :model="registerForm"
@@ -83,20 +83,19 @@
         style="width:100%;margin-bottom:30px;"
         @click.native.prevent="handleregister"
       >register</el-button>
-
     </el-form>
   </div>
 </template>
 
 <script>
 import { validUsername, validEmail } from '@/utils/validate'
-import svgBg from '../components/svg'
+import coordinateBg from '../components/coordinate'
 import { mapActions } from 'vuex'
 
 export default {
   name: 'Register',
   components: {
-    svgBg
+    coordinateBg
   },
   data() {
     // 自定义账号姓名验证
@@ -168,15 +167,15 @@ export default {
     // 展示密码
     showPwd() {
       if (this.passwordType === 'password') {
-        this.passwordType = ''
+        this.passwordType = '';
       } else {
-        this.passwordType = 'password'
+        this.passwordType = 'password';
       }
       this.$nextTick(() => {
         this.$refs.password.focus()
       })
     },
-    // 登录
+    // 注册
     handleregister() {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
@@ -184,10 +183,28 @@ export default {
             this.loading = true
             // 处理登录  store client/base/user
             this.register(this.registerForm)
-              .then((res) => {
-                console.log(res)
-                this.$router.push({ path: this.redirect || '/client/login' })
-                this.loading = false
+              .then(res => {
+                if (res.status === true) {
+                  this.$message({
+                    showClose: true,
+                    message: '恭喜你！注册成功，请登录！',
+                    type: 'success',
+                    duration: 3500,
+                    // 箭头函数中this是固定的
+                    // 箭头函数可以让onClose里面的this，绑定定义时所在的作用域，而不是指向运行时所在的作用域。
+                    onClose: () => {
+                      this.$router.push({
+                        path: this.redirect || '/client/login'
+                      })
+                      this.loading = false
+                    }
+                  })
+                } else {
+                  this.$message({
+                    message: '注册失败！',
+                    type: 'error'
+                  })
+                }
               })
               .catch(() => {
                 this.loading = false
@@ -209,7 +226,7 @@ export default {
 </script>
 
 <style lang="scss">
-$bg: #283443;
+$bg: #4a6d6d;
 $light_gray: #fff;
 $cursor: #fff;
 

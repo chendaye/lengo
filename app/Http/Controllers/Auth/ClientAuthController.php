@@ -37,6 +37,7 @@ class ClientAuthController extends Controller
             'email' => ['required'],
             'password' => ['required', 'min:6', 'max:16'],
         ];
+
         // 错误信息
         $messages = [
             'name.required' => '请填写正确的用户名',
@@ -45,7 +46,9 @@ class ClientAuthController extends Controller
             'password.min' => '密码必须大于等于6个字符',
             'password.max' => '密码最大不超过16个字符',
         ];
+
         $payload = $request->only('name', 'email', 'password');
+
         $validator = Validator::make($payload, $rules, $messages);
 
         // 验证格式
@@ -59,12 +62,7 @@ class ClientAuthController extends Controller
             'email' => $payload['email'],
             'password' => bcrypt($payload['password']),
         ]);
-
-        if ($result) {
-            return $this->response->array(['success' => '恭喜！注册成功']);
-        } else {
-            return $this->response->array(['error' => 'Sorry！注册失败']);
-        }
+        return $this->success($result);
     }
 
     /**

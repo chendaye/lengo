@@ -13,7 +13,7 @@ export default [{
 },
 {
   path: '/client/register',
-  name: 'clientLogin',
+  name: 'clientRegister',
   component: () => import('@/views/client/login/register'),
   hidden: true,
   meta: {

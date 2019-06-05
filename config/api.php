@@ -144,6 +144,13 @@ return [
         'debug' => ':debug',
     ],
 
+    'normalCustomFormat' => [
+        'message'     => ':message',
+        'data'      => ':data',
+        'code'        => ':code',
+        'status_code' => ':status_code',
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | API Middleware
