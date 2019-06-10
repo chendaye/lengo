@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <skyBg />
+    <coordinateBg />
     <el-form
       ref="loginForm"
       :model="loginForm"
@@ -9,19 +9,15 @@
       auto-complete="on"
       label-position="left"
     >
-      <div class="title-container">
-        <h3 class="title">Login Form</h3>
-      </div>
-
-      <el-form-item prop="username">
+      <el-form-item prop="email">
         <span class="svg-container">
-          <svg-icon icon-class="user" />
+          <svg-icon icon-class="email" />
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
+          ref="email"
+          v-model="loginForm.email"
+          placeholder="email"
+          name="email"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -54,50 +50,43 @@
         style="width:100%;margin-bottom:30px;"
         @click.native.prevent="handleLogin"
       >Login</el-button>
-
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span>password: any</span>
-      </div>
     </el-form>
   </div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
-import skyBg from '../components/sky'
-import { mapActions } from 'vuex'
+import { validEmail } from '@/utils/validate';
+import coordinateBg from '../components/coordinate';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'Login',
   components: {
-    skyBg
+    coordinateBg
   },
   data() {
     // 自定义账号姓名验证
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('请输入正确的姓名！'))
+    const validateEmail = (rule, value, callback) => {
+      if (!validEmail(value)) {
+        callback(new Error('请输入正确的邮箱！'));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('密码不少于6个字符！'))
+        callback(new Error('密码不少于6个字符！'));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        email: '',
+        password: ''
       },
       loginRules: {
-        username: [
-          { required: true, trigger: 'blur', validator: validateUsername }
-        ],
+        email: [{ required: true, trigger: 'blur', validator: validateEmail }],
         password: [
           { required: true, trigger: 'blur', validator: validatePassword }
         ]
@@ -105,23 +94,20 @@ export default {
       loading: false,
       passwordType: 'password',
       redirect: undefined
-    }
+    };
   },
   watch: {
     // 监听路由
     $route: {
       handler: function(route) {
-        this.redirect = route.query && route.query.redirect
+        this.redirect = route.query && route.query.redirect;
       },
       immediate: true
     }
   },
   methods: {
-    ...mapActions('user', [
-      'login', // -> this.login()
-      'logout',
-      'getInfo',
-      'resetToken'
+    ...mapActions('client', [
+      'login' // -> this.login()
     ]),
     // 展示密码
     showPwd() {
@@ -131,31 +117,34 @@ export default {
         this.passwordType = 'password';
       }
       this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
+        this.$refs.password.focus();
+      });
     },
     // 登录
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = true
-          // 处理登录  store admin/base/user
+          this.loading = true;
+          // 处理登录  store client/base/user
           this.login(this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/' })
-              this.loading = false
+            .then(res => {
+              alert(777);
+              console.log(res);
+              this.$router.push({ path: this.redirect || '/' });
+              this.loading = false;
             })
-            .catch(() => {
-              this.loading = false
-            })
+            .catch(error => {
+              console.log(error);
+              this.loading = false;
+            });
         } else {
-          console.log('error submit!!')
-          return false
+          console.log('error submit!!');
+          return false;
         }
-      })
+      });
     }
   }
-}
+};
 </script>
 
 <style lang="scss">
@@ -220,6 +209,7 @@ $light_gray: #eee;
     padding: 160px 35px 0;
     margin: 0 auto;
     overflow: hidden;
+    margin-top: 100px;
   }
 
   .tips {

@@ -21,7 +21,6 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    console.log(config)
     const url = config.url.replace(config.baseURL, '')
     const isClient = url.startsWith('/client') // 是否是客户端请求
     if (store.getters.client_token) {
@@ -44,7 +43,6 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   response => {
-    console.log('response', response)
     // 判断一下响应中是否有 token，如果有就直接使用此 token 替换掉本地的 token。你可以根据你的业务需求自己编写更新 token 的逻辑
     const token = response.headers.authorization
     const url = response.config.url.replace(response.config.baseURL, '')

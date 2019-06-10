@@ -79,7 +79,7 @@ return [
         // 默认用户验证表
         'clients' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Client::class,
         ],
 
         // 'users' => [

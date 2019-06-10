@@ -54,6 +54,7 @@ const actions = {
       email,
       password
     } = userInfo
+
     // 登录
     return new Promise((resolve, reject) => {
       // 登录 api/client/login
@@ -65,10 +66,11 @@ const actions = {
         const {
           data
         } = response
-        // 保存 token
+        // 存 store
         commit('SET_TOKEN', data.access_token)
+        // 存 cookie
         setToken(data.access_token, 'client')
-        resolve()
+        resolve(response)
       }).catch(error => {
         reject(error)
       })
@@ -172,7 +174,9 @@ const actions = {
   },
 
   // 刷新token
-  refreshToken({ commit }, token) {
+  refreshToken({
+    commit
+  }, token) {
     return new Promise(resolve => {
       commit('SET_TOKEN', token) // state
       setToken(token, 'client') // cookie

@@ -1,6 +1,6 @@
 <template>
   <div class="register-container">
-    <coordinateBg />
+    <meteorBg />
     <el-form
       ref="registerForm"
       :model="registerForm"
@@ -88,45 +88,45 @@
 </template>
 
 <script>
-import { validUsername, validEmail } from '@/utils/validate'
-import coordinateBg from '../components/coordinate'
-import { mapActions } from 'vuex'
+import { validUsername, validEmail } from '@/utils/validate';
+import meteorBg from '../components/meteor';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'Register',
   components: {
-    coordinateBg
+    meteorBg
   },
   data() {
     // 自定义账号姓名验证
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('用户名必须由6-12个字母或数字构成！'))
+        callback(new Error('用户名必须由6-12个字母或数字构成！'));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     const validateEmail = (rule, value, callback) => {
       if (!validEmail(value)) {
-        callback(new Error('请输入正确的邮箱！'))
+        callback(new Error('请输入正确的邮箱！'));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('密码不少于6个字符！'))
+        callback(new Error('密码不少于6个字符！'));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     const validateRepassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('密码不少于6个字符！'))
+        callback(new Error('密码不少于6个字符！'));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     return {
       registerForm: {
         username: '',
@@ -149,13 +149,13 @@ export default {
       loading: false,
       passwordType: 'password',
       redirect: undefined
-    }
+    };
   },
   watch: {
     // 监听路由
     $route: {
       handler: function(route) {
-        this.redirect = route.query && route.query.redirect
+        this.redirect = route.query && route.query.redirect;
       },
       immediate: true
     }
@@ -172,15 +172,15 @@ export default {
         this.passwordType = 'password';
       }
       this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
+        this.$refs.password.focus();
+      });
     },
     // 注册
     handleregister() {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
           if (this.registerForm.password === this.registerForm.repassword) {
-            this.loading = true
+            this.loading = true;
             // 处理登录  store client/base/user
             this.register(this.registerForm)
               .then(res => {
@@ -195,34 +195,34 @@ export default {
                     onClose: () => {
                       this.$router.push({
                         path: this.redirect || '/client/login'
-                      })
-                      this.loading = false
+                      });
+                      this.loading = false;
                     }
-                  })
+                  });
                 } else {
                   this.$message({
                     message: '注册失败！',
                     type: 'error'
-                  })
+                  });
                 }
               })
               .catch(() => {
-                this.loading = false
-              })
+                this.loading = false;
+              });
           } else {
             this.$message({
               message: '两次输入的密码不一致！',
               type: 'error'
-            })
+            });
           }
         } else {
-          console.log('error submit!!')
-          return false
+          console.log('error submit!!');
+          return false;
         }
-      })
+      });
     }
   }
-}
+};
 </script>
 
 <style lang="scss">
@@ -287,6 +287,8 @@ $light_gray: #eee;
     padding: 160px 35px 0;
     margin: 0 auto;
     overflow: hidden;
+    margin-top: -150px;
+    margin-left: 650px;
   }
 
   .tips {
