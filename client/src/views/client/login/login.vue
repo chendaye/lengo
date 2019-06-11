@@ -128,9 +128,8 @@ export default {
           // 处理登录  store client/base/user
           this.login(this.loginForm)
             .then(res => {
-              alert(777);
-              console.log(res);
-              this.$router.push({ path: this.redirect || '/' });
+              console.log(res)
+              this.$router.push({ path: this.redirect || '/client' });
               this.loading = false;
             })
             .catch(error => {
