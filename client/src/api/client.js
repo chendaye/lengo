@@ -19,7 +19,7 @@ export function login(data) {
 }
 
 // 获取用户信息
-export function getInfo(token) {
+export function me(token) {
   return request({
     url: '/client/me',
     method: 'get',

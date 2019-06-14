@@ -92,8 +92,7 @@ export default {
         ]
       },
       loading: false,
-      passwordType: 'password',
-      redirect: undefined
+      passwordType: 'password'
     };
   },
   watch: {
@@ -125,11 +124,10 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true;
-          // 处理登录  store client/base/user
+          // 处理登录  store admin/base/user
           this.login(this.loginForm)
             .then(res => {
-              console.log(res)
-              this.$router.push({ path: this.redirect || '/client' });
+              this.$router.push({ path: '/admin' });
               this.loading = false;
             })
             .catch(error => {

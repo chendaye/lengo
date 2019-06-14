@@ -3,25 +3,27 @@ import request from '@/utils/request'
 // 用户登录
 export function login(data) {
   return request({
-    url: '/user/login',
+    url: '/admin/login',
     method: 'post',
     data
   })
 }
 
 // 获取用户信息
-export function getInfo(token) {
+export function me(token) {
   return request({
-    url: '/user/info',
+    url: '/admin/me',
     method: 'get',
-    params: { token }
+    params: {
+      token
+    }
   })
 }
 
 // 用户登出
 export function logout() {
   return request({
-    url: '/user/logout',
+    url: '/admin/logout',
     method: 'post'
   })
 }

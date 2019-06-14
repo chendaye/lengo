@@ -6,7 +6,12 @@
 </template>
 <script>
 export default {
-  name: 'SvgBg'
+  name: 'SvgBg',
+  data() {
+    return {
+
+    }
+  }
 };
 </script>
 <script>

@@ -1,8 +1,8 @@
 import {
   login,
   logout,
-  getInfo
-} from '@/api/client'
+  me
+} from '@/api/admin'
 import {
   getToken,
   setToken,
@@ -39,6 +39,9 @@ const mutations = {
   },
   SET_REMARK: (state, remark) => {
     state.remark = remark
+  },
+  SET_AUTH: (state, auth) => {
+    state.auth = auth
   }
 }
 
@@ -50,14 +53,14 @@ const actions = {
   }, userInfo) {
     // 账户密码
     const {
-      email,
+      name,
       password
     } = userInfo
     // 登录
     return new Promise((resolve, reject) => {
       // 登录 api/client/login
       login({
-        email: email.trim(),
+        name: name.trim(),
         password: password
       }).then(response => {
         // 登录成功返回数据
@@ -66,8 +69,9 @@ const actions = {
         } = response
         // 保存 token
         commit('SET_TOKEN', data.access_token)
+        commit('SET_AUTH', true)
         setToken(data.access_token, 'admin')
-        resolve()
+        resolve(response)
       }).catch(error => {
         reject(error)
       })
@@ -75,13 +79,13 @@ const actions = {
   },
 
   // 获取用户信息
-  getInfo({
+  me({
     commit,
     state
   }) {
     return new Promise((resolve, reject) => {
       // /client/me
-      getInfo(state.token).then(response => {
+      me(state.token).then(response => {
         // 返回的用户信息
         const {
           data
@@ -119,6 +123,7 @@ const actions = {
       logout(state.token).then(() => {
         // state 中 token 置为空
         commit('SET_TOKEN', '')
+        commit('SET_AUTH', false)
         // cookie 中 token 删除
         removeToken('admin')
         // 重置路由

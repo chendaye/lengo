@@ -2,7 +2,7 @@ import {
   login,
   register,
   logout,
-  getInfo
+  me
 } from '@/api/client'
 import {
   getToken,
@@ -40,6 +40,9 @@ const mutations = {
   },
   SET_REMARK: (state, remark) => {
     state.remark = remark
+  },
+  SET_AUTH: (state, auth) => {
+    state.auth = auth
   }
 }
 
@@ -68,6 +71,7 @@ const actions = {
         } = response
         // 存 store
         commit('SET_TOKEN', data.access_token)
+        commit('SET_AUTH', true)
         // 存 cookie
         setToken(data.access_token, 'client')
         resolve(response)
@@ -107,13 +111,13 @@ const actions = {
   },
 
   // 获取用户信息
-  getInfo({
+  me({
     commit,
     state
   }) {
     return new Promise((resolve, reject) => {
       // /client/me
-      getInfo(state.token).then(response => {
+      me(state.token).then(response => {
         // 返回的用户信息
         const {
           data
@@ -151,6 +155,7 @@ const actions = {
       logout(state.token).then(() => {
         // state 中 token 置为空
         commit('SET_TOKEN', '')
+        commit('SET_AUTH', false)
         // cookie 中 token 删除
         removeToken('client')
         // 重置路由

@@ -11,18 +11,18 @@
         label-position="left"
       >
         <div class="title-container">
-          <h3 class="title">Login Form</h3>
+          <h3 class="title">Lengo</h3>
         </div>
 
-        <el-form-item prop="username">
+        <el-form-item prop="name">
           <span class="svg-container">
             <svg-icon icon-class="user" />
           </span>
           <el-input
-            ref="username"
-            v-model="loginForm.username"
-            placeholder="Username"
-            name="username"
+            ref="name"
+            v-model="loginForm.name"
+            placeholder="name"
+            name="name"
             type="text"
             tabindex="1"
             auto-complete="on"
@@ -88,11 +88,11 @@ export default {
     };
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        name: '',
+        password: ''
       },
       loginRules: {
-        username: [
+        name: [
           { required: true, trigger: 'blur', validator: validateUsername }
         ],
         password: [
@@ -114,11 +114,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions('user', [
-      'login', // -> this.login()
-      'logout',
-      'getInfo',
-      'resetToken'
+    ...mapActions('admin', [
+      'login' // -> this.login()
     ]),
     // 展示密码
     showPwd() {
@@ -138,8 +135,8 @@ export default {
           this.loading = true;
           // 处理登录  store admin/base/user
           this.login(this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/' });
+            .then(res => {
+              this.$router.push({ path: '/admin' });
               this.loading = false;
             })
             .catch(() => {
@@ -156,9 +153,6 @@ export default {
 </script>
 
 <style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-
 $bg: #283443;
 $light_gray: #fff;
 $cursor: #fff;

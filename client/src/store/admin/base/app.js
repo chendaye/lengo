@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie'
 
+// state
 const state = {
   sidebar: {
     opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
@@ -8,6 +9,7 @@ const state = {
   device: 'desktop'
 }
 
+// mutations
 const mutations = {
   TOGGLE_SIDEBAR: state => {
     state.sidebar.opened = !state.sidebar.opened
@@ -28,6 +30,7 @@ const mutations = {
   }
 }
 
+// actions
 const actions = {
   toggleSideBar({ commit }) {
     commit('TOGGLE_SIDEBAR')

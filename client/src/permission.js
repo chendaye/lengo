@@ -51,20 +51,22 @@ router.beforeEach(async(to, from, next) => {
             // note: roles 必须是数组! 如: ['admin'] or ,['developer','editor']
             const {
               roles
-            } = await store.dispatch('admin/getInfo')
+            } = await store.dispatch('admin/me')
 
             // 基于角色生成动态路由
-            const accessRoutes = await store.dispatch('routers/generateRoutes', roles)
+            // const accessRoutes = await store.dispatch('routers/generateRoutes', roles)
 
             // 添加动态路由
-            router.addRoutes(accessRoutes)
+            // router.addRoutes(accessRoutes)
 
             // 确保路由生成完成
             // 设置 replace: true, 侧边栏将不会留下历史记录
-            next({
-              ...to,
-              replace: true
-            })
+            // next({
+            //   ...to,
+            //   replace: true
+            // })
+
+            next()
           } catch (error) {
             // 删掉token 回到登录页面
             await store.dispatch('admin/resetToken')
