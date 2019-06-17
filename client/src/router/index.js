@@ -12,18 +12,18 @@ Vue.use(Router)
 // 客户端与后台路由路由
 export const CARouters = [...adminRoutes, ...clientRoutes]
 
-const allRoute = [{
-  path: '/', // 根路由
-  component: App, // 顶层路由，对应index.html
-  children: CARouters
-}]
+// const allRoute = [{
+//   path: '/', // 根路由
+//   component: App, // 顶层路由，对应index.html
+//   children: CARouters
+// }]
 
 const createRouter = () => new Router({
   mode: 'history', // require service support
   scrollBehavior: () => ({
     y: 0
   }),
-  routes: allRoute
+  routes: CARouters
 })
 
 const router = createRouter()

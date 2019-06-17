@@ -7,13 +7,15 @@ const getters = {
   client_email: state => state.client.email,
   // admin
   admin_sidebar: state => state.app.sidebar,
-  admin_device: state => state.app.device,
   admin_token: state => state.admin.token,
   admin_avatar: state => state.admin.avatar,
   admin_name: state => state.admin.name,
   admin_remark: state => state.admin.remark,
   admin_email: state => state.admin.email,
   admin_roles: state => state.admin.roles,
-  permission_routes: state => state.routers.routes
+  permission_routes: state => state.routers.routes,
+  // app
+  device: state => state.app.device
+
 }
 export default getters

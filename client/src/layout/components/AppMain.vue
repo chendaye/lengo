@@ -1,4 +1,5 @@
 <template>
+<!-- 中间要展示的部分 -->
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
       <router-view :key="key" />
@@ -11,6 +12,7 @@ export default {
   name: 'AppMain',
   computed: {
     key() {
+      // 嵌套后台管理页面
       return this.$route.fullPath
     }
   }
