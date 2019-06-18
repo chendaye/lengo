@@ -115,7 +115,8 @@ export default {
   },
   methods: {
     ...mapActions('admin', [
-      'login' // -> this.login()
+      'login', // -> this.login()
+      'me'
     ]),
     // 展示密码
     showPwd() {
@@ -136,8 +137,11 @@ export default {
           // 处理登录  store admin/base/user
           this.login(this.loginForm)
             .then(res => {
-              this.$router.push({ path: '/admin/dashboard' });
+              this.me().then(res => {
+                this.$router.push({ path: '/admin/dashboard' });
               this.loading = false;
+              })
+
             })
             .catch(() => {
               this.loading = false;

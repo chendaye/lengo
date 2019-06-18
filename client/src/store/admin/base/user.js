@@ -100,7 +100,7 @@ const actions = {
           email,
           remark,
           avatar
-        } = data
+        } = data.user
         // 调用mutations 设置 state
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
