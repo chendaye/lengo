@@ -61,7 +61,6 @@
 <script>
 import { validUsername } from '@/utils/validate';
 import { mapActions } from 'vuex';
-// import wordBg from '../components/word';
 import coordinateBg from '@/components/Bg/coordinate';
 
 export default {
