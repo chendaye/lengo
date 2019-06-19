@@ -56,7 +56,7 @@
 
 <script>
 import { validEmail } from '@/utils/validate';
-import coordinateBg from '../components/coordinate';
+import coordinateBg from '@/components/Bg/coordinate';
 import { mapActions } from 'vuex';
 
 export default {
@@ -145,7 +145,8 @@ export default {
 </script>
 
 <style lang="scss">
-$bg: #4a6d6d;
+// $bg: #4a6d6d;
+$bg: #2d3a4b;
 $light_gray: #fff;
 $cursor: #fff;
 
@@ -189,7 +190,8 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg: #4a6d6d;
+$bg: #2d3a4b;
+// $bg: #4a6d6d;
 $dark_gray: #889aa4;
 $light_gray: #eee;
 

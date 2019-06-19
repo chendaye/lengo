@@ -89,7 +89,7 @@
 
 <script>
 import { validUsername, validEmail } from '@/utils/validate';
-import meteorBg from '../components/meteor';
+import meteorBg from '@/components/Bg/meteor';
 import { mapActions } from 'vuex';
 
 export default {
@@ -288,7 +288,7 @@ $light_gray: #eee;
     margin: 0 auto;
     overflow: hidden;
     margin-top: -150px;
-    margin-left: 650px;
+    // margin-left: 650px;
   }
 
   .tips {

@@ -1,74 +1,73 @@
 <template>
-  <body>
-    <wordBg />
-    <div class="login-container">
-      <el-form
-        ref="loginForm"
-        :model="loginForm"
-        :rules="loginRules"
-        class="login-form"
-        auto-complete="on"
-        label-position="left"
-      >
-        <div class="title-container">
-          <h3 class="title">Lengo</h3>
-        </div>
+  <div class="login-container">
+    <coordinateBg />
+    <el-form
+      ref="loginForm"
+      :model="loginForm"
+      :rules="loginRules"
+      class="login-form"
+      auto-complete="on"
+      label-position="left"
+    >
+      <div class="title-container">
+        <h3 class="title">Lengo</h3>
+      </div>
 
-        <el-form-item prop="name">
-          <span class="svg-container">
-            <svg-icon icon-class="user" />
-          </span>
-          <el-input
-            ref="name"
-            v-model="loginForm.name"
-            placeholder="name"
-            name="name"
-            type="text"
-            tabindex="1"
-            auto-complete="on"
-          />
-        </el-form-item>
+      <el-form-item prop="name">
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-input
+          ref="name"
+          v-model="loginForm.name"
+          placeholder="name"
+          name="name"
+          type="text"
+          tabindex="1"
+          auto-complete="on"
+        />
+      </el-form-item>
 
-        <el-form-item prop="password">
-          <span class="svg-container">
-            <svg-icon icon-class="password" />
-          </span>
-          <el-input
-            :key="passwordType"
-            ref="password"
-            v-model="loginForm.password"
-            :type="passwordType"
-            placeholder="Password"
-            name="password"
-            tabindex="2"
-            auto-complete="on"
-            @keyup.enter.native="handleLogin"
-          />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
-        </el-form-item>
+      <el-form-item prop="password">
+        <span class="svg-container">
+          <svg-icon icon-class="password" />
+        </span>
+        <el-input
+          :key="passwordType"
+          ref="password"
+          v-model="loginForm.password"
+          :type="passwordType"
+          placeholder="Password"
+          name="password"
+          tabindex="2"
+          auto-complete="on"
+          @keyup.enter.native="handleLogin"
+        />
+        <span class="show-pwd" @click="showPwd">
+          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+        </span>
+      </el-form-item>
 
-        <el-button
-          :loading="loading"
-          type="primary"
-          style="width:100%;margin-bottom:30px;"
-          @click.native.prevent="handleLogin"
-        >Login</el-button>
-      </el-form>
-    </div>
-  </body>
+      <el-button
+        :loading="loading"
+        type="primary"
+        style="width:100%;margin-bottom:30px;"
+        @click.native.prevent="handleLogin"
+      >Login</el-button>
+    </el-form>
+  </div>
 </template>
 
 <script>
 import { validUsername } from '@/utils/validate';
 import { mapActions } from 'vuex';
-import wordBg from '../components/word';
+// import wordBg from '../components/word';
+import coordinateBg from '@/components/Bg/coordinate';
 
 export default {
   name: 'Login',
   components: {
-    wordBg
+    coordinateBg
   },
   data() {
     // 自定义账号姓名验证
@@ -139,9 +138,8 @@ export default {
             .then(res => {
               this.me().then(res => {
                 this.$router.push({ path: '/admin/dashboard' });
-              this.loading = false;
-              })
-
+                this.loading = false;
+              });
             })
             .catch(() => {
               this.loading = false;
@@ -210,7 +208,6 @@ $light_gray: #eee;
   width: 100%;
   background-color: $bg;
   overflow: hidden;
-  margin-left: 500px;
 
   .login-form {
     position: relative;
