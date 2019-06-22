@@ -12,5 +12,8 @@
 */
 
 Route::get('/', function () {
-    return  view('welcome');
+    $a = new \Lib\Fdfs\Lm();
+    dd($a->storage_file_exist('group1', 'aa'));
 });
+
+Route::get('test', '\App\Http\Controllers\TestController@index');
