@@ -2,6 +2,7 @@
   <el-container>
     <el-header>
       <el-button type="success" @click="dialogVisible = true">创建管理员</el-button>
+      <pic></pic>
       <!-- 弹窗 -->
       <el-dialog :title="dialogTitle" :visible.sync="dialogVisible">
         <el-form
@@ -35,8 +36,12 @@
 </template>
 
 <script>
+import pic from '@/components/Upload/image';
 export default {
   name: 'User',
+  components: {
+    pic
+  },
   data() {
     return {
       dialogVisible: false,
