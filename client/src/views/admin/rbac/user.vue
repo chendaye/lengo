@@ -2,7 +2,6 @@
   <el-container>
     <el-header>
       <el-button type="success" @click="dialogVisible = true">创建管理员</el-button>
-      <pic></pic>
       <!-- 弹窗 -->
       <el-dialog :title="dialogTitle" :visible.sync="dialogVisible">
         <el-form
@@ -22,6 +21,9 @@
           </el-form-item>
           <el-form-item label="个性签名" prop="remark">
             <el-input v-model="ruleForm.remark" />
+          </el-form-item>
+          <el-form-item label="上传头像" prop="remark">
+            <pic />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" plain @click="submitForm('ruleForm')">立即创建</el-button>

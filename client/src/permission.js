@@ -36,7 +36,7 @@ router.beforeEach(async(to, from, next) => {
       if (to.path === '/admin/login') {
         // 已经登录直接跳转到主页
         next({
-          path: '/admin/dashboard'
+          path: '/admin'
         })
         NProgress.done()
       } else {
