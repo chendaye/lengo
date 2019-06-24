@@ -23,7 +23,6 @@ const whiteList = ['/admin/login', '/admin/register', '/client/login', '/client/
 router.beforeEach(async(to, from, next) => {
   // 进度条
   NProgress.start()
-
   if (to.path.startsWith('/admin')) {
     // 设置页面标题
     document.title = getPageTitle(to.meta.title)
@@ -36,7 +35,7 @@ router.beforeEach(async(to, from, next) => {
       if (to.path === '/admin/login') {
         // 已经登录直接跳转到主页
         next({
-          path: '/admin'
+          path: '/admin/dashboard'
         })
         NProgress.done()
       } else {
@@ -49,9 +48,9 @@ router.beforeEach(async(to, from, next) => {
           try {
             // 获取用户信息
             // note: roles 必须是数组! 如: ['admin'] or ,['developer','editor']
-            // const {
-            //   roles
-            // } = await store.dispatch('admin/me')
+            const {
+              roles
+            } = await store.dispatch('admin/me')
 
             // 基于角色生成动态路由
             // const accessRoutes = await store.dispatch('routers/generateRoutes', roles)

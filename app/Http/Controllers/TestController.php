@@ -29,7 +29,8 @@ class TestController extends Controller
         dump($server);
 
         $storage['sock'] = $server['sock'];
-        $file_info = $f->storage_upload_by_filename("/etc/fdfs/client.conf", null, array(), null, $tracker, $storage);
+        // $file_info = $f->storage_upload_by_filename("/etc/fdfs/client.conf", null, array(), null, $tracker, $storage);
+        $file_info = $f->storage_upload_by_filename("/etc/fdfs/client.conf");
 
         dump($file_info);
 

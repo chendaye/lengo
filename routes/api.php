@@ -38,5 +38,14 @@ $api->version('v1', function ($api) {
             $api->post('refresh', 'AuthController@refresh');
             $api->get('me', 'AuthController@me');
         });
+
+
+        // Graduate
+        $api->group(['namespace' =>  'App\Http\Controllers\Graduate\V1'], function ($api) {
+            $api->group(['prefix' => 'rbac'], function($api) {
+                // 添加管理员
+                $api->post('avatar', 'UserController@avatar');
+            });
+        });
     });
 });

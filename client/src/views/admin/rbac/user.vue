@@ -22,7 +22,7 @@
           <el-form-item label="个性签名" prop="remark">
             <el-input v-model="ruleForm.remark" />
           </el-form-item>
-          <el-form-item label="上传头像" prop="remark">
+          <el-form-item label="上传头像" prop="avatar">
             <pic />
           </el-form-item>
           <el-form-item>
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import pic from '@/components/Upload/image';
+import pic from './components/avatar';
 export default {
   name: 'User',
   components: {

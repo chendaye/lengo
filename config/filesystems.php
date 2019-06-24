@@ -64,6 +64,10 @@ return [
             'url' => env('AWS_URL'),
         ],
 
+        'fdfs' => [
+            'driver' => 'fdfs',
+        ]
+
     ],
 
 ];
