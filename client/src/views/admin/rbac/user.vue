@@ -23,7 +23,7 @@
             <el-input v-model="ruleForm.remark" />
           </el-form-item>
           <el-form-item label="上传头像" prop="avatar">
-            <pic />
+            <pic @getAvatar="getAvatar" />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" plain @click="submitForm('ruleForm')">立即创建</el-button>
@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import { validUsername, validEmail } from '@/utils/validate';
 import pic from './components/avatar';
 export default {
   name: 'User',
@@ -45,39 +46,58 @@ export default {
     pic
   },
   data() {
+    // 自定义账号姓名验证
+    const validateUsername = (rule, value, callback) => {
+      if (!validUsername(value)) {
+        callback(new Error('用户名必须由6-12个字母或数字构成！'));
+      } else {
+        callback();
+      }
+    };
+    const validateEmail = (rule, value, callback) => {
+      if (!validEmail(value)) {
+        callback(new Error('请输入正确的邮箱！'));
+      } else {
+        callback();
+      }
+    };
+    const validatePassword = (rule, value, callback) => {
+      if (value.length < 6) {
+        callback(new Error('密码不少于6个字符！'));
+      } else {
+        callback();
+      }
+    };
     return {
       dialogVisible: false,
       dialogTitle: '创建管理员',
       ruleForm: {
         name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+        email: '',
+        password: '',
+        remark: '',
+        avatar: ''
       },
       rules: {
         name: [
-          { required: true, message: '请输入活动名称', trigger: 'blur' },
-          { min: 6, max: 12, message: '长度在 6 到 12 个字符', trigger: 'blur' }
+          { required: true, trigger: 'blur', validator: validateUsername }
         ],
-        email: [
-          { required: true, type: 'email', message: '请填写正确的邮箱', trigger: 'change' }
-        ],
+        email: [{ required: true, trigger: 'blur', validator: validateEmail }],
         password: [
-          { required: true, message: '请填写密码', trigger: 'change' },
-          { min: 6, max: 12, message: '长度在 6 到 12 个字符', trigger: 'blur' }
+          { required: true, trigger: 'blur', validator: validatePassword }
         ]
       }
     };
   },
   methods: {
+    // 上传头像
+    getAvatar(msg) {
+      this.ruleForm.avatar = msg.group_name + '/' + msg.filename
+    },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert('submit!');
+          console.log(this.ruleForm);
         } else {
           console.log('error submit!!');
           return false;
