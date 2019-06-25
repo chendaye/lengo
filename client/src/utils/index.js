@@ -108,3 +108,46 @@ export function param2Obj(url) {
       '"}'
   )
 }
+
+/**
+ * 获取列表中指定元素的索引值
+ * @param {*} list
+ * @param {*} id
+ * @param {*} field
+ */
+export const getIndexByID = (list, id, field = 'id') => {
+  for (const i in list) {
+    const current = list[i];
+    if (current[field] === id) {
+      return i;
+    }
+  }
+  return -1;
+};
+
+/**
+ * 更新元素
+ * @param {*} list
+ * @param {*} item
+ * @param {*} field
+ */
+export const updateItem = (list, item, field = 'id') => {
+  const index = getIndexByID(list, item[field], field);
+  if (index < 0) {
+    return list.splice(0, 0, item);
+  }
+  return list.splice(index, 1, item);
+};
+
+/**
+ * 删除元素
+ * @param {*} list
+ * @param {*} id
+ * @param {*} field
+ */
+export const deleteItem = (list, id, field = 'id') => {
+  const index = getIndexByID(list, id, field);
+  if (index >= 0) {
+    return list.splice(index, 1);
+  }
+};

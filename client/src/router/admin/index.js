@@ -87,8 +87,8 @@ export default [{
     }
   },
   {
-    path: 'classify',
-    name: 'Classify',
+    path: 'category',
+    name: 'Category',
     component: () => import('@/views/admin/wtu/tag'),
     meta: {
       title: '分类',
