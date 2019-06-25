@@ -1,18 +1,18 @@
 import request from '@/utils/request';
 
 export default {
-  factory: (model, base = '') => {
+  factory: (module, clientAdmin = 'admin') => {
     const common = {
       get: (action, params) => {
         return request({
-          url: `${base}/${model}/${action}`,
+          url: `${clientAdmin}/${module}/${action}`,
           method: 'get',
           params: params
         });
       },
       post: (action, data) => {
         return request({
-          url: `${base}/${model}/${action}`,
+          url: `${clientAdmin}/${module}/${action}`,
           method: 'post',
           data: data
         });

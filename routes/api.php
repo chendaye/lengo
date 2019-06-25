@@ -31,7 +31,7 @@ $api->version('v1', function ($api) {
     // 管理后台路由
     $api->group(['prefix' => 'admin'], function ($api) {
         // 权限路由
-        $api->group(['namespace' => 'App\Http\Controllers\Auth'], function($api){
+        $api->group(['namespace' => 'App\Http\Controllers\Auth'], function ($api) {
             $api->post('register', 'AuthController@register');
             $api->post('login', 'AuthController@login');
             $api->post('logout', 'AuthController@logout');
@@ -42,9 +42,11 @@ $api->version('v1', function ($api) {
 
         // Graduate
         $api->group(['namespace' =>  'App\Http\Controllers\Graduate\V1'], function ($api) {
-            $api->group(['prefix' => 'rbac'], function($api) {
-                // 添加管理员
+            $api->group(['prefix' => 'rbac'], function ($api) {
+                // 上传头像
                 $api->post('avatar', 'UserController@avatar');
+                // 添加管理员
+                $api->post('add', 'UserController@add');
             });
         });
     });

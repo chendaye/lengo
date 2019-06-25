@@ -14,4 +14,8 @@ User::create(['name' => 'chendaye666','email'=>'chendaye666@gmail.com','mobile' 
 && /usr/bin/restart.sh /usr/bin/fdfs_storaged /etc/fdfs/storage.conf \
 && /usr/bin/fdfs_monitor /etc/fdfs/storage.conf \
 && /usr/bin/fdfs_upload_file /etc/fdfs/client.conf /usr/bin/fdfs_upload_file
+
+VOLUME /etc/fdfs
+VOLUME /home/dfs
+docker-compose build fastdfs
 ```

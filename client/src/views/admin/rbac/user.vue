@@ -4,12 +4,7 @@
       <el-button type="success" @click="dialogVisible = true">创建管理员</el-button>
       <!-- 弹窗 -->
       <el-dialog :title="dialogTitle" :visible.sync="dialogVisible">
-        <el-form
-          ref="ruleForm"
-          :model="ruleForm"
-          :rules="rules"
-          label-width="100px"
-        >
+        <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
           <el-form-item label="昵称" prop="name">
             <el-input v-model="ruleForm.name" />
           </el-form-item>
@@ -40,6 +35,8 @@
 <script>
 import { validUsername, validEmail } from '@/utils/validate';
 import pic from './components/avatar';
+import crud from '@/api/crud';
+const rbacCrud = crud.factory('rbac');
 export default {
   name: 'User',
   components: {
@@ -92,14 +89,26 @@ export default {
   methods: {
     // 上传头像
     getAvatar(msg) {
-      this.ruleForm.avatar = msg.group_name + '/' + msg.filename
+      this.ruleForm.avatar = msg.group_name + '/' + msg.filename;
     },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           console.log(this.ruleForm);
+          rbacCrud.post('add', this.ruleForm).then(res => {
+            if (res.status === 200) {
+              this.dialogVisible = false;
+              this.$message({
+                message: '创建管理员成功！',
+                type: 'success'
+              });
+            }
+          });
         } else {
-          console.log('error submit!!');
+          this.$message({
+            message: 'error submit!!',
+            type: 'error'
+          });
           return false;
         }
       });
