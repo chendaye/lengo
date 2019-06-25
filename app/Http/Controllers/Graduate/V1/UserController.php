@@ -37,14 +37,12 @@ class UserController extends Controller
         }
 
         // 创建用户
-        $result = $user->insert([
-            'name' => $payload['name'],
-            'email' => $payload['email'],
-            'password' => bcrypt($payload['password']),
-            'remark' => $payload['remark'],
-            'avatar' => $payload['avatar']
-        ]);
-        
+        $user->name = $payload['name'];
+        $user->email = $payload[ 'email'];
+        $user->remark = $payload[ 'remark'];
+        $user->avatar = $payload[ 'avatar'];
+        $user->password = bcrypt($payload['password']);
+        $result = $user->save();
         return $this->success($result);
     }
 
