@@ -131,11 +131,8 @@ trait StatusCode
         }
         // 状态信息
         $status = [
-            'meta' => [
-                'code' => $code,
-                'message' => $message,
-            ],
-
+            'code' => $code,
+            'message' => $message,
         ];
 
         return $status;

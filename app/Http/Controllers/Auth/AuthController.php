@@ -23,10 +23,10 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-//        $this->middleware('jwt.refresh', ['except' => ['login', 'register']]); // jwt 自带中间件
+        //        $this->middleware('jwt.refresh', ['except' => ['login', 'register']]); // jwt 自带中间件
         $this->middleware('refresh', ['except' => ['login', 'register']]); // 自定义中间件
         // 初始化主表模型
-        if($this->namespace){
+        if ($this->namespace) {
             $class = $this->namespace;
             // 初始化模型
             $this->model = new $class();
@@ -202,8 +202,8 @@ class AuthController extends Controller
         $limit = $request->input('limit'); // 每页条数
         $where = $request->input('where'); // 查询条件
         $order = $request->input('order'); // 排序
-        $a = $request->input('order');
-        return $this->success($request->only('order'));
-        return $this->model->list($page, $limit, $where, $order);
+        $order = json_decode($order, true);
+        // return $this->success($r['id']);
+        return $this->model->list($page, $limit, [], $order);
     }
 }

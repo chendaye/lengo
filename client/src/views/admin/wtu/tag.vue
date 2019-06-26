@@ -171,9 +171,10 @@ export default {
     // table
     getList() {
       this.listLoading = true;
-      this.listQuery.order = { id: 'desc' };
+      this.listQuery.order = { id: 'desc', created_at: 'asc' }
       wtuCrud.get('index', this.listQuery).then(res => {
-        console.log();
+        console.log(res.data);
+        this.list = res.data;
         this.listLoading = false;
       });
     },

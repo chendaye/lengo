@@ -14,14 +14,103 @@ class Model extends BaseModel
     // 表名
     protected $table = null;
 
+    protected $query;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->query = $this;
+    }
+
     /**
      * 分页
      */
-    public function list($page = 1, $limit = 10,$where = [], $order = ['id' => 'desc'])
+    public function list($page = 1, $limit = 10, $where = [], $order = ['id' => 'desc'])
     {
         // https://laravel.com/api/5.8/Illuminate/Database/Eloquent/Builder.html#method_paginate 分页api
-        $data = $this->conditions($where)->sort($order)->paginate($limit, ['*'], 'page',  $page);
+        $query = $this;
+        $query = $query->conditions($where, $query);
+        $query = $query-> sort( $order, $query);
+        $data = $query->paginate($limit, ['*'], 'page',  $page);
         return $data;
+    }
+
+    /**
+     *  简单条件查询
+     *
+     * @param array $where
+     * @return $this
+     * @author long
+     */
+    private function conditions(array $where, $query)
+    {
+        foreach ($where as $key => $val) {
+            if (Schema::hasColumn($this->table, $key)) {
+                switch ($val['ex']) {
+                    case 'cp':
+                        // =,>.<.>=,<=,like
+                        $query = $query->where($key, $val['op'], $val['va']);
+                        break;
+                    case 'in':
+                        $query = $query->whereIn($key, $val['va']);
+                        break;
+                    case 'notIn':
+                        $query = $query->whereNotIn($key, $val['va']);
+                        break;
+                    case 'null':
+                        $query = $query->whereNull($key);
+                        break;
+                    case 'notNull':
+                        $query = $query->whereNotNull($key);
+                        break;
+                    case 'date':
+                        $query = $query->whereDate($key, $val['va']);
+                        break;
+                    case 'month':
+                        $query = $query->whereMonth($key, $val['va']);
+                        break;
+                    case 'day':
+                        $query = $query->whereDay($key, $val['va']);
+                        break;
+                    case 'year':
+                        $query = $query->whereYear($key, $val['va']);
+                        break;
+                    case 'time':
+                        $query = $query->whereTime($key, $val['va']);
+                        break;
+                    case 'or':
+                        $query = $query->orWhere($key, $val['op'], $val['va']);
+                        break;
+                    case 'bt':
+                        $query = $query->whereBetween($key, $val['va']);
+                        break;
+                    case 'notBt':
+                        $query = $query->whereNotBetween($key, $val['va']);
+                        break;
+                    default:
+                        $query = $query->where($key, $val['op'], $val['va']);
+                        break;
+                }
+            }
+        }
+        return $query;
+    }
+
+    /**
+     * 排序
+     *
+     * @param array $order
+     * @return $this
+     * @author long
+     */
+    private function sort(array $order, $query)
+    {
+        foreach ($order as $key => $val) {
+            if (Schema::hasColumn($this->table, $key)) {
+                $query = $query->orderBy($key, $val);
+            }
+        }
+        return $query;
     }
 
     /**
@@ -32,9 +121,9 @@ class Model extends BaseModel
      */
     public function add($data)
     {
-        foreach($data as $key => $val){
-            if(Schema::hasColumn($this->table, $key)){
-              $this->$key = $val;
+        foreach ($data as $key => $val) {
+            if (Schema::hasColumn($this->table, $key)) {
+                $this->$key = $val;
             }
         }
         return $this->save();
@@ -63,83 +152,4 @@ class Model extends BaseModel
     {
         return $this->conditions($condiction)->update($data);
     }
-
-    /**
-     *  简单条件查询
-     *
-     * @param array $where
-     * @return $this
-     * @author long
-     */
-    private function conditions(array $where)
-    {
-        foreach ($where as $key => $val) {
-            if (Schema::hasColumn($this->table, $key)) {
-                switch($val['ex']){
-                    case 'cp':
-                        // =,>.<.>=,<=,like
-                        $this->where($key, $val['op'], $val['va']);
-                        break;
-                    case 'in':
-                        $this->whereIn($key, $val['va']);
-                        break;
-                    case 'notIn':
-                        $this->whereNotIn($key, $val['va']);
-                        break;
-                    case 'null':
-                        $this->whereNull($key);
-                        break;
-                    case 'notNull':
-                        $this->whereNotNull($key);
-                        break;
-                    case 'date':
-                        $this->whereDate($key, $val['va']);
-                        break;
-                    case 'month':
-                        $this->whereMonth($key, $val['va']);
-                        break;
-                    case 'day':
-                        $this->whereDay($key, $val['va']);
-                        break;
-                    case 'year':
-                        $this->whereYear($key, $val['va']);
-                        break;
-                    case 'time':
-                        $this->whereTime($key, $val['va']);
-                        break;
-                    case 'or':
-                        $this->orWhere($key, $val['op'], $val['va']);
-                        break;
-                    case 'bt':
-                        $this->whereBetween($key, $val['va']);
-                        break;
-                    case 'notBt':
-                        $this->whereNotBetween($key, $val['va']);
-                        break;
-                    default :
-                        $this->where($key, $val['op'], $val['va']);
-                        break;
-                }
-            }
-        }
-        return $this;
-    }
-
-    /**
-     * 排序
-     *
-     * @param array $order
-     * @return $this
-     * @author long
-     */
-    private function sort(array $order)
-    {
-        foreach ($order as $key => $val) {
-            if (Schema::hasColumn($this->table, $key)) {
-                $this->orderBy($key, $val);
-            }
-        }
-        return $this;
-    }
-
 }
