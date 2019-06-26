@@ -3,6 +3,7 @@ namespace App\Traits;
 
 use Dingo\Api\Routing\Helpers; // 定制化api响应
 use App\Traits\StatusCode;
+use Illuminate\Http\Request;
 
 trait Response
 {
@@ -60,5 +61,17 @@ trait Response
 
         // Dingo/响应
         return $this->response->array($response);
+    }
+
+    /**
+     * 将请求参数转化为关联数组
+     *
+     * @param string $param
+     * @return void
+     * @author long
+     */
+    public function param(string $param)
+    {
+        return json_decode($param, true);
     }
 }

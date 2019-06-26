@@ -200,10 +200,8 @@ class AuthController extends Controller
     {
         $page = $request->input('page'); // 第几页
         $limit = $request->input('limit'); // 每页条数
-        $where = $request->input('where'); // 查询条件
-        $order = $request->input('order'); // 排序
-        $order = json_decode($order, true);
-        // return $this->success($r['id']);
-        return $this->model->list($page, $limit, [], $order);
+        $where = $this->param($request->input('where')); // 查询条件
+        $order = $this->param( $request->input('order'));
+        return $this->model->list($page, $limit, $where, $order);
     }
 }

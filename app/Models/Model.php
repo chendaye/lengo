@@ -14,14 +14,6 @@ class Model extends BaseModel
     // 表名
     protected $table = null;
 
-    protected $query;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->query = $this;
-    }
-
     /**
      * 分页
      */
@@ -138,7 +130,9 @@ class Model extends BaseModel
      */
     public function del($data = [])
     {
-        return $this->conditions($data)->delete();
+        $query = $this;
+        $query = $query->conditions($data, $query);
+        return $query->delete();
     }
 
     /**
@@ -150,6 +144,8 @@ class Model extends BaseModel
      */
     public function alert($data = [], $condiction = [])
     {
-        return $this->conditions($condiction)->update($data);
+        $query = $this;
+        $query = $query->conditions($data, $query);
+        return $query->update($data);
     }
 }
