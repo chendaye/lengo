@@ -23,14 +23,13 @@ service.interceptors.request.use(
   config => {
     const url = config.url.replace(config.baseURL, '')
     const isClient = url.startsWith('/client') // 是否是客户端请求
-    if (store.getters.client_token) {
-      if (isClient) {
-        // 让每一个请求都有token
-        config.headers['X-Token'] = getToken('client')
-      } else {
-        config.headers['X-Token'] = getToken('admin')
-      }
+    if (isClient) {
+      // 让每一个请求都有 jwt token
+      config.headers['Authorization'] = 'Bearer' + getToken('client')
+    } else {
+      config.headers['Authorization'] = 'Bearer' + getToken('admin')
     }
+    // console.log(config.headers['Authorization'])
     return config
   },
   error => {
@@ -57,7 +56,9 @@ service.interceptors.response.use(
       }
     }
     // return response
-    const res = response.data.meta !== undefined ? response.data.meta.meta : { code: 200000 }
+    const res = response.data.meta !== undefined ? response.data.meta.meta : {
+      code: 200000
+    }
 
     // if the custom code is not 200000, it is judged as an error.
     if (res.code !== 200000) {
@@ -107,22 +108,22 @@ service.interceptors.response.use(
           return this.$store.dispatch('/admin/logout')
         }
         // 如果响应中的 http code 为 400，那么就弹出一条错误提示给用户
-      case 400:
-        console.log('err' + error) // for debug
-        Message({
-          message: error.response.data.message,
-          type: 'error',
-          duration: 5 * 1000
-        })
-        break
-      case 500:
-        console.log('err' + error) // for debug
-        Message({
-          message: error.response.data.message,
-          type: 'error',
-          duration: 5 * 1000
-        })
-        break
+        case 400:
+          console.log('err' + error) // for debug
+          Message({
+            message: error.response.data.message,
+            type: 'error',
+            duration: 5 * 1000
+          })
+          break
+        case 500:
+          console.log('err' + error) // for debug
+          Message({
+            message: error.response.data.message,
+            type: 'error',
+            duration: 5 * 1000
+          })
+          break
     }
 
     return Promise.reject(error)

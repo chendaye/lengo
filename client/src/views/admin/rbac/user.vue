@@ -94,8 +94,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          console.log(this.ruleForm);
-          rbacCrud.post('add', this.ruleForm).then(res => {
+          rbacCrud.post('addUser', this.ruleForm).then(res => {
             if (res.status === 200) {
               this.dialogVisible = false;
               this.$message({

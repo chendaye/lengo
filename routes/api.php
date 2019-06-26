@@ -45,7 +45,7 @@ $api->version('v1', function ($api) {
                 // 上传头像
                 $api->post('avatar', 'UserController@avatar');
                 // 添加管理员
-                $api->post('add', 'UserController@add');
+                $api->post('addUser', 'UserController@addUser');
             });
         });
 
@@ -54,6 +54,8 @@ $api->version('v1', function ($api) {
             $api->group(['prefix' => 'wtu'], function ($api) {
                 // 添加标签
                 $api->post('add', 'TagController@add');
+                // 标签列表数据
+                $api->get('index', 'TagController@index');
             });
         });
     });

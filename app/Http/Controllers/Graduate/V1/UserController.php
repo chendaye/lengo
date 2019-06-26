@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\Graduate\V1;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\Models\User;
 use Lib\Fdfs\Lm;
 
-class UserController extends Controller
+class UserController extends AuthController
 {
-    public function add(User $user, Request $request)
+    public function addUser(User $user, Request $request)
     {
         // 验证规则
         $rules = [

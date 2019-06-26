@@ -10,21 +10,28 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-
-    //设置使用 guard 为api选项验证
+    // 鉴权方式
     protected $guard = 'api';
+    // 控制器对应的的模型
+    protected $model;
+    // 控制器对应的模型类名称
+    protected $namespace = null;
 
     /**
-     * 权限验证
-     *
-     * @return void
+     * Controller constructor.
+     * 初始化主表类名
      */
     public function __construct()
     {
-        // $this->middleware('jwt.refresh', ['except' => ['login', 'register']]); // jwt 自带中间件
+//        $this->middleware('jwt.refresh', ['except' => ['login', 'register']]); // jwt 自带中间件
         $this->middleware('refresh', ['except' => ['login', 'register']]); // 自定义中间件
+        // 初始化主表模型
+        if($this->namespace){
+            $class = $this->namespace;
+            // 初始化模型
+            $this->model = new $class();
+        }
     }
-
 
     /**
      * 注册
@@ -141,5 +148,62 @@ class AuthController extends Controller
     {
         // api
         return Auth::guard($this->guard);
+    }
+
+    /**
+     * 新增一条记录
+     *
+     * @param Request $request
+     */
+    public function add(Request $request)
+    {
+        $payload = $request->input();
+        // 当前登录用户
+        $payload['user_id'] = Auth::guard('api')->id();
+        // 插入数据
+        $res = $this->model->add($payload);
+        return $this->success($res);
+    }
+
+    /**
+     * 删除记录
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function del(Request $request)
+    {
+        $query = $request->only('where');
+        return $this->model->del($query);
+    }
+
+    /**
+     * 更新记录
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function update(Request $request)
+    {
+        $query = $request->input('where');
+        $data = $request->input('data');
+        return $this->model->alert($data, $query);
+    }
+
+    /**
+     * 获取列表数据
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function index(Request $request)
+    {
+        $page = $request->input('page'); // 第几页
+        $limit = $request->input('limit'); // 每页条数
+        $where = $request->input('where'); // 查询条件
+        $order = $request->input('order'); // 排序
+        $a = $request->input('order');
+        return $this->success($request->only('order'));
+        return $this->model->list($page, $limit, $where, $order);
     }
 }
