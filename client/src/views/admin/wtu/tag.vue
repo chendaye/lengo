@@ -31,14 +31,14 @@
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Created Date" width="300px" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.created_at }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="Tag" min-width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.tag }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Created Date" width="300px" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.created_at }}</span>
         </template>
       </el-table-column>
       <el-table-column
