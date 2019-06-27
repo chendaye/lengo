@@ -20,6 +20,7 @@ class CreateCategorysTable extends Migration
             $table->integer('user_id')->default(0)->comment('创建人id');
             $table->tinyInteger('level')->default(1)->comment('递归层级');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

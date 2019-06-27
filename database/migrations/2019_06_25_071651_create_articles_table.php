@@ -24,6 +24,7 @@ class CreateArticlesTable extends Migration
             $table->integer('user_id')->default(0)->comment('创建人id');
             $table->tinyInteger('draft')->comment('0:文章 1:草稿');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

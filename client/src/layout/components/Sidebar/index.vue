@@ -59,7 +59,7 @@ export default {
     }
   },
   created() {
-    console.log(this.$router.options.routes)
+    // console.log(this.$router.options.routes)
   }
 };
 </script>

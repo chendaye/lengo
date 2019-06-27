@@ -18,6 +18,7 @@ class CreateArticleHasTagsTable extends Migration
             $table->integer('article_id')->comment('文章id');
             $table->integer('tag_id')->comment('标签id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

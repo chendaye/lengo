@@ -18,9 +18,12 @@ const service = axios.create({
   timeout: 5000 // request timeout
 })
 
-// 请求拦截器
+/**
+ * 请求拦截器
+ */
 service.interceptors.request.use(
   config => {
+    console.log('请求拦截', config)
     const url = config.url.replace(config.baseURL, '')
     const isClient = url.startsWith('/client') // 是否是客户端请求
     if (isClient) {
@@ -39,9 +42,12 @@ service.interceptors.request.use(
   }
 )
 
-// 响应拦截器
+/**
+ * 响应拦截
+ */
 service.interceptors.response.use(
   response => {
+    console.log('响应拦截', response)
     // 判断一下响应中是否有 token，如果有就直接使用此 token 替换掉本地的 token。你可以根据你的业务需求自己编写更新 token 的逻辑
     const token = response.headers.authorization
     const url = response.config.url.replace(response.config.baseURL, '')
@@ -55,8 +61,9 @@ service.interceptors.response.use(
         this.$store.dispatch('admin/refreshToken', token)
       }
     }
+
     // return response
-    const res = response.data.meta !== undefined ? response.data.meta.meta : {
+    const res = response.data.meta !== undefined ? response.data.meta : {
       code: 200000
     }
 
@@ -92,38 +99,50 @@ service.interceptors.response.use(
       return response
     }
   },
+
+  /**
+   * 错误拦截
+   */
   error => {
-    // console.log('error', error.response)
+    console.log('错误拦截', error)
+
+    // 错误信息
+    const msg = error.response.data;
 
     const url = error.response.config.url.replace(error.response.config.baseURL, '')
     // error.response   error.config 请求配置和请求响应
     // 判断是客户端响应还是 后台响应
     const isClient = url.startsWith('/client')
-    switch (error.response.status) {
+    switch (msg.status_code) {
       // 如果响应中的 http code 为 401，那么则此用户可能 token 失效了之类的，我会触发 logout 方法，清除本地的数据并将用户重定向至登录页面
       case 401:
+        Message({
+          message: '令牌失效，请重新登录！',
+          type: 'error',
+          duration: 5 * 1000
+        })
         if (isClient) {
           return this.$store.dispatch('/client/logout')
         } else {
           return this.$store.dispatch('/admin/logout')
         }
         // 如果响应中的 http code 为 400，那么就弹出一条错误提示给用户
-        case 400:
-          console.log('err' + error) // for debug
-          Message({
-            message: error.response.data.message,
-            type: 'error',
-            duration: 5 * 1000
-          })
-          break
-        case 500:
-          console.log('err' + error) // for debug
-          Message({
-            message: error.response.data.message,
-            type: 'error',
-            duration: 5 * 1000
-          })
-          break
+      case 400:
+        console.log('err' + error) // for debug
+        Message({
+          message: msg.message,
+          type: 'error',
+          duration: 5 * 1000
+        })
+        break
+      case 500:
+        console.log('err' + error) // for debug
+        Message({
+          message: msg.message,
+          type: 'error',
+          duration: 5 * 1000
+        })
+        break
     }
 
     return Promise.reject(error)

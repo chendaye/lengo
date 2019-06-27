@@ -18,6 +18,7 @@ class CreateArticleHasCategorysTable extends Migration
             $table->integer('article_id')->comment('文章id');
             $table->integer('category_id')->comment('分类id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
