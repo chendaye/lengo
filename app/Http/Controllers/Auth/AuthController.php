@@ -173,7 +173,7 @@ class AuthController extends Controller
      */
     public function del(Request $request)
     {
-        $query = $request->only('where');
+        $query = $request->input('where');
         return $this->model->del($query);
     }
 
@@ -200,8 +200,11 @@ class AuthController extends Controller
     {
         $page = $request->input('page'); // 第几页
         $limit = $request->input('limit'); // 每页条数
-        $where = $this->param($request->input('where')); // 查询条件
-        $order = $this->param( $request->input('order'));
+        $order = $request->input('order');
+        $where = $request->input('where');
+        $order = $this->json($order);
+        $where = $this->json($where);
+
         return $this->model->list($page, $limit, $where, $order);
     }
 }

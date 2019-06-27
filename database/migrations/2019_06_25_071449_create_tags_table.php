@@ -19,6 +19,7 @@ class CreateTagsTable extends Migration
             $table->integer('count')->default(0)->comment('使用次数');
             $table->integer('user_id')->default(0)->comment('创建人id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

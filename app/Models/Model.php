@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model as BaseModel;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Model extends BaseModel
 {
+    use SoftDeletes; // 软删除
+
     public $timestamps = true;
     //模型不可以注入的字段 空代表所有字段都可以注入
     protected $guarded = [];
@@ -20,9 +23,8 @@ class Model extends BaseModel
     public function list($page = 1, $limit = 10, $where = [], $order = ['id' => 'desc'])
     {
         // https://laravel.com/api/5.8/Illuminate/Database/Eloquent/Builder.html#method_paginate 分页api
-        $query = $this;
-        $query = $query->conditions($where, $query);
-        $query = $query-> sort( $order, $query);
+        $query = $this->conditions($where);
+        $query = $this->sort($order, $query);
         $data = $query->paginate($limit, ['*'], 'page',  $page);
         return $data;
     }
@@ -34,53 +36,53 @@ class Model extends BaseModel
      * @return $this
      * @author long
      */
-    private function conditions(array $where, $query)
+    private function conditions(array $where)
     {
         foreach ($where as $key => $val) {
             if (Schema::hasColumn($this->table, $key)) {
                 switch ($val['ex']) {
                     case 'cp':
                         // =,>.<.>=,<=,like
-                        $query = $query->where($key, $val['op'], $val['va']);
+                        $query = $this->where($key, $val['op'], $val['va']);
                         break;
                     case 'in':
-                        $query = $query->whereIn($key, $val['va']);
+                        $query = $this->whereIn($key, $val['va']);
                         break;
                     case 'notIn':
-                        $query = $query->whereNotIn($key, $val['va']);
+                        $query = $this->whereNotIn($key, $val['va']);
                         break;
                     case 'null':
-                        $query = $query->whereNull($key);
+                        $query = $this->whereNull($key);
                         break;
                     case 'notNull':
-                        $query = $query->whereNotNull($key);
+                        $query = $this->whereNotNull($key);
                         break;
                     case 'date':
-                        $query = $query->whereDate($key, $val['va']);
+                        $query = $this->whereDate($key, $val['va']);
                         break;
                     case 'month':
-                        $query = $query->whereMonth($key, $val['va']);
+                        $query = $this->whereMonth($key, $val['va']);
                         break;
                     case 'day':
-                        $query = $query->whereDay($key, $val['va']);
+                        $query = $this->whereDay($key, $val['va']);
                         break;
                     case 'year':
-                        $query = $query->whereYear($key, $val['va']);
+                        $query = $this->whereYear($key, $val['va']);
                         break;
                     case 'time':
-                        $query = $query->whereTime($key, $val['va']);
+                        $query = $this->whereTime($key, $val['va']);
                         break;
                     case 'or':
-                        $query = $query->orWhere($key, $val['op'], $val['va']);
+                        $query = $this->orWhere($key, $val['op'], $val['va']);
                         break;
                     case 'bt':
-                        $query = $query->whereBetween($key, $val['va']);
+                        $query = $this->whereBetween($key, $val['va']);
                         break;
                     case 'notBt':
-                        $query = $query->whereNotBetween($key, $val['va']);
+                        $query = $this->whereNotBetween($key, $val['va']);
                         break;
                     default:
-                        $query = $query->where($key, $val['op'], $val['va']);
+                        $query = $this->where($key, $val['op'], $val['va']);
                         break;
                 }
             }
@@ -130,8 +132,7 @@ class Model extends BaseModel
      */
     public function del($data = [])
     {
-        $query = $this;
-        $query = $query->conditions($data, $query);
+        $query = $this->conditions($data);
         return $query->delete();
     }
 
@@ -139,13 +140,12 @@ class Model extends BaseModel
      * 更新数据
      *
      * @param array $data
-     * @param array $condiction
+     * @param array $condition
      * @return bool
      */
-    public function alert($data = [], $condiction = [])
+    public function alert($data = [], $condition = [])
     {
-        $query = $this;
-        $query = $query->conditions($data, $query);
+        $query = $this->conditions($condition);
         return $query->update($data);
     }
 }

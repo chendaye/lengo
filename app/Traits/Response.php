@@ -70,8 +70,14 @@ trait Response
      * @return void
      * @author long
      */
-    public function param(string $param)
+    public function json($param)
     {
-        return json_decode($param, true);
+        if(\is_string($param)){
+            return json_decode($param, true);
+        }elseif(empty($param) || \is_null($param)){
+            return [];
+        }else{
+            return $param;
+        }
     }
 }

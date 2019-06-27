@@ -56,6 +56,10 @@ $api->version('v1', function ($api) {
                 $api->post('add', 'TagController@add');
                 // 标签列表数据
                 $api->get('index', 'TagController@index');
+                // 更新标签
+                $api->post('update', 'TagController@update');
+                // 删除标签
+                $api->post('del', 'TagController@delete');
             });
         });
     });

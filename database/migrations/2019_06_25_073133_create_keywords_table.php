@@ -18,6 +18,7 @@ class CreateKeywordsTable extends Migration
             $table->char('keyword', 20)->comment('关键词');
             $table->integer('article_id')->comment('文章id');
             $table->timestamps();
+            $table->softDeletes();
             // 创建索引
             $table->index('keyword');
         });

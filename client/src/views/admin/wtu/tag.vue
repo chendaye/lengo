@@ -19,26 +19,24 @@
     </div>
 
     <el-table
-      :key="tableKey"
       v-loading="listLoading"
       :data="list"
       border
       fit
       highlight-current-row
       style="width: 100%;"
-      @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
+      <el-table-column label="ID" prop="id" align="center" width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Created Date" width="150px" align="center">
+      <el-table-column label="Created Date" width="300px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.created_at }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Tag" min-width="150px">
+      <el-table-column label="Tag" min-width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.tag }}</span>
         </template>
@@ -51,12 +49,7 @@
       >
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">Edit</el-button>
-          <el-button
-            v-if="row.status!='deleted'"
-            size="mini"
-            type="danger"
-            @click="handleModifyStatus(row,'deleted')"
-          >Delete</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(row)">Delete</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -71,26 +64,20 @@
 
     <!-- tag弹窗 -->
     <el-dialog :title="dialogTitle[dialogStatus]" :visible.sync="dialogVisible">
-      <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
+      <el-form ref="dataForm" :model="dataForm" :rules="rules" label-width="100px">
         <el-form-item label="标签名" prop="tag">
-          <el-input v-model="ruleForm.tag" />
+          <el-input v-model="dataForm.tag" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" plain @click="submitForm('ruleForm')">立即创建</el-button>
-        <el-button type="info" plain @click="resetForm('ruleForm')">重置</el-button>
+        <el-button
+          type="primary"
+          plain
+          @click="submitForm('dataForm')"
+        >{{ dialogTitle[dialogStatus] }}</el-button>
+        <el-button type="info" plain @click="resetForm('dataForm')">重置</el-button>
         <el-button type="warning" plain @click="dialogVisible = false">取 消</el-button>
       </div>
-    </el-dialog>
-
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
-      </span>
     </el-dialog>
   </div>
 </template>
@@ -98,8 +85,8 @@
 <script>
 import crud from '@/api/crud';
 import waves from '@/directive/waves'; // waves directive
-import { parseTime } from '@/utils';
 import Pagination from '@/components/Pagination';
+import { deleteItem, updateItem } from '@/utils/index';
 const wtuCrud = crud.factory('wtu');
 
 export default {
@@ -113,14 +100,13 @@ export default {
         update: '更新标签',
         create: '创建标签'
       },
-      ruleForm: {
+      dataForm: {
         tag: ''
       },
       rules: {
         name: [{ required: true, message: '请输标签名', trigger: 'blur' }]
       },
       // table
-      tableKey: 0,
       list: null,
       total: 0,
       listLoading: true,
@@ -128,7 +114,7 @@ export default {
         page: 1,
         limit: 10,
         order: {},
-        where: []
+        where: {}
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -143,11 +129,48 @@ export default {
   },
   methods: {
     submitForm(formName) {
-      this.$refs[formName].validate(valid => {
+      if (this.dialogStatus === 'create') {
+        this.createData();
+      } else {
+        this.updateData();
+      }
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+
+    // table
+    getList() {
+      this.listLoading = true;
+      this.listQuery.order = { id: 'desc', created_at: 'asc' };
+      this.listQuery.where.created_at = { op: '!=', va: '', ex: 'cp' };
+      wtuCrud.get('index', this.listQuery).then(res => {
+        this.list = res.data.data;
+        this.total = res.data.total;
+        console.log(this.list);
+
+        this.listLoading = false;
+      });
+    },
+    handleFilter() {
+      this.listQuery.page = 1;
+      this.getList();
+    },
+    handleCreate() {
+      this.dialogStatus = 'create';
+      this.dialogVisible = true;
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate();
+      });
+    },
+    createData() {
+      this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          console.log(this.ruleFeom);
-          wtuCrud.post('add', this.ruleForm).then(res => {
+          this.dataForm.created_at = null;
+          wtuCrud.post('add', this.dataForm).then(res => {
             if (res.status === 200) {
+              this.dataForm.created_at = new Date();
+              updateItem(this.list, this.dataForm);
               this.dialogVisible = false;
               this.$message({
                 message: '创建标签成功！',
@@ -164,87 +187,11 @@ export default {
         }
       });
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    },
-
-    // table
-    getList() {
-      this.listLoading = true;
-      this.listQuery.order = { id: 'desc', created_at: 'asc' }
-      wtuCrud.get('index', this.listQuery).then(res => {
-        console.log(res.data);
-        this.list = res.data;
-        this.listLoading = false;
-      });
-    },
-    handleFilter() {
-      this.listQuery.page = 1;
-      this.getList();
-    },
-    handleModifyStatus(row, status) {
-      this.$message({
-        message: 'Success',
-        type: 'success'
-      });
-      row.status = status;
-    },
-    sortChange(data) {
-      const { prop, order } = data;
-      if (prop === 'id') {
-        this.sortByID(order);
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id';
-      } else {
-        this.listQuery.sort = '-id';
-      }
-      this.handleFilter();
-    },
-    resetTemp() {
-      this.temp = {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
-      };
-    },
-    handleCreate() {
-      this.resetTemp();
-      this.dialogStatus = 'create';
-      this.dialogVisible = true;
-      this.$nextTick(() => {
-        this.$refs['ruleForm'].clearValidate();
-      });
-    },
-    createData() {
-      this.$refs['dataForm'].validate(valid => {
-        if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024; // mock a id
-          this.temp.author = 'vue-element-admin';
-          createArticle(this.temp).then(() => {
-            this.list.unshift(this.temp);
-            this.dialogFormVisible = false;
-            this.$notify({
-              title: 'Success',
-              message: 'Created Successfully',
-              type: 'success',
-              duration: 2000
-            });
-          });
-        }
-      });
-    },
+    // 更新标签
     handleUpdate(row) {
-      this.temp = Object.assign({}, row); // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp);
+      this.dataForm = Object.assign({}, row); // copy obj
       this.dialogStatus = 'update';
-      this.dialogFormVisible = true;
+      this.dialogVisible = true;
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate();
       });
@@ -252,27 +199,34 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp);
-          tempData.timestamp = +new Date(tempData.timestamp); // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
-            for (const v of this.list) {
-              if (v.id === this.temp.id) {
-                const index = this.list.indexOf(v);
-                this.list.splice(index, 1, this.temp);
-                break;
+          wtuCrud
+            .post('update', {
+              data: this.dataForm,
+              where: { id: { op: '=', va: this.dataForm.id, ex: 'cp' }}
+            })
+            .then(res => {
+              if (res.status === 200) {
+                updateItem(this.list, this.dataForm);
+                this.dialogVisible = false;
+                this.$notify({
+                  title: 'Success',
+                  message: '标签更新成功！',
+                  type: 'success',
+                  duration: 2000
+                });
+              } else {
+                this.$notify({
+                  title: 'Success',
+                  message: '标签更新失败！',
+                  type: 'fail',
+                  duration: 2000
+                });
               }
-            }
-            this.dialogFormVisible = false;
-            this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
-              type: 'success',
-              duration: 2000
             });
-          });
         }
       });
     },
+    // 删除标签
     handleDelete(row) {
       this.$notify({
         title: 'Success',
@@ -280,25 +234,16 @@ export default {
         type: 'success',
         duration: 2000
       });
-      const index = this.list.indexOf(row);
-      this.list.splice(index, 1);
-    },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData;
-        this.dialogPvVisible = true;
-      });
-    },
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v =>
-        filterVal.map(j => {
-          if (j === 'timestamp') {
-            return parseTime(v[j]);
-          } else {
-            return v[j];
-          }
+      wtuCrud
+        .post('del', {
+          where: { id: { op: '=', va: row.id, ex: 'cp' }}
         })
-      );
+        .then(res => {
+          if (res.status === 200) {
+            deleteItem(this.list, row.id);
+            console.log(res);
+          }
+        });
     }
   }
 };
