@@ -202,6 +202,7 @@ class AuthController extends Controller
         $limit = $request->input('limit'); // 每页条数
         $order = $request->input('order');
         $where = $request->input('where');
+        // 获取的请求数据 只是把第一层转化维数组了， 第二层需要手动转换
         $order = $this->json($order);
         $where = $this->json($where);
 

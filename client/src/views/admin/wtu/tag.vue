@@ -3,8 +3,8 @@
     <div class="filter-container">
       <el-button type="success" class="filter-item" icon="el-icon-edit" @click="handleCreate">新建标签</el-button>
       <el-input
-        v-model="listQuery.title"
-        placeholder="Title"
+        v-model="listQuery.tag"
+        placeholder="Tag"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
@@ -114,7 +114,8 @@ export default {
         page: 1,
         limit: 10,
         order: {},
-        where: {}
+        where: {},
+        tag: null
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -144,6 +145,9 @@ export default {
       this.listLoading = true;
       this.listQuery.order = { id: 'desc', created_at: 'asc' };
       this.listQuery.where.created_at = { op: '!=', va: '', ex: 'cp' };
+      if (this.listQuery.tag !== null) {
+        this.listQuery.where.tag = { op: 'like', va: '%' + this.listQuery.tag + '%', ex: 'cp' };
+      }
       wtuCrud.get('index', this.listQuery).then(res => {
         this.list = res.data.data;
         this.total = res.data.total;
@@ -156,8 +160,15 @@ export default {
       this.listQuery.page = 1;
       this.getList();
     },
+    resetDataForm() {
+      this.dataForm = {
+        id: null,
+        tag: null
+      }
+    },
     handleCreate() {
       this.dialogStatus = 'create';
+      this.resetDataForm();
       this.dialogVisible = true;
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate();
@@ -166,11 +177,10 @@ export default {
     createData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          this.dataForm.created_at = null;
           wtuCrud.post('add', this.dataForm).then(res => {
             if (res.status === 200) {
-              this.dataForm.created_at = new Date();
-              updateItem(this.list, this.dataForm);
+              console.log(res.data);
+              updateItem(this.list, res.data.data);
               this.dialogVisible = false;
               this.$message({
                 message: '创建标签成功！',

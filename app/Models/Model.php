@@ -23,7 +23,8 @@ class Model extends BaseModel
     public function list($page = 1, $limit = 10, $where = [], $order = ['id' => 'desc'])
     {
         // https://laravel.com/api/5.8/Illuminate/Database/Eloquent/Builder.html#method_paginate 分页api
-        $query = $this->conditions($where);
+        $query = $this;
+        $query = $this->conditions($where, $query);
         $query = $this->sort($order, $query);
         $data = $query->paginate($limit, ['*'], 'page',  $page);
         return $data;
@@ -38,51 +39,52 @@ class Model extends BaseModel
      */
     private function conditions(array $where)
     {
+        $query = $this;
         foreach ($where as $key => $val) {
             if (Schema::hasColumn($this->table, $key)) {
                 switch ($val['ex']) {
                     case 'cp':
                         // =,>.<.>=,<=,like
-                        $query = $this->where($key, $val['op'], $val['va']);
+                        $query = $query->where($key, $val['op'], $val['va']);
                         break;
                     case 'in':
-                        $query = $this->whereIn($key, $val['va']);
+                        $query = $query->whereIn($key, $val['va']);
                         break;
                     case 'notIn':
-                        $query = $this->whereNotIn($key, $val['va']);
+                        $query = $query->whereNotIn($key, $val['va']);
                         break;
                     case 'null':
-                        $query = $this->whereNull($key);
+                        $query = $query->whereNull($key);
                         break;
                     case 'notNull':
-                        $query = $this->whereNotNull($key);
+                        $query = $query->whereNotNull($key);
                         break;
                     case 'date':
-                        $query = $this->whereDate($key, $val['va']);
+                        $query = $query->whereDate($key, $val['va']);
                         break;
                     case 'month':
-                        $query = $this->whereMonth($key, $val['va']);
+                        $query = $query->whereMonth($key, $val['va']);
                         break;
                     case 'day':
-                        $query = $this->whereDay($key, $val['va']);
+                        $query = $query->whereDay($key, $val['va']);
                         break;
                     case 'year':
-                        $query = $this->whereYear($key, $val['va']);
+                        $query = $query->whereYear($key, $val['va']);
                         break;
                     case 'time':
-                        $query = $this->whereTime($key, $val['va']);
+                        $query = $query->whereTime($key, $val['va']);
                         break;
                     case 'or':
-                        $query = $this->orWhere($key, $val['op'], $val['va']);
+                        $query = $query->orWhere($key, $val['op'], $val['va']);
                         break;
                     case 'bt':
-                        $query = $this->whereBetween($key, $val['va']);
+                        $query = $query->whereBetween($key, $val['va']);
                         break;
                     case 'notBt':
-                        $query = $this->whereNotBetween($key, $val['va']);
+                        $query = $query->whereNotBetween($key, $val['va']);
                         break;
                     default:
-                        $query = $this->where($key, $val['op'], $val['va']);
+                        $query = $query->where($key, $val['op'], $val['va']);
                         break;
                 }
             }
@@ -115,12 +117,19 @@ class Model extends BaseModel
      */
     public function add($data)
     {
+        $insert = [];
         foreach ($data as $key => $val) {
             if (Schema::hasColumn($this->table, $key)) {
-                $this->$key = $val;
+                $insert[$key] = $val;
             }
         }
-        return $this->save();
+        $insert['created_at'] = date( "Y-m-d H:i:s", time());
+        $insert['updated_at'] = date( "Y-m-d H:i:s", time());
+        // $this->save();
+        $insertId =  $this->insertGetId($insert); // 返回自增ID
+        $insert['id'] = $insertId;
+        return $insert;
+
     }
 
     /**
@@ -132,7 +141,8 @@ class Model extends BaseModel
      */
     public function del($data = [])
     {
-        $query = $this->conditions($data);
+        $query = $this;
+        $query = $this->conditions($data, $query);
         return $query->delete();
     }
 
@@ -145,7 +155,8 @@ class Model extends BaseModel
      */
     public function alert($data = [], $condition = [])
     {
-        $query = $this->conditions($condition);
+        $query = $this;
+        $query = $this->conditions($condition, $query);
         return $query->update($data);
     }
 }
