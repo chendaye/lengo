@@ -190,6 +190,7 @@ class AuthController extends Controller
         return $this->model->alert($data, $query);
     }
 
+
     /**
      * 获取列表数据
      *

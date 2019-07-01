@@ -89,7 +89,7 @@ export default [{
   {
     path: 'category',
     name: 'Category',
-    component: () => import('@/views/admin/wtu/tag'),
+    component: () => import('@/views/admin/wtu/category'),
     meta: {
       title: '分类',
       icon: 'plane'

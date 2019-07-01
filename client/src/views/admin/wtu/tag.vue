@@ -148,7 +148,7 @@ export default {
       if (this.listQuery.tag !== null) {
         this.listQuery.where.tag = { op: 'like', va: '%' + this.listQuery.tag + '%', ex: 'cp' };
       }
-      wtuCrud.get('index', this.listQuery).then(res => {
+      wtuCrud.get('indexTag', this.listQuery).then(res => {
         this.list = res.data.data;
         this.total = res.data.total;
         console.log(this.list);
@@ -177,7 +177,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          wtuCrud.post('add', this.dataForm).then(res => {
+          wtuCrud.post('addTag', this.dataForm).then(res => {
             if (res.status === 200) {
               console.log(res.data);
               updateItem(this.list, res.data.data);
@@ -210,7 +210,7 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           wtuCrud
-            .post('update', {
+            .post('updateTag', {
               data: this.dataForm,
               where: { id: { op: '=', va: this.dataForm.id, ex: 'cp' }}
             })
@@ -245,7 +245,7 @@ export default {
         duration: 2000
       });
       wtuCrud
-        .post('del', {
+        .post('delTag', {
           where: { id: { op: '=', va: row.id, ex: 'cp' }}
         })
         .then(res => {

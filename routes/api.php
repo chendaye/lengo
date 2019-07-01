@@ -53,13 +53,17 @@ $api->version('v1', function ($api) {
         $api->group(['namespace' =>  'App\Http\Controllers\Graduate\V1'], function ($api) {
             $api->group(['prefix' => 'wtu'], function ($api) {
                 // 添加标签
-                $api->post('add', 'TagController@add');
+                $api->post('addTag', 'TagController@add');
                 // 标签列表数据
-                $api->get('index', 'TagController@index');
+                $api->get('indexTag', 'TagController@index');
                 // 更新标签
-                $api->post('update', 'TagController@update');
+                $api->post('updateTag', 'TagController@update');
                 // 删除标签
-                $api->post('del', 'TagController@delete');
+                $api->post('delTag', 'TagController@delete');
+
+                // 获取下一级节点
+                $api->get('nextNode', 'CategoryController@nextNode');
+                $api->get('tree', 'CategoryController@tree');
             });
         });
     });
