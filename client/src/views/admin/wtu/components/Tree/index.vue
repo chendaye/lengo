@@ -1,11 +1,20 @@
 <template>
   <div>
-    <el-input
-      v-model="filterText"
-      placeholder="输入关键字进行过滤"
-    />
+    <el-row :gutter="5">
+      <el-col :span="12"><div class="grid-content bg-purple">
+        <el-button plain type="success" icon="el-icon-edit" @click="rootVisible = true">新建根分类</el-button>
+      </div></el-col>
+      <el-col :span="12"><div class="grid-content bg-purple">
+        <el-input
+          v-model="filterText"
+          placeholder="输入关键字"
+        />
+      </div></el-col>
+
+    </el-row>
 
     <el-tree
+      v-if="data.length > 0"
       ref="tree"
       class="filter-tree"
       :props="defaultProps"
@@ -30,12 +39,34 @@
         </span>
       </span>
     </el-tree>
+
+    <!-- 添加根分类 -->
+    <el-dialog
+      title="添加分类"
+      :visible.sync="rootVisible"
+      width="50%"
+    >
+      <span>
+        <el-form ref="rootForm" :model="rootForm" :rules="rules" label-width="100px" class="demo-rootForm">
+          <el-form-item label="分类名" prop="desc">
+            <el-input v-model="rootForm.desc" />
+          </el-form-item>
+        </el-form>
+      </span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" plain @click="submitRootForm('rootForm')">立即创建</el-button>
+        <el-button type="info" plain @click="resetForm('rootForm')">重置</el-button>
+        <el-button type="warning" plain @click="rootVisible = false">取 消</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import crud from '@/api/crud';
 const wtuCrud = crud.factory('wtu');
+import { mapGetters } from 'vuex';
 
 let id = 1000;
 export default {
@@ -47,42 +78,28 @@ export default {
         children: 'children',
         label: 'label'
       },
-      data: [{
-        id: 1,
-        label: '一级 1',
-        children: [{
-          id: 4,
-          label: '二级 1-1',
-          children: [{
-            id: 9,
-            label: '三级 1-1-1'
-          }, {
-            id: 10,
-            label: '三级 1-1-2'
-          }]
-        }]
-      }, {
-        id: 2,
-        label: '一级 2',
-        children: [{
-          id: 5,
-          label: '二级 2-1'
-        }, {
-          id: 6,
-          label: '二级 2-2'
-        }]
-      }, {
-        id: 3,
-        label: '一级 3',
-        children: [{
-          id: 7,
-          label: '二级 3-1'
-        }, {
-          id: 8,
-          label: '二级 3-2'
-        }]
-      }]
+      data: [],
+      rootVisible: false,
+      // 添加根分类
+      rootForm: {
+        desc: '',
+        pid: 0,
+        level: 1,
+        user_id: null
+      },
+      rules: {
+        desc: [
+          { required: true, message: '请输入分类名称', trigger: 'blur' },
+          { min: 1, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur' }
+        ]
+      }
     };
+  },
+  computed: {
+    // 当前登录的管理员id
+    ...mapGetters([
+      'admin_id'
+    ])
   },
   watch: {
     filterText(val) {
@@ -92,14 +109,26 @@ export default {
 
   created() {
     wtuCrud.get('tree', {}).then(res => {
-      this.data = res.data.data;
-      console.log(res.data.data);
-    })
+      if (res.status === 200) {
+        this.data = res.data.data;
+      } else {
+        this.$message({
+          message: '获取分类失败！',
+          type: 'error'
+        });
+      }
+    });
+    // 当前登录管理员
+    this.rootForm.user_id = this.admin_id;
   },
   methods: {
     filterNode(value, data) {
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
+    },
+    // 添加根分类
+    addRoot() {
+      this.rootVisible = true;
     },
     append(data) {
       const newChild = { id: id++, label: 'testtest', children: [] };
@@ -114,6 +143,23 @@ export default {
       const children = parent.data.children || parent.data;
       const index = children.findIndex(d => d.id === data.id);
       children.splice(index, 1);
+    },
+    // 创建根分类
+    submitRootForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          console.log(this.rootForm);
+          wtuCrud.post('addRoot', this.rootForm).then(res => {
+            console.log(res);
+          });
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
     }
   }
 };

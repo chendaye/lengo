@@ -23,7 +23,6 @@ export default {
   },
 
   computed: {
-
   },
   watch: {
     filterText(val) {

@@ -33,7 +33,7 @@ class CategoryController extends AuthController
      * @return array
      * @author chendaye
      */
-    public function nextNode(int $pid = 1)
+    public function nextNode(int $pid)
     {
         return $this->model->where('pid', $pid)->orderBy('created_at', 'desc')->get();
     }
@@ -46,7 +46,7 @@ class CategoryController extends AuthController
      * @return array
      * @author chendaye
      */
-    public function nodeTree(int $root = 1, array $node = [])
+    public function nodeTree(int $root, array $node = [])
     {
         // 获取下一级节点
         $child = $this->nextNode($root)->toArray();
@@ -80,7 +80,9 @@ class CategoryController extends AuthController
         $tree = [];
         $root = $this->nextNode(0)->toArray();
         foreach ($root as $val) {
-            $tree[] = $this->nodeTree($val['id']);
+            // 合并为一个数组
+            $tree = array_merge($tree, $this->nodeTree($val['id']));
+            // $tree[] = $this->nodeTree($val['id']);
         }
         return $this->success($tree);
     }

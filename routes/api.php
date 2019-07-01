@@ -61,9 +61,10 @@ $api->version('v1', function ($api) {
                 // 删除标签
                 $api->post('delTag', 'TagController@delete');
 
-                // 获取下一级节点
-                $api->get('nextNode', 'CategoryController@nextNode');
+                // 获取分类树
                 $api->get('tree', 'CategoryController@tree');
+                // 天加根分类
+                $api->post('addRoot', 'CategoryController@add');
             });
         });
     });

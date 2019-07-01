@@ -16,6 +16,7 @@ import {
 // 用户信息
 const state = {
   token: getToken('client'),
+  id: null,
   name: '',
   email: '',
   remark: '',
@@ -26,6 +27,9 @@ const state = {
 // 设置 state 内容（同步）
 const mutations = {
   // 在 state 中保存 token
+  SET_ID: (state, id) => {
+    state.id = id
+  },
   SET_TOKEN: (state, token) => {
     state.token = token
   },
@@ -128,12 +132,14 @@ const actions = {
         }
         // 名称 头像
         const {
+          id,
           name,
           email,
           remark,
           avatar
         } = data
         // 调用mutations 设置 state
+        commit('SET_ID', id)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_EMAIL', email)
