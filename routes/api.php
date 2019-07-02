@@ -64,7 +64,7 @@ $api->version('v1', function ($api) {
                 // 获取分类树
                 $api->get('tree', 'CategoryController@tree');
                 // 天加根分类
-                $api->post('addRoot', 'CategoryController@add');
+                $api->post('addCategory', 'CategoryController@add');
             });
         });
     });

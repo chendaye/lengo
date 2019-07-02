@@ -35,7 +35,7 @@ class CategoryController extends AuthController
      */
     public function nextNode(int $pid)
     {
-        return $this->model->where('pid', $pid)->orderBy('created_at', 'desc')->get();
+        return $this->model->where('pid', $pid)->orderBy('created_at', 'asc')->get();
     }
 
     /**
@@ -81,7 +81,9 @@ class CategoryController extends AuthController
         $root = $this->nextNode(0)->toArray();
         foreach ($root as $val) {
             // 合并为一个数组
-            $tree = array_merge($tree, $this->nodeTree($val['id']));
+            $val['label'] = $val['desc'];
+            $val['children'] = $this->nodeTree($val['id']);
+            $tree = array_merge($tree, [$val]);
             // $tree[] = $this->nodeTree($val['id']);
         }
         return $this->success($tree);
