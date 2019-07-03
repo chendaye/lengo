@@ -12,21 +12,6 @@ class CategoryController extends AuthController
     public $namespace = Category::class;
 
     /**
-     * 删除分类
-     *
-     * @param Request $request
-     * @return void
-     * @author chendaye
-     */
-    public function delete(Request $request)
-    {
-        // 删除标签
-        $this->del($request);
-        //TODO：删除标签与
-    }
-
-
-    /**
      * 获取下一级节点
      *
      * @param integer $pid
@@ -37,6 +22,26 @@ class CategoryController extends AuthController
     {
         return $this->model->where('pid', $pid)->orderBy('created_at', 'asc')->get();
     }
+
+    /**
+     * 获取所有子分类
+     *
+     * @param integer $pid
+     * @param array $tree
+     * @return array
+     * @author chendaye
+     */
+    public function allSon(int $pid, array $tree = [], $detail = true)
+    {
+         $child = $this->nextNode($pid)->toArray();
+         foreach($child as $val){
+            $tree[] = $detail ? $val : $val['id'];
+            $tree = $detail ? $this->allSon($val['id'], $tree) : $this->allSon($val['id'], $tree, false);
+         }
+         return $tree;
+    }
+
+
 
     /**
      * 生成分类树
@@ -53,7 +58,7 @@ class CategoryController extends AuthController
         // 判断下一级节点是否存在
         foreach ($child as $val) {
             if ($this->nextNode($val['id'])->toArray()) {
-                $val['label'] = $val['desc'];
+                // $val['label'] = $val['desc'];
                 $val['children'] = array_filter($this->nodeTree($val['id'], $val), function ($v) {
                     if (is_array($v)) {
                         return $v;
@@ -61,8 +66,8 @@ class CategoryController extends AuthController
                 });
                 $node[] = $val;
             } else {
-                $val['label'] = $val['desc'];
-                // $val['children'] = [];
+                // $val['label'] = $val['desc'];
+                $val['children'] = [];
                 $node[] = $val;
             }
         }
@@ -87,5 +92,37 @@ class CategoryController extends AuthController
             // $tree[] = $this->nodeTree($val['id']);
         }
         return $this->success($tree);
+    }
+
+    /**
+     * 删除标签
+     *
+     * @param Request $request
+     * @return void
+     * @author chendaye
+     */
+    public function delete(Request $request)
+    {
+        // 删除标签
+        $where = $request->input('where');
+        $where = $this->json($where);
+        // parentId
+        $parentId = $where['id']['va'];
+
+        if(! $parentId){
+            return $this->error('请传递分类id');
+        }
+        // 获取所有次级分类
+        $son = $this->allSon($parentId, [], false);
+        $son[] = $parentId;
+
+        // 删除
+        $res = $this->model->whereIn('id', $son)->delete();
+        if($res){
+            return $this->success('分类删除成功！');
+        }else{
+            return $this->error('分类删除失败！');
+        }
+        //TODO：删除关联
     }
 }

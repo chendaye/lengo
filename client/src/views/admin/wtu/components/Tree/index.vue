@@ -14,26 +14,26 @@
     </el-row>
 
     <el-tree
-      v-if="data.length > 0"
+      v-if="treeData.length > 0"
       ref="tree"
       class="filter-tree"
-      :props="defaultProps"
+      :props="mapProps"
       :filter-node-method="filterNode"
-      :data="data"
+      :data="treeData"
       node-key="id"
     >
       <span slot-scope="{ node, data }" class="custom-tree-node">
         <span>{{ node.label }}</span>
         <span>
           <el-tooltip class="item" effect="dark" content="添加" placement="top">
-            <i class="el-icon-circle-plus" @click.stop="() => append(data)" />
+            <i class="el-icon-circle-plus" @click.stop="() => addSon(data)" />
           </el-tooltip>
           <el-tooltip class="item" effect="dark" content="编辑" placement="top">
-            <i class="el-icon-edit" @click.stop="() => edit(node, data)" />
+            <i class="el-icon-edit" @click.stop="() => editNode(node, data)" />
           </el-tooltip>
 
           <el-tooltip class="item" effect="dark" content="删除" placement="top">
-            <i class="el-icon-delete" @click.stop="() => remove(node, data)" />
+            <i class="el-icon-delete" @click.stop="() => delNode(data)" />
           </el-tooltip>
         </span>
       </span>
@@ -55,7 +55,11 @@
         </el-form>
       </span>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" plain @click="submitcategoryForm('categoryForm')">立即创建</el-button>
+        <el-button
+          type="primary"
+          plain
+          @click="submitcategoryForm('categoryForm')"
+        >{{ dialogTitle[buttonStatus] }}</el-button>
         <el-button type="info" plain @click="resetForm('categoryForm')">重置</el-button>
         <el-button type="warning" plain @click="rootVisible = false">取 消</el-button>
       </span>
@@ -64,48 +68,55 @@
 </template>
 
 <script>
-import crud from '@/api/crud';
-const wtuCrud = crud.factory('wtu');
-import { mapGetters } from 'vuex';
+import crud from "@/api/crud";
+const wtuCrud = crud.factory("wtu");
+import { mapGetters } from "vuex";
 
-let id = 1000;
 export default {
   data() {
     return {
-      filterText: '',
-      defaultProps: {
-        children: 'children',
-        label: 'label'
+      filterText: "",
+      mapProps: {
+        children: "children",
+        label: "desc" // desc 映射为 label
       },
-      data: [],
+      treeData: [],
       rootVisible: false,
       // 添加根分类
       categoryForm: {
-        desc: '',
+        desc: "",
         pid: null,
         level: null,
         user_id: null
       },
+      // 整棵树的数据
+      nodeData: {},
       // 弹框状态
-      dialogStatus: 'root',
+      dialogStatus: "root",
+      buttonStatus: "root",
       // 弹框标题
       dialogTitle: {
-        root: '添加根分类',
-        son: '添加次级分类',
-        edit: '编辑分类'
+        root: "添加根分类",
+        son: "添加子分类",
+        edit: "编辑分类"
+      },
+      buttonTitle: {
+        root: "新建根分类",
+        son: "新建子分类",
+        exit: "编辑分类"
       },
       // 验证规则
       rules: {
         desc: [
-          { required: true, message: '请输入分类名称', trigger: 'blur' },
-          { min: 1, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur' }
+          { required: true, message: "请输入分类名称", trigger: "blur" },
+          { min: 1, max: 50, message: "长度在 3 到 50 个字符", trigger: "blur" }
         ]
       }
     };
   },
   computed: {
     // 当前登录的管理员id
-    ...mapGetters(['admin_id'])
+    ...mapGetters(["admin_id"])
   },
   watch: {
     filterText(val) {
@@ -114,13 +125,13 @@ export default {
   },
 
   created() {
-    wtuCrud.get('tree', {}).then(res => {
+    wtuCrud.get("tree", {}).then(res => {
       if (res.status === 200) {
-        this.data = res.data.data;
+        this.treeData = res.data.data;
       } else {
         this.$message({
-          message: '获取分类失败！',
-          type: 'error'
+          message: "获取分类失败！",
+          type: "error"
         });
       }
     });
@@ -134,61 +145,148 @@ export default {
     },
     // 添加根分类
     addRoot() {
-      this.categoryForm.desc = '';
+      this.categoryForm.desc = "";
       this.categoryForm.pid = 0;
       this.categoryForm.level = 1;
       this.rootVisible = true;
-      this.dialogStatus = 'root';
+      this.dialogStatus = "root";
+      this.buttonStatus = "root";
     },
-    append(data) {
-      const newChild = { id: id++, label: 'testtest', children: [] };
-      if (!data.children) {
-        this.$set(data, 'children', []);
-      }
-      data.children.push(newChild);
+    // 添加子分类
+    addSon(data) {
+      this.categoryForm.desc = "";
+      this.categoryForm.pid = data.id;
+      this.categoryForm.level = data.level + 1;
+      this.rootVisible = true;
+      this.dialogStatus = "son";
+      this.buttonStatus = "son";
     },
-
-    remove(node, data) {
-      const parent = node.parent;
-      const children = parent.data.children || parent.data;
-      const index = children.findIndex(d => d.id === data.id);
-      children.splice(index, 1);
-    },
-
     // 编辑分类
-    edit(node, data) {
-      console.log('node', node);
-      console.log('data', data);
+    editNode(node, data) {
+      this.nodeData = node; // 保存整棵树的属性
+      this.categoryForm = data; // 保存整棵树的数据
+      this.rootVisible = true;
+      this.dialogStatus = "edit";
+      this.buttonStatus = "edit";
+    },
+    // 删除分类
+    delNode(data) {
+      this.$confirm(
+        `此操作将删除分类及其子分类【${data.desc}】, 是否继续?`,
+        "提示",
+        {
+          confirmButtonText: "删除",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      )
+        .then(() => {
+          wtuCrud
+            .post("delCategory", {
+              where: { id: { op: "=", va: data.id, ex: "cp" }}
+            })
+            .then(() => {
+              this.$refs.tree.remove(data.id);
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
 
     // 创建根分类
     submitcategoryForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          console.log(this.categoryForm);
-          wtuCrud.post('addCategory', this.categoryForm).then(res => {
-            if (res.status === 200) {
-              const tmp = res.data.data;
-              tmp.label = tmp.desc;
-              this.data.push(tmp);
-              this.$notify({
-                title: '成功',
-                message: '根分类创建成功',
-                type: 'success'
-              });
-              this.rootVisible = false;
-            } else {
-              this.$notify.error({
-                title: '错误',
-                message: '根节点添加失败！'
-              });
-            }
-          });
+          if (this.dialogStatus === "root") {
+            this.submitCategory();
+          } else if (this.dialogStatus === "son") {
+            this.submitSon();
+          } else if (this.dialogStatus === "edit") {
+            this.submitEdit();
+          }
         } else {
-          console.log('error submit!!');
+          console.log("error submit!!");
           return false;
         }
       });
+    },
+    // 添加根分类
+    submitCategory() {
+      wtuCrud.post("addCategory", this.categoryForm).then(res => {
+        if (res.status === 200) {
+          const tmp = res.data.data;
+          this.data.push(tmp);
+          this.$notify({
+            title: "成功",
+            message: "根分类创建成功",
+            type: "success"
+          });
+          this.rootVisible = false;
+        } else {
+          this.$notify.error({
+            title: "错误",
+            message: "根节点添加失败！"
+          });
+        }
+      });
+    },
+    // 添加子分类
+    submitSon() {
+      wtuCrud.post("addCategory", this.categoryForm).then(res => {
+        if (res.status === 200) {
+          const tmp = res.data.data;
+          // 添加节点
+          this.$refs.tree.append(tmp, this.categoryForm.pid);
+
+          this.$notify({
+            title: "成功",
+            message: "子分类创建成功",
+            type: "success"
+          });
+          this.rootVisible = false;
+        } else {
+          this.$notify.error({
+            title: "错误",
+            message: "子节点添加失败！"
+          });
+        }
+      });
+    },
+
+    // 编辑分类
+    submitEdit() {
+      wtuCrud
+        .post("updateCategory", {
+          data: { desc: this.categoryForm.desc },
+          where: { id: { op: "=", va: this.categoryForm.id, ex: "cp" }}
+        })
+        .then(res => {
+          if (res.status === 200) {
+            console.log(this.categoryForm);
+            // 用nodeData 保存整个树的属性  this.categoryForm 保存了树数据
+            this.nodeData.data = this.categoryForm;
+            this.rootVisible = false;
+            this.$notify({
+              title: "Success",
+              message: "分类更新成功！",
+              type: "success",
+              duration: 2000
+            });
+          } else {
+            this.$notify.error({
+              title: "错误",
+              message: "分类更新失败！"
+            });
+          }
+        });
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();

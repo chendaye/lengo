@@ -63,8 +63,12 @@ $api->version('v1', function ($api) {
 
                 // 获取分类树
                 $api->get('tree', 'CategoryController@tree');
-                // 天加根分类
+                // 添加分类
                 $api->post('addCategory', 'CategoryController@add');
+                // 编辑分类
+                $api->post('updateCategory', 'CategoryController@update');
+                // 删除分类
+                $api->post('delCategory', 'CategoryController@delete');
             });
         });
     });
