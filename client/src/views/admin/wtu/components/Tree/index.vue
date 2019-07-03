@@ -21,6 +21,15 @@
       :filter-node-method="filterNode"
       :data="treeData"
       node-key="id"
+      draggable
+      :allow-drop="allowDrop"
+      :allow-drag="allowDrag"
+      @node-drag-start="handleDragStart"
+      @node-drag-enter="handleDragEnter"
+      @node-drag-leave="handleDragLeave"
+      @node-drag-over="handleDragOver"
+      @node-drag-end="handleDragEnd"
+      @node-drop="handleDrop"
     >
       <span slot-scope="{ node, data }" class="custom-tree-node">
         <span>{{ node.label }}</span>
@@ -141,7 +150,7 @@ export default {
   methods: {
     filterNode(value, data) {
       if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+      return data.desc.indexOf(value) !== -1;
     },
     // 添加根分类
     addRoot() {
@@ -223,7 +232,7 @@ export default {
       wtuCrud.post("addCategory", this.categoryForm).then(res => {
         if (res.status === 200) {
           const tmp = res.data.data;
-          this.data.push(tmp);
+          this.treeData.push(tmp);
           this.$notify({
             title: "成功",
             message: "根分类创建成功",
@@ -290,6 +299,44 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+
+    // 拖拽
+    // 节点开始拖拽时触发的事件
+    handleDragStart(node, ev) {
+      console.log('drag start', node);
+    },
+    // 拖拽进入其他节点时触发的事件
+    handleDragEnter(draggingNode, dropNode, ev) {
+      console.log('tree drag enter: ', dropNode.label);
+    },
+    // 拖拽离开某个节点时触发的事件
+    handleDragLeave(draggingNode, dropNode, ev) {
+      console.log('tree drag leave: ', dropNode.label);
+    },
+    // 在拖拽节点时触发的事件（类似浏览器的 mouseover 事件）
+    handleDragOver(draggingNode, dropNode, ev) {
+      console.log('tree drag over: ', dropNode.label);
+    },
+    // 拖拽结束时（可能未成功）触发的事件
+    handleDragEnd(draggingNode, dropNode, dropType, ev) {
+      console.log('tree drag end: ', dropNode && dropNode.label, dropType);
+    },
+    // 拖拽成功完成时触发的事件
+    handleDrop(draggingNode, dropNode, dropType, ev) {
+      console.log('tree drop: ', dropNode.label, dropType);
+    },
+    // 拖拽时判定目标节点能否被放置
+    allowDrop(draggingNode, dropNode, type) {
+      if (dropNode.data.label === '二级 3-1') {
+        return type !== 'inner';
+      } else {
+        return true;
+      }
+    },
+    // 判断节点能否被拖拽
+    allowDrag(draggingNode) {
+      return draggingNode.data.label.indexOf('三级 3-2-2') === -1;
     }
   }
 };
