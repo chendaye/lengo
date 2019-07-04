@@ -27,7 +27,7 @@
       @node-drop="handleDrop"
     >
       <span slot-scope="{ node, data }" class="custom-tree-node">
-        <span>{{ node.label }}</span>
+        <span><b class="node-font">{{ node.label }}</b></span>
         <span>
           <el-tooltip class="item" effect="dark" content="添加" placement="top">
             <i class="el-icon-circle-plus" @click.stop="() => addSon(data)" />
@@ -366,5 +366,10 @@ export default {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
+  background-color: rgb(190, 218, 186)
+}
+.node-font{
+  font-style: italic;
+  font-size: 14px
 }
 </style>
