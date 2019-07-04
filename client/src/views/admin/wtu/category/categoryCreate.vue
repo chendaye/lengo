@@ -10,7 +10,7 @@
 
 <script>
 import crud from '@/api/crud';
-import tree from './components/Tree/index';
+import tree from '../components/Tree/index';
 
 export default {
   components: {
