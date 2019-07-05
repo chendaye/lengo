@@ -67,24 +67,22 @@ export default {
       return this.color[index];
     }
   },
-  created() {
-    wtuCrud
-      .get("detailTag", { where: { op: "id", va: this.idVal, ex: "=" }})
-      .then(res => {
-        if (res.status === 200) {
-          this.tag = res.data;
-        }
-      });
-  },
+  created() {},
   mounted: function() {
-    // this.$nextTick(function() {
-    //   console.log(this.sizeVal, this.idVal, this.colorVal);
-    // });
+    this.$nextTick(function() {
+      wtuCrud
+        .get("detailTag", { where: { op: "id", va: this.idVal, ex: "=" }})
+        .then(res => {
+          if (res.status === 200) {
+            this.tag = res.data;
+          }
+        });
+    });
   },
   methods: {
     check() {
       if (this.icon === null) {
-        this.icon = 'el-icon-star-on';
+        this.icon = "el-icon-star-on";
       } else {
         this.icon = null;
       }
