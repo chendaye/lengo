@@ -209,4 +209,20 @@ class AuthController extends Controller
 
         return $this->model->list($page, $limit, $where, $order);
     }
+
+    /**
+     * 获取某一条记录
+     *
+     * @param Request $request
+     * @return array
+     * @author chendaye
+     */
+    public function detail( Request $request)
+    {
+        $where = $request->input('where');
+        // 获取的请求数据 只是把第一层转化维数组了， 第二层需要手动转换
+        $where = $this->json($where);
+
+        return $this->model->detail($where)->first();
+    }
 }

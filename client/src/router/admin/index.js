@@ -124,7 +124,7 @@ export default [{
       redirect: '/admin/wtu/article',
       children: [{
         path: 'noteCreate',
-        component: () => import('@/views/admin/wtu/category/categoryCreate'),
+        component: () => import('@/views/admin/wtu/article/write'),
         name: 'NoteCreate',
         meta: {
           title: '写笔记',

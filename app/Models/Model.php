@@ -23,10 +23,22 @@ class Model extends BaseModel
     public function list($page = 1, $limit = 10, $where = [], $order = ['id' => 'desc'])
     {
         // https://laravel.com/api/5.8/Illuminate/Database/Eloquent/Builder.html#method_paginate 分页api
-        $query = $this;
-        $query = $this->conditions($where, $query);
+        $query = $this->conditions($where);
         $query = $this->sort($order, $query);
         $data = $query->paginate($limit, ['*'], 'page',  $page);
+        return $data;
+    }
+
+    /**
+     * 单条记录
+     *
+     * @param array $where
+     * @return void
+     * @author chendaye
+     */
+    public function detail($where)
+    {
+        $data = $this->conditions($where)->first();
         return $data;
     }
 
