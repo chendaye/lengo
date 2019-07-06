@@ -41,7 +41,7 @@
                 <span class="header-attr">文章分类</span>
               </div>
               <!-- 分类选择 -->
-              <category />
+              <category :is-check="true" @handchecked="handchecked" />
             </el-card>
           </div>
         </el-col>
@@ -51,8 +51,9 @@
               <div slot="header" class="clearfix">
                 <span class="header-attr">文章标签</span>
               </div>
-              <!-- 标签选择 -->
-              <tag />
+              <div v-for="item in tags" class="tag-content">
+                <tag  :size-val="size" :content="item" :is-check="true" @check="check"  @nocheck="nocheck" />
+              </div>
             </el-card>
           </div>
         </el-col>
@@ -85,9 +86,11 @@
 <script>
 import { mavonEditor } from "mavon-editor";
 import "mavon-editor/dist/css/index.css";
-import cover from "../components/cover/index";
-import category from "../components/category/index";
-import tag from "../components/tag/index";
+import cover from "@/components/cover/index";
+import category from "@/components/Tree/index";
+import tag from '@/components/Tag/index'
+import crud from "@/api/crud";
+const wtuCrud = crud.factory("wtu");
 
 export default {
   name: "Markdown",
@@ -108,10 +111,28 @@ export default {
       article: {
         title: "",
         abstract: ""
-      }
+      },
+      // 选中的标签
+      checks: [],
+      // 所有标签
+      tags:[],
+      // 所有分类
+      categorys: []
     };
   },
-  created() {},
+  created() {
+    // 获取标签
+    wtuCrud
+    .get("listTag", {
+      order:{ id: 'desc', created_at: 'asc' },
+      where: {created_at:{ op: '!=', va: '', ex: 'cp' }}
+    })
+    .then(res => {
+      if (res.status === 200) {
+        this.tags = res.data;
+      }
+    });
+  },
   methods: {
     // 将图片上传到服务器，返回地址替换到md中
     $imgAdd(pos, $file) {
@@ -135,6 +156,28 @@ export default {
       console.log(this.content);
       console.log(this.html);
       this.$message.success("提交成功！");
+    },
+
+    // 标签选中事件
+    check(data){
+      this.checks.push(data);
+    },
+    // 取消选中事件
+    nocheck(data){
+      let index = null;
+      for (let i = 0; i < this.checks.length; i++) {
+        if (this.checks[i] === data){
+          index = i;
+        }
+      }
+      this.checks.splice(index, 1);
+    },
+
+    // 选中分类树
+    handchecked(data){
+      console.log(data);
+      this.categorys = data.checkedKeys.concat(data.halfCheckedKeys);
+      console.log(this.categorys)
     }
   }
 };
@@ -185,5 +228,9 @@ export default {
 }
 .clearfix {
   text-align: center;
+}
+
+.tag-content {
+  float:left; margin:6px;
 }
 </style>

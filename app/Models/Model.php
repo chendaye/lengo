@@ -36,9 +36,25 @@ class Model extends BaseModel
      * @return void
      * @author chendaye
      */
-    public function detail($where)
+    public function detail($where = [], $order = ['id' => 'desc'])
     {
-        $data = $this->conditions($where)->first();
+        $query = $this->conditions($where);
+        $data = $query->first();
+        return $data;
+    }
+
+    /**
+     * 所有记录
+     *
+     * @param array $where
+     * @return void
+     * @author chendaye
+     */
+    public function lists($where, $order = [])
+    {
+        $query = $this->conditions($where);
+        $query = $this->sort($order, $query);
+        $data = $query->get();
         return $data;
     }
 

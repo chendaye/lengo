@@ -1,16 +1,14 @@
 <template>
   <el-row :gutter="10" class="app-container">
-    <el-col :span="24">
-      <el-col :span="6">
-        <tree />
-      </el-col>
-      <el-col :span="18" /></el-col>
+    <el-col :span="16">
+        <tree :is-create="true" :is-drag="true" :is-filter="true" />
+    </el-col>
   </el-row>
 </template>
 
 <script>
 import crud from '@/api/crud';
-import tree from '../components/Tree/index';
+import tree from '@/components/Tree/index';
 
 export default {
   components: {
@@ -49,5 +47,8 @@ export default {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
+}
+.app-container {
+  /* background-color: rgb(92, 168, 73) */
 }
 </style>

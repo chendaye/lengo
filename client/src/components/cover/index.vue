@@ -28,7 +28,7 @@ export default {
   },
   data: function() {
     return {
-      defaultSrc: require('../../../../../assets/logo.jpg'),
+      defaultSrc: require('@/assets/logo.jpg'),
       fileList: [],
       imgSrc: '',
       cropImg: '',

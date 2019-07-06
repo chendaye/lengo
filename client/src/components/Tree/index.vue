@@ -1,12 +1,12 @@
 <template>
   <div>
-    <el-row :gutter="5">
+    <el-row :gutter="5" v-if="isFilter">
       <el-col :span="12">
         <div class="grid-content bg-purple">
           <el-button plain type="success" icon="el-icon-edit" @click="addRoot">新建根分类</el-button>
         </div>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="12" >
         <div class="grid-content bg-purple">
           <el-input v-model="filterText" placeholder="输入关键字" />
         </div>
@@ -16,19 +16,21 @@
     <el-tree
       v-if="treeData.length > 0"
       ref="tree"
-      class="filter-tree"
+      class="filter-tree background"
       :props="mapProps"
       :filter-node-method="filterNode"
       :data="treeData"
       node-key="id"
-      draggable
+      :draggable="isDrag"
+      :show-checkbox="isCheck"
       :allow-drop="allowDrop"
       :allow-drag="allowDrag"
       @node-drop="handleDrop"
+      @check="handChecked"
     >
-      <span slot-scope="{ node, data }" class="custom-tree-node">
+      <span slot-scope="{ node, data }" class="custom-tree-node" >
         <span><b class="node-font">{{ node.label }}</b></span>
-        <span>
+        <span v-if="isCreate">
           <el-tooltip class="item" effect="dark" content="添加" placement="top">
             <i class="el-icon-circle-plus" @click.stop="() => addSon(data)" />
           </el-tooltip>
@@ -77,6 +79,25 @@ const wtuCrud = crud.factory("wtu");
 import { mapGetters } from "vuex";
 
 export default {
+  name: 'Tree',
+  props:{
+    isCreate: {
+      type: Boolean,
+      default: false
+    },
+    isCheck: {
+      type: Boolean,
+      default: false
+    },
+    isDrag: {
+      type: Boolean,
+      default: false
+    },
+    isFilter: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       filterText: "",
@@ -353,6 +374,14 @@ export default {
     allowDrag(draggingNode) {
       return true;
       // return draggingNode.data.desc.indexOf('三级 3-2-2') === -1;
+    },
+    /**
+     * data 当前选中的节点
+     * check 包含 checkedNodes、checkedKeys 勾选状态的 key 和 node
+     * halfCheckedNodes、halfCheckedKeys 半勾选状态的 key 和 node
+     */
+    handChecked(data, check){
+      this.$emit('handchecked', {current: data, check: check});
     }
   }
 };
@@ -366,10 +395,13 @@ export default {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
-  background-color: rgb(190, 218, 186)
+  /* background-color:navy */
 }
 .node-font{
   font-style: italic;
-  font-size: 14px
+  font-size: 14px;
+}
+.background {
+  /* background-color:rgb(92, 168, 73) */
 }
 </style>

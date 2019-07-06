@@ -2,13 +2,13 @@
   <div>
     <el-button
       :style="{'background-color': colorVal}"
-      class="tag"
-      plain
       round
+      type="info"
+      class="tag"
       :icon="icon"
       :size="size[sizeVal]"
       @click="check"
-    >{{ tag.tag }}</el-button>
+    >{{ content.tag }}[{{ content.count }}]</el-button>
   </div>
 </template>
 
@@ -24,10 +24,18 @@ export default {
       type: String,
       default: "mini"
     },
-    idVal: {
+    content: {
       // 标签id
-      type: Number,
+      type: Object,
       required: true
+    },
+    isSearch: {
+      type: Boolean,
+      default: false
+    },
+    isCheck: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -38,7 +46,6 @@ export default {
         mini: "mini"
       },
       color: [
-        "antiquewhite",
         "blue",
         "brown",
         "burlywood",
@@ -50,13 +57,15 @@ export default {
         "forestgreen",
         "goldenrod",
         "greenyellow",
-        "lavenderblush",
-        "lightsalmon",
-        "lightyellow",
-        "mistyrose"
+        "crimson",
+        "darkred",
+        "olive",
+        "orange",
+        "saddlebrown",
       ],
       tag: {},
-      icon: null
+      icon: null,
+      tagId: null
     };
   },
   computed: {
@@ -69,22 +78,46 @@ export default {
   },
   created() {},
   mounted: function() {
+    // 页面渲染完之后，再执行
     this.$nextTick(function() {
-      wtuCrud
-        .get("detailTag", { where: { op: "id", va: this.idVal, ex: "=" }})
-        .then(res => {
-          if (res.status === 200) {
-            this.tag = res.data;
-          }
-        });
+      // 获取标签detail
+      // wtuCrud
+      //   .get("detailTag", { where: { op: "id", va: this.idVal, ex: "cp" }})
+      //   .then(res => {
+      //     if (res.status === 200) {
+      //       this.tag = res.data;
+      //     }
+      //   });
     });
   },
   methods: {
     check() {
       if (this.icon === null) {
+        // 选中
         this.icon = "el-icon-star-on";
+        this.tagId = this.content.id;
+        this.content.count++;
+        if(this.isSearch){
+          // 触发搜索
+          this.$emit('search', this.tagId);
+        }
+        if(this.isCheck){
+          // 触发选中
+          this.$emit('check', this.tagId);
+        }
       } else {
+        // 取消选中
+        if(this.isSearch){
+          // 取消搜索
+          this.$emit('nosearch', this.tagId);
+        }
+        if(this.isCheck){
+          // 取消选中
+          this.$emit('nocheck', this.tagId);
+        }
         this.icon = null;
+        this.tagId = null;
+        this.content.count--;
       }
     }
   }
@@ -92,7 +125,8 @@ export default {
 </script>
 
 <style scope>
+
 .tag {
-  /* background-color:mistyrose */
+  /* background-color:saddlebrown */
 }
 </style>

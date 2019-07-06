@@ -58,6 +58,8 @@ $api->version('v1', function ($api) {
                 $api->get('indexTag', 'TagController@index');
                 // 获取标签详情
                 $api->get('detailTag', 'TagController@detail');
+                // 获取所有标签列表
+                $api->get('listTag', 'TagController@list');
                 // 更新标签
                 $api->post('updateTag', 'TagController@update');
                 // 删除标签
