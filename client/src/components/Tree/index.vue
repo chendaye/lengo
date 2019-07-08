@@ -1,12 +1,12 @@
 <template>
   <div>
-    <el-row :gutter="5" v-if="isFilter">
+    <el-row v-if="isFilter" :gutter="5">
       <el-col :span="12">
         <div class="grid-content bg-purple">
           <el-button plain type="success" icon="el-icon-edit" @click="addRoot">新建根分类</el-button>
         </div>
       </el-col>
-      <el-col :span="12" >
+      <el-col :span="12">
         <div class="grid-content bg-purple">
           <el-input v-model="filterText" placeholder="输入关键字" />
         </div>
@@ -28,7 +28,7 @@
       @node-drop="handleDrop"
       @check="handChecked"
     >
-      <span slot-scope="{ node, data }" class="custom-tree-node" >
+      <span slot-scope="{ node, data }" class="custom-tree-node">
         <span><b class="node-font">{{ node.label }}</b></span>
         <span v-if="isCreate">
           <el-tooltip class="item" effect="dark" content="添加" placement="top">
@@ -80,7 +80,7 @@ import { mapGetters } from "vuex";
 
 export default {
   name: 'Tree',
-  props:{
+  props: {
     isCreate: {
       type: Boolean,
       default: false
@@ -380,8 +380,8 @@ export default {
      * check 包含 checkedNodes、checkedKeys 勾选状态的 key 和 node
      * halfCheckedNodes、halfCheckedKeys 半勾选状态的 key 和 node
      */
-    handChecked(data, check){
-      this.$emit('handchecked', {current: data, check: check});
+    handChecked(data, check) {
+      this.$emit('handchecked', { current: data, check: check });
     }
   }
 };

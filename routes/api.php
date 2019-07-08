@@ -73,6 +73,9 @@ $api->version('v1', function ($api) {
                 $api->post('updateCategory', 'CategoryController@update');
                 // 删除分类
                 $api->post('delCategory', 'CategoryController@delete');
+
+                // 上传文章封面
+                $api->post('cover', 'ArticleController@cover');
             });
         });
     });

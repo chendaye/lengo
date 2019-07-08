@@ -52,7 +52,7 @@
                 <span class="header-attr">文章标签</span>
               </div>
               <div v-for="item in tags" class="tag-content">
-                <tag  :size-val="size" :content="item" :is-check="true" @check="check"  @nocheck="nocheck" />
+                <tag :size-val="size" :content="item" :is-check="true" @check="check" @nocheck="nocheck" />
               </div>
             </el-card>
           </div>
@@ -106,6 +106,8 @@ export default {
       content: "",
       html: "",
       configs: {},
+      // 标签尺寸
+      size: 'mini',
 
       // 文章
       article: {
@@ -115,7 +117,7 @@ export default {
       // 选中的标签
       checks: [],
       // 所有标签
-      tags:[],
+      tags: [],
       // 所有分类
       categorys: []
     };
@@ -123,15 +125,15 @@ export default {
   created() {
     // 获取标签
     wtuCrud
-    .get("listTag", {
-      order:{ id: 'desc', created_at: 'asc' },
-      where: {created_at:{ op: '!=', va: '', ex: 'cp' }}
-    })
-    .then(res => {
-      if (res.status === 200) {
-        this.tags = res.data;
-      }
-    });
+      .get("listTag", {
+        order: { id: 'desc', created_at: 'asc' },
+        where: { created_at: { op: '!=', va: '', ex: 'cp' }}
+      })
+      .then(res => {
+        if (res.status === 200) {
+          this.tags = res.data;
+        }
+      });
   },
   methods: {
     // 将图片上传到服务器，返回地址替换到md中
@@ -159,14 +161,14 @@ export default {
     },
 
     // 标签选中事件
-    check(data){
+    check(data) {
       this.checks.push(data);
     },
     // 取消选中事件
-    nocheck(data){
+    nocheck(data) {
       let index = null;
       for (let i = 0; i < this.checks.length; i++) {
-        if (this.checks[i] === data){
+        if (this.checks[i] === data) {
           index = i;
         }
       }
@@ -174,10 +176,16 @@ export default {
     },
 
     // 选中分类树
-    handchecked(data){
-      console.log(data);
-      this.categorys = data.checkedKeys.concat(data.halfCheckedKeys);
-      console.log(this.categorys)
+    handchecked(data) {
+      // 半选和全选都存入数据库
+      if (data.check.checkedKeys.length > 0) {
+        this.categorys = data.check.checkedKeys.concat(data.check.halfCheckedKeys);
+      } else {
+        this.$notify.error({
+          title: "错误",
+          message: "选择出错！"
+        });
+      }
     }
   }
 };
