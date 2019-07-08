@@ -37,9 +37,9 @@ class UserController extends AuthController
 
         // 创建用户
         $user->name = $payload['name'];
-        $user->email = $payload[ 'email'];
-        $user->remark = $payload[ 'remark'];
-        $user->avatar = $payload[ 'avatar'];
+        $user->email = $payload['email'];
+        $user->remark = $payload['remark'];
+        $user->avatar = $payload['avatar'];
         $user->password = bcrypt($payload['password']);
         $result = $user->save();
         return $this->success($result);
@@ -56,9 +56,9 @@ class UserController extends AuthController
     {
         $lm = new Lm();
         $tmp = $request->file('avatar');
-        $file = $lm->up((string)$tmp);
+        $file = $lm->up((string) $tmp);
         $file['url'] = $lm->url($file['group_name'], $file['filename']);
-
+        unlink($tmp); // 删除文件
         return $this->response->array($file);
     }
 }

@@ -30,7 +30,7 @@
                 <span class="header-attr">文章封面</span>
               </div>
               <!-- 封面图片上传 -->
-              <cover />
+              <cover @upcover="upcover" />
             </el-card>
           </div>
         </el-col>
@@ -51,7 +51,7 @@
               <div slot="header" class="clearfix">
                 <span class="header-attr">文章标签</span>
               </div>
-              <div v-for="item in tags" class="tag-content">
+              <div v-for="item in tags" :key="item.id" class="tag-content">
                 <tag :size-val="size" :content="item" :is-check="true" @check="check" @nocheck="nocheck" />
               </div>
             </el-card>
@@ -119,7 +119,9 @@ export default {
       // 所有标签
       tags: [],
       // 所有分类
-      categorys: []
+      categorys: [],
+      // 上传的封面
+      coverImg: ''
     };
   },
   created() {
@@ -186,7 +188,14 @@ export default {
           message: "选择出错！"
         });
       }
+    },
+
+    // 封面上传
+    upcover(data) {
+      this.coverImg = data.url;
+      console.log(data);
     }
+
   }
 };
 </script>

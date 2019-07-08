@@ -1,7 +1,10 @@
 <template>
   <div>
-    <div class="cover" @click="dialogVisible = true">
-      <i class="el-icon-plus avatar-uploader-icon"/>
+    <div v-if="modelSrc === null" class="cover" @click="dialogVisible = true">
+      <i class="el-icon-plus avatar-uploader-icon" />
+    </div>
+    <div v-else>
+      <img width="100%" :src="modelSrc" alt="" @click="dialogVisible = true">
     </div>
 
     <el-dialog title="裁剪图片" :visible.sync="dialogVisible" width="50%">
@@ -42,7 +45,10 @@
       </div>
       <!-- 操作按钮 -->
       <div class="test-button">
-        <label class="btn" for="uploads">选择图片</label>
+        <el-button type="primary" plain for="uploads">
+          <label for="uploads">选择图片</label>
+        </el-button>
+
         <input
           id="uploads"
           type="file"
@@ -50,29 +56,29 @@
           accept="image/png, image/jpeg, image/gif, image/jpg"
           @change="uploadImg($event)"
         >
-        <button v-if="!crap" class="btn" @click="startCrop">start</button>
-        <button v-else class="btn" @click="stopCrop">stop</button>
+        <el-button type="success" plain @click="upToServer('base64')">上传封面</el-button>
+        <el-button type="warning" plain @click="changeScale(1)">放大</el-button>
+        <el-button type="warning" plain @click="changeScale(-1)">缩小</el-button>
+        <el-button type="info" plain @click="refreshAndclear()">刷新</el-button>
+        <!-- <button class="btn" @click="upToServer('blob')">上传blob</button>
         <button class="btn" @click="clearCrop">clear</button>
         <button class="btn" @click="refreshCrop">刷新</button>
-        <button class="btn" @click="changeScale(1)">+</button>
-        <button class="btn" @click="changeScale(-1)">-</button>
         <button class="btn" @click="rotateLeft">左旋</button>
-        <button class="btn" @click="rotateRight">右旋</button>
+        <button class="btn" @click="rotateRight">右旋</button> -->
+        <!-- <button v-if="!crap" class="btn" @click="startCrop">start</button>
+        <button v-else class="btn" @click="stopCrop">stop</button>
         <button class="btn" @click="finish('base64')">预览(base64)</button>
         <button class="btn" @click="finish('blob')">预览(blob)</button>
-        <button class="btn" @click="upToServer('blob')">上传</button>
         <a v-show="false" class="btn" @click="down('base64')">下载(base64)</a>
-        <a v-show="false" class="btn" @click="down('blob')">下载(blob)</a>
+        <a v-show="false" class="btn" @click="down('blob')">下载(blob)</a> -->
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-      </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+// import mimes from '../ImageCropper/utils/mimes.js'
+// import data2blob from '../ImageCropper/utils/data2blob.js'
 import crud from "@/api/crud";
 const wtuCrud = crud.factory("wtu");
 import { VueCropper } from "vue-cropper";
@@ -85,19 +91,11 @@ export default {
     return {
       dialogVisible: false,
       model: false,
-      modelSrc: "",
+      modelSrc: null,
       crap: false,
       previews: {},
-      lists: [
-        {
-          img: "https://qn-qn-kibey-static-cdn.app-echo.com/goodboy-weixin.PNG"
-        },
-        {
-          img: "https://avatars2.githubusercontent.com/u/15681693?s=460&v=4"
-        }
-      ],
       option: {
-        img: "https://qn-qn-kibey-static-cdn.app-echo.com/goodboy-weixin.PNG",
+        img: '',
         size: 1,
         full: false, // 是否输出原图比例的截图
         outputType: "png", // 输出图片格式 jpeg  png webp
@@ -116,12 +114,18 @@ export default {
     };
   },
   computed: {
-    url: function() {
-      return process.env.VUE_APP_BASE_API + "/admin/rbac/avatar";
-    }
+    // url: function() {
+    //   return process.env.VUE_APP_BASE_API + "/admin/rbac/avatar";
+    // }
+  },
+  created() {
+
   },
   mounted: function() {
-    // console.log(window['vue-cropper'])
+    this.$nextTick(function() {
+      // 开启截图
+      // this.$refs.cropper.startCrop();
+    })
   },
   methods: {
     startCrop() {
@@ -141,6 +145,11 @@ export default {
     refreshCrop() {
       // clear
       this.$refs.cropper.refresh();
+    },
+    // 清楚并且刷新
+    refreshAndclear() {
+      this.clearCrop();
+      this.refreshCrop();
     },
     changeScale(num) {
       num = num || 1;
@@ -206,6 +215,8 @@ export default {
         });
         return false;
       }
+      // 开始截图
+      this.$refs.cropper.startCrop();
       /**
        * | readAsArrayBuffer(file) | 按字节读取文件内容，结果用ArrayBuffer对象表示 |
         | readAsBinaryString(file) | 按字节读取文件内容，结果为文件的二进制串 |
@@ -235,9 +246,9 @@ export default {
       };
 
       // todo：读取文件内容并且转化为base64
-      reader.readAsDataURL(file);
-      // 转化为blob
-      // reader.readAsArrayBuffer(file);
+      // reader.readAsDataURL(file);
+      // todo: 转化为blob
+      reader.readAsArrayBuffer(file);
     },
 
     /**
@@ -249,23 +260,53 @@ export default {
           var img = window.URL.createObjectURL(data);
           const fmData = new FormData();
           fmData.append("cover", img);
-          console.log("formData", fmData.get("cover"));
-
           wtuCrud.post("cover", fmData).then(res => {
-            console.log(res);
+            if (res.status === 200) {
+              this.modelSrc = res.data.data.url;
+              this.$notify({
+                title: 'Success',
+                message: '封面上传成功！',
+                type: 'success',
+                duration: 2000
+              });
+              this.dialogVisible = false;
+              // 父组件回调
+              this.$emit('upcover', res.data.data);
+            } else {
+              this.$notify.error({
+                title: "错误",
+                message: "上传失败！"
+              });
+            }
           });
         });
       } else {
         this.$refs.cropper.getCropData(data => {
           const fmData = new FormData();
           fmData.append("cover", data);
-          console.log("formData", fmData.get("cover"));
           wtuCrud.post("cover", fmData).then(res => {
-            console.log(res);
+            if (res.status === 200) {
+              this.modelSrc = res.data.data.url;
+              this.$notify({
+                title: 'Success',
+                message: '封面上传成功！',
+                type: 'success',
+                duration: 2000
+              });
+              this.dialogVisible = false;
+              // 父组件回调
+              this.$emit('upcover', res.data.data);
+            } else {
+              this.$notify.error({
+                title: "错误",
+                message: "上传失败！"
+              });
+            }
           });
         });
       }
     },
+
     // 上传图片的回调函数 返回结果success, error
     imgLoad(msg) {
       console.log(msg);

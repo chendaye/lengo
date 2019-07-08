@@ -11,7 +11,7 @@ class ArticleController extends AuthController
 {
 
     /**
-     * 封面上传
+     * å°�é�¢ä¸Šä¼ 
      *
      * @param Request $request
      * @return array
@@ -20,10 +20,48 @@ class ArticleController extends AuthController
     public function cover(Request $request)
     {
         $lm = new Lm();
-        // $tmp = $request->file('avatar');
-        // $file = $lm->up((string) $tmp);
-        // $file['url'] = $lm->url($file['group_name'], $file['filename']);
+        $tmp = $request->input('cover');
+        $path = $this->base64ToPic($tmp);
+        if ($path) {
+            $file = $lm->up($path);
+            $file['url'] = $lm->url($file['group_name'], $file['filename']);
+            unlink($path); // 删除文件
+            return $this->success($file);
+        } else {
+            return $this->error('封面上传失败！');
+        }
+    }
 
-        return $this->response->array($request->input('cover'));
+    /**
+     * base64 生成图片
+     *
+     * @param [type] $data
+     * @return string
+     * @author chendaye
+     */
+    public function base64ToPic($data)
+    {
+        // 取base64 编码  cover: data:image/png;base64,iVBORw...
+        if (strstr($data, ",")) {
+            $image = explode(',', $data);
+            $image = $image[1];
+        }
+
+        // 获取图片后缀
+        if (strstr( $data, ";")) {
+            $ext = explode(';', $data);
+            $ext = explode('/', $ext[0]);
+            $ext = $ext[1];
+        }
+
+        $imageName = date("His", time()) . "_" . time() . '.' . $ext;
+
+        $imageSrc = "/tmp/" . $imageName; //图片名字
+        $r = file_put_contents($imageSrc, base64_decode($image)); //返回的是字节数
+        if (!$r) {
+            return false;
+        } else {
+            return $imageSrc;
+        }
     }
 }

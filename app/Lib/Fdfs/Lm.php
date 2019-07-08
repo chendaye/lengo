@@ -1,4 +1,5 @@
 <?php
+
 namespace Lib\Fdfs;
 
 /**
@@ -122,6 +123,20 @@ class Lm extends \FastDFS
 
         $storage['sock'] = $server['sock'];
         $file = $this->storage_upload_by_filename($filename, $ext, $meta, $group, $tracker, $storage);
+        if ($file) {
+            return $file ?? $this->error();
+        }
+    }
+
+    public function upBuff($buff, string $ext = null, array $meta = [], string $group = null, array $tracker = [], array $storage = [])
+    {
+        if (!$buff) return false;
+        $tracker = empty($tracker) ? $this->tracker_get_connection() : $tracker;
+        $storage =  empty($storage) ? $this->tracker_query_storage_store() : $storage;
+        $server = $this->connect_server($storage['ip_addr'], $storage['port']);
+
+        $storage['sock'] = $server['sock'];
+        $file = $this->storage_upload_by_filebuff($buff, $ext, $meta, $group, $tracker, $storage);
         if ($file) {
             return $file ?? $this->error();
         }
