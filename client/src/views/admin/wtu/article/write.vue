@@ -156,7 +156,7 @@ export default {
 
     // 封面上传
     upcover(data) {
-      this.coverImg = data.url;
+      this.coverImg = data;
       console.log(data);
     },
 
