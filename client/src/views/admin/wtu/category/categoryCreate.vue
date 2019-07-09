@@ -1,13 +1,12 @@
 <template>
   <el-row :gutter="10" class="app-container">
     <el-col :span="16">
-        <tree :is-create="true" :is-drag="true" :is-filter="true" />
+      <tree :is-create="true" :is-drag="true" :is-root="true" />
     </el-col>
   </el-row>
 </template>
 
 <script>
-import crud from '@/api/crud';
 import tree from '@/components/Tree/index';
 
 export default {

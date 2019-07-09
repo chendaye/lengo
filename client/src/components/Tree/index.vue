@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row v-if="isFilter" :gutter="5">
+    <el-row v-if="isRoot" :gutter="5">
       <el-col :span="12">
         <div class="grid-content bg-purple">
           <el-button plain type="success" icon="el-icon-edit" @click="addRoot">新建根分类</el-button>
@@ -8,7 +8,15 @@
       </el-col>
       <el-col :span="12">
         <div class="grid-content bg-purple">
-          <el-input v-model="filterText" placeholder="输入关键字" />
+          <el-input v-model="filterText"  placeholder="输入关键字" />
+        </div>
+      </el-col>
+    </el-row>
+
+    <el-row v-if="isFilter" :gutter="5">
+      <el-col :span="24">
+        <div class="grid-content bg-purple">
+          <el-input v-model="filterText" size="mini" placeholder="输入关键字" />
         </div>
       </el-col>
     </el-row>
@@ -94,6 +102,10 @@ export default {
       default: false
     },
     isFilter: {
+      type: Boolean,
+      default: false
+    },
+    isRoot: {
       type: Boolean,
       default: false
     }

@@ -15,7 +15,11 @@ User::create(['name' => 'chendaye666','email'=>'chendaye666@gmail.com','mobile' 
 && /usr/bin/fdfs_monitor /etc/fdfs/storage.conf \
 && /usr/bin/fdfs_upload_file /etc/fdfs/client.conf /usr/bin/fdfs_upload_file
 
+
+
 VOLUME /etc/fdfs
 VOLUME /home/dfs
 docker-compose build fastdfs
+
+解决：备份data改名 ， 重新build， 删掉新的data 恢复原data
 ```

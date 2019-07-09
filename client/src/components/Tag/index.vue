@@ -61,7 +61,7 @@ export default {
         "darkred",
         "olive",
         "orange",
-        "saddlebrown",
+        "saddlebrown"
       ],
       tag: {},
       icon: null,
@@ -97,21 +97,21 @@ export default {
         this.icon = "el-icon-star-on";
         this.tagId = this.content.id;
         this.content.count++;
-        if(this.isSearch){
+        if (this.isSearch) {
           // 触发搜索
           this.$emit('search', this.tagId);
         }
-        if(this.isCheck){
+        if (this.isCheck) {
           // 触发选中
           this.$emit('check', this.tagId);
         }
       } else {
         // 取消选中
-        if(this.isSearch){
+        if (this.isSearch) {
           // 取消搜索
           this.$emit('nosearch', this.tagId);
         }
-        if(this.isCheck){
+        if (this.isCheck) {
           // 取消选中
           this.$emit('nocheck', this.tagId);
         }

@@ -41,7 +41,7 @@
                 <span class="header-attr">文章分类</span>
               </div>
               <!-- 分类选择 -->
-              <category :is-check="true" @handchecked="handchecked" />
+              <category :is-check="true" :is-filter="true" @handchecked="handchecked" />
             </el-card>
           </div>
         </el-col>
@@ -51,9 +51,7 @@
               <div slot="header" class="clearfix">
                 <span class="header-attr">文章标签</span>
               </div>
-              <div v-for="item in tags" :key="item.id" class="tag-content">
-                <tag :size-val="size" :content="item" :is-check="true" @check="check" @nocheck="nocheck" />
-              </div>
+              <tag @check="check" @nocheck="nocheck" />
             </el-card>
           </div>
         </el-col>
@@ -88,7 +86,7 @@ import { mavonEditor } from "mavon-editor";
 import "mavon-editor/dist/css/index.css";
 import cover from "@/components/cover/index";
 import category from "@/components/Tree/index";
-import tag from '@/components/Tag/index'
+import tag from '@/components/Tag/tagFilter'
 import crud from "@/api/crud";
 const wtuCrud = crud.factory("wtu");
 
@@ -106,36 +104,18 @@ export default {
       content: "",
       html: "",
       configs: {},
-      // 标签尺寸
-      size: 'mini',
-
       // 文章
       article: {
         title: "",
         abstract: ""
       },
-      // 选中的标签
-      checks: [],
-      // 所有标签
-      tags: [],
       // 所有分类
       categorys: [],
       // 上传的封面
-      coverImg: ''
+      coverImg: '',
+      // 选中的标签
+      checks: [],
     };
-  },
-  created() {
-    // 获取标签
-    wtuCrud
-      .get("listTag", {
-        order: { id: 'desc', created_at: 'asc' },
-        where: { created_at: { op: '!=', va: '', ex: 'cp' }}
-      })
-      .then(res => {
-        if (res.status === 200) {
-          this.tags = res.data;
-        }
-      });
   },
   methods: {
     // 将图片上传到服务器，返回地址替换到md中
@@ -161,22 +141,6 @@ export default {
       console.log(this.html);
       this.$message.success("提交成功！");
     },
-
-    // 标签选中事件
-    check(data) {
-      this.checks.push(data);
-    },
-    // 取消选中事件
-    nocheck(data) {
-      let index = null;
-      for (let i = 0; i < this.checks.length; i++) {
-        if (this.checks[i] === data) {
-          index = i;
-        }
-      }
-      this.checks.splice(index, 1);
-    },
-
     // 选中分类树
     handchecked(data) {
       // 半选和全选都存入数据库
@@ -194,6 +158,23 @@ export default {
     upcover(data) {
       this.coverImg = data.url;
       console.log(data);
+    },
+
+    // 标签选中事件
+    check(data) {
+      this.checks.push(data);
+      console.log(this.checks)
+    },
+    // 取消选中事件
+    nocheck(data) {
+      let index = null;
+      for (let i = 0; i < this.checks.length; i++) {
+        if (this.checks[i] === data) {
+          index = i;
+        }
+      }
+      this.checks.splice(index, 1);
+      console.log(this.checks)
     }
 
   }
@@ -245,9 +226,5 @@ export default {
 }
 .clearfix {
   text-align: center;
-}
-
-.tag-content {
-  float:left; margin:6px;
 }
 </style>

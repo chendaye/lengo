@@ -110,7 +110,7 @@ export function param2Obj(url) {
 }
 
 /**
- * 获取列表中指定元素的索引值
+ * 根据ID获取列表中指定元素的索引值
  * @param {*} list
  * @param {*} id
  * @param {*} field
@@ -149,5 +149,29 @@ export const deleteItem = (list, id, field = 'id') => {
   const index = getIndexByID(list, id, field);
   if (index >= 0) {
     return list.splice(index, 1);
+  }
+};
+
+/**
+ * 通过指定字段 把数组某一个元素移动到数组最前面或者最后面
+ * @param {array} list
+ * @param {int} id
+ * @param {bool} up
+ * @param {string} field
+ */
+export const bubbleItem = (list, id, up = true, field = 'id') => {
+  const index = getIndexByID(list, id, field); // 找到元素对应的索引
+
+  if (index >= 0) {
+    const tmp = list[index]; // 暂存元素
+    // 删除元素
+    list.splice(index, 1);
+    if (up) {
+      // 通过id找到指定的元素，移到数组最前面
+      return list.unshift(tmp);
+    } else {
+      // 通过id找到指定的元素，移到数组最后面
+      return list.push(tmp);
+    }
   }
 };
