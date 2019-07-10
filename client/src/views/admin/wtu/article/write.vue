@@ -221,8 +221,8 @@ export default {
 
     // 检查标题是否重复
     title(data) {
-      wtuCrud.post('title', { title: this.article.title }).then(res => {
-        if (res.status && res.data) {
+      wtuCrud.get('title', { title: this.article.title }).then(res => {
+        if (res.status && res.data.data) {
           this.$message({
             message: '标题重复！',
             type: 'warning'

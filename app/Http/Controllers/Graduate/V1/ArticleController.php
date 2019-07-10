@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Validator;
 use Lib\Fdfs\Lm;
 use App\Models\Article;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends AuthController
 {
@@ -113,30 +114,44 @@ class ArticleController extends AuthController
             'content' => $data['markdown'],
             'html' => $data['html'],
             'draft' => $data['draft'],
+            'user_id' => Auth::guard('api')->id()
         ];
-
         // 保存文章
-        if($this->model->where('title', '=', $article['title'])->exists()) return $this->error('文章标题重复！');
-
+        if ($this->model->where('title', '=', $article['title'])->exists()) return $this->error('文章标题重复！');
         // 不存在就插入
-        $articleId = $this->model->add($article);
-        return $this->success($articleId);
-
-        $tags = $data['tags'];
-        $category = $data['category'];
-        return $this->success($article);
-       
+        $articleInfo = $this->model->add($article);
+        if (!$articleInfo) return $this->error('文章保存失败！');
+        $articleId = $articleInfo['id'];
+        // 保存文章标签
+        $articleModel = Article::find($articleId); // 获取要关联的文章
+        foreach ($data['tags'] as $val) {
+            try {
+                $articleModel->tags()->attach($val);
+            } catch (\Expectation $e) {
+                return $this->error($e->getMessage());
+            }
+        }
+        // 保存文章分类
+        foreach ($data['category'] as $val) {
+            try {
+                $articleModel->categorys()->attach($val);
+            } catch (\Expectation $e) {
+                return $this->error($e->getMessage());
+            }
+        }
+        // 返回文章信息
+        return $this->success($articleInfo);
     }
 
     /**
      * 检查标题是否重复
      */
-    public function title(Request $request)
+    public function checkTitle(Request $request)
     {
         $title = $request->input('title');
-        if ($this->model->where('title', '=', $title)->exists()){
+        if ($this->model->where('title', '=', $title)->exists()) {
             return $this->success(true);
-        }else{
+        } else {
             return $this->success(false);
         }
     }
