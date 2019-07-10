@@ -38,21 +38,25 @@ export default {
       // 标签尺寸
       size: 'mini',
       // 所有标签
-      tags: []
+      tags: [],
+      list: []
     }
   },
   watch: {
     filterText: function(newVal, oldVal) {
-      wtuCrud
-        .get("listTag", {
-          order: { id: 'desc', created_at: 'asc' },
-          where: { tag: { op: 'like', va: '%' + newVal + '%', ex: 'cp' }}
-        })
-        .then(res => {
-          if (res.status === 200) {
-            this.tags = res.data;
-          }
-        });
+      this.tags = this.list.filter(item => {
+        return item.tag.indexOf(newVal) > -1;
+      });
+      // wtuCrud
+      //   .get("listTag", {
+      //     order: { id: 'desc', created_at: 'asc' },
+      //     where: { tag: { op: 'like', va: '%' + newVal + '%', ex: 'cp' }}
+      //   })
+      //   .then(res => {
+      //     if (res.status === 200) {
+      //       this.tags = res.data;
+      //     }
+      //   });
     }
   },
   created() {
@@ -65,6 +69,7 @@ export default {
       .then(res => {
         if (res.status === 200) {
           this.tags = res.data;
+          this.list = res.data;
         }
       });
   },
@@ -88,7 +93,7 @@ export default {
 }
 </script>
 
-<style scope="this api replaced by slot-scope in 2.5.0+">
+<style scope>
   .tag-content {
     float:left; margin:6px;
   }

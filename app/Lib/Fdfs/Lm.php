@@ -38,6 +38,19 @@ class Lm extends \FastDFS
         }
     }
 
+    /**
+     * 生成下载链接
+     *
+     * @param string $group
+     * @param string $fileId
+     * @return string|bool
+     * @author long
+     */
+    public function sortUrl(string $group, string $fileId)
+    {
+        return $group . '/' . $fileId;
+    }
+
 
 
     /**
@@ -123,8 +136,14 @@ class Lm extends \FastDFS
 
         $storage['sock'] = $server['sock'];
         $file = $this->storage_upload_by_filename($filename, $ext, $meta, $group, $tracker, $storage);
-        if ($file) {
-            return $file ?? $this->error();
+
+        if ($file['group_name'] && $file['filename']) {
+            $url = $this->url($file['group_name'], $file['filename']);
+            $file['url'] = $url;
+            $file['sortUrl'] = $this->sortUrl($file['group_name'], $file['filename']);
+            return $file;
+        } else {
+            return false;
         }
     }
 

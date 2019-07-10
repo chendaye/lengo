@@ -6,12 +6,15 @@ use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Http\Request;
 use Validator;
 use Lib\Fdfs\Lm;
+use App\Models\Article;
 
 class ArticleController extends AuthController
 {
+    // 主表类名
+    public $namespace = Article::class;
 
     /**
-     * å°�é�¢ä¸Šä¼ 
+     * 图片上传
      *
      * @param Request $request
      * @return array
@@ -24,12 +27,39 @@ class ArticleController extends AuthController
         $path = $this->base64ToPic($tmp);
         if ($path) {
             $file = $lm->up($path);
-            $file['url'] = $lm->url($file['group_name'], $file['filename']);
             unlink($path); // 删除文件
+            if (!$file) {
+                return $this->error('FastDfs挂了，上传封面失败！');
+            }
             return $this->success($file);
         } else {
-            return $this->error('封面上传失败！');
+            return $this->error('前端上传问题，封面上传失败！');
         }
+    }
+
+
+
+    /**
+     * 上传文中图片
+     *
+     * @param Request $request
+     * @return void
+     * @author chendaye
+     */
+    public function markDownPic(Request $request)
+    {
+        $lm = new Lm();
+        $tmp = $_FILES['file'];
+        if (!$tmp) {
+            return $this->error('markdown上传有误');
+        }
+
+        $file = $lm->up((string) $tmp['tmp_name']);
+        unlink($tmp['tmp_name']); // 删除文件
+        if (!$file) {
+            return $this->error('FastDfs挂了，插图上传失败！');
+        }
+        return $this->response->array($file);
     }
 
     /**
@@ -48,7 +78,7 @@ class ArticleController extends AuthController
         }
 
         // 获取图片后缀
-        if (strstr( $data, ";")) {
+        if (strstr($data, ";")) {
             $ext = explode(';', $data);
             $ext = explode('/', $ext[0]);
             $ext = $ext[1];
@@ -62,6 +92,52 @@ class ArticleController extends AuthController
             return false;
         } else {
             return $imageSrc;
+        }
+    }
+
+    /**
+     * 创建笔记
+     *
+     * @param Request $request
+     * @return array
+     * @author chendaye
+     */
+    public function article(Request $request)
+    {
+        $data = $this->json($request->all());
+        // 文章内容
+        $article = [
+            'title' => $data['title'],
+            'abstract' => $data['abstract'],
+            'cover' => $data['cover']['sortUrl'],
+            'content' => $data['markdown'],
+            'html' => $data['html'],
+            'draft' => $data['draft'],
+        ];
+
+        // 保存文章
+        if($this->model->where('title', '=', $article['title'])->exists()) return $this->error('文章标题重复！');
+
+        // 不存在就插入
+        $articleId = $this->model->add($article);
+        return $this->success($articleId);
+
+        $tags = $data['tags'];
+        $category = $data['category'];
+        return $this->success($article);
+       
+    }
+
+    /**
+     * 检查标题是否重复
+     */
+    public function title(Request $request)
+    {
+        $title = $request->input('title');
+        if ($this->model->where('title', '=', $title)->exists()){
+            return $this->success(true);
+        }else{
+            return $this->success(false);
         }
     }
 }

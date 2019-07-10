@@ -76,6 +76,12 @@ $api->version('v1', function ($api) {
 
                 // 上传文章封面
                 $api->post('cover', 'ArticleController@cover');
+                // 上传插图
+                $api->post( 'markDownPic', 'ArticleController@markDownPic');
+                // 标题是否重复
+                $api->post( 'title', 'ArticleController@title');
+                // 保存文章
+                $api->post( 'article', 'ArticleController@article');
             });
         });
     });

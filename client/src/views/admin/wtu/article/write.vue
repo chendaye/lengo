@@ -7,7 +7,7 @@
       <el-row>
         <el-col :span="24">
           <div class="grid-content bg-purple">
-            <el-input v-model="article.title" placeholder="请输入内容">
+            <el-input v-model="article.title" placeholder="请输入内容" @blur="title">
               <template slot="prepend">文章标题：</template>
             </el-input>
           </div>
@@ -62,19 +62,17 @@
         <mavon-editor
           ref="md"
           v-model="content"
+          :ishljs="true"
           style="min-height: 600px"
           @imgAdd="$imgAdd"
+          @save="$save"
           @change="change"
         />
       </div>
     </el-main>
     <el-footer>
-      <el-button type="success" round plain @click="submit">
+      <el-button type="success" round plain @click="submit(0)">
         上传文章
-        <i class="el-icon-upload el-icon--right" />
-      </el-button>
-      <el-button type="info" round plain @click="submit">
-        上传草稿
         <i class="el-icon-upload el-icon--right" />
       </el-button>
     </el-footer>
@@ -86,7 +84,7 @@ import { mavonEditor } from "mavon-editor";
 import "mavon-editor/dist/css/index.css";
 import cover from "@/components/cover/index";
 import category from "@/components/Tree/index";
-import tag from '@/components/Tag/tagFilter'
+import tag from "@/components/Tag/tagFilter";
 import crud from "@/api/crud";
 const wtuCrud = crud.factory("wtu");
 
@@ -103,7 +101,6 @@ export default {
       // markDown
       content: "",
       html: "",
-      configs: {},
       // 文章
       article: {
         title: "",
@@ -112,9 +109,9 @@ export default {
       // 所有分类
       categorys: [],
       // 上传的封面
-      coverImg: '',
+      coverImg: {},
       // 选中的标签
-      checks: [],
+      checks: []
     };
   },
   methods: {
@@ -122,30 +119,77 @@ export default {
     $imgAdd(pos, $file) {
       var formdata = new FormData();
       formdata.append("file", $file);
-      // 这里没有服务器供大家尝试，可将下面上传接口替换为你自己的服务器接口
-      this.$axios({
-        url: "/common/upload",
-        method: "post",
-        data: formdata,
-        headers: { "Content-Type": "multipart/form-data" }
-      }).then(url => {
-        this.$refs.md.$img2Url(pos, url);
+
+      wtuCrud.post("markDownPic", formdata).then(res => {
+        if (res.status === 200) {
+          this.$refs.md.$img2Url(pos, res.data.url);
+          console.log(res.data.url);
+        }
       });
+    },
+    // 存草稿
+    $save() {
+      this.submit(1);
     },
     change(value, render) {
       // render 为 markdown 解析后的结果
       this.html = render;
     },
-    submit() {
-      console.log(this.content);
-      console.log(this.html);
-      this.$message.success("提交成功！");
+    // 提交文章
+    submit(draft) {
+      if (!this.article.title || !this.article.abstract) {
+        this.$notify.info({
+          title: '消息',
+          message: '请编辑文章标题和摘要！'
+        });
+        return false;
+      } else if (this.content === '' || this.html === '') {
+        this.$notify.info({
+          title: '消息',
+          message: '请编辑文章内容！'
+        });
+        return false;
+      } else if (this.coverImg === {}) {
+        this.$notify.info({
+          title: '消息',
+          message: '请编辑文章内容！'
+        });
+        return false;
+      } else if (this.checks.length === 0) {
+        this.$notify.info({
+          title: '消息',
+          message: '请选择文章标签！'
+        });
+        return false;
+      } else if (this.categorys.length === 0) {
+        this.$notify.info({
+          title: '消息',
+          message: '请选择文章分类！'
+        });
+        return false;
+      } else {
+        wtuCrud.post('article', {
+          markdown: this.content,
+          html: this.html,
+          cover: this.coverImg,
+          tags: this.checks,
+          category: this.categorys,
+          title: this.article.title,
+          abstract: this.article.abstract,
+          draft: draft
+        }).then(res => {
+          console.log(res);
+          this.$message.success("笔记保存成功，开始新的知识之旅吧！");
+        })
+      }
     },
     // 选中分类树
     handchecked(data) {
       // 半选和全选都存入数据库
       if (data.check.checkedKeys.length > 0) {
-        this.categorys = data.check.checkedKeys.concat(data.check.halfCheckedKeys);
+        this.categorys = data.check.checkedKeys.concat(
+          data.check.halfCheckedKeys
+        );
       } else {
         this.$notify.error({
           title: "错误",
@@ -163,7 +207,6 @@ export default {
     // 标签选中事件
     check(data) {
       this.checks.push(data);
-      console.log(this.checks)
     },
     // 取消选中事件
     nocheck(data) {
@@ -174,9 +217,20 @@ export default {
         }
       }
       this.checks.splice(index, 1);
-      console.log(this.checks)
-    }
+    },
 
+    // 检查标题是否重复
+    title(data) {
+      wtuCrud.post('title', { title: this.article.title }).then(res => {
+        if (res.status && res.data) {
+          this.$message({
+            message: '标题重复！',
+            type: 'warning'
+          });
+          this.article.title = '';
+        }
+      });
+    }
   }
 };
 </script>
@@ -222,7 +276,7 @@ export default {
 .header-attr {
   font-size: 18px;
   font-weight: bold;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
 }
 .clearfix {
   text-align: center;

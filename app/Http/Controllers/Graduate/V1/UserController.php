@@ -57,8 +57,10 @@ class UserController extends AuthController
         $lm = new Lm();
         $tmp = $request->file('avatar');
         $file = $lm->up((string) $tmp);
-        $file['url'] = $lm->url($file['group_name'], $file['filename']);
         unlink($tmp); // 删除文件
+        if(! $file){
+            return $this->error( 'FastDfs挂了，上传头像失败');
+        }
         return $this->response->array($file);
     }
 }

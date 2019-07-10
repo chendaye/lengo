@@ -19,6 +19,7 @@ class CreateArticlesTable extends Migration
             $table->text('abstract')->comment('摘要');  // 摘要
             $table->string('cover', 200)->nullable()->comment('封面图片'); // 封面图片
             $table->text('content')->comment('文章内容');  // 文章内容
+            $table->text('html')->comment('文章html内容');  // 文章内容
             $table->integer('view')->default(0)->comment('浏览次数');  // 浏览次数
             $table->integer('comment')->default(0)->comment('评论次数次数');  // 评论次数次数
             $table->integer('user_id')->default(0)->comment('创建人id');

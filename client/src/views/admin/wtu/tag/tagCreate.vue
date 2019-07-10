@@ -90,7 +90,7 @@ import { deleteItem, updateItem } from '@/utils/index';
 const wtuCrud = crud.factory('wtu');
 
 export default {
-  name: 'User',
+  name: 'Tag',
   components: { Pagination },
   directives: { waves },
   data() {
@@ -259,30 +259,6 @@ export default {
 };
 </script>
 
-<style>
-.el-header,
-.el-footer {
-  line-height: 60px;
-}
+<style scope>
 
-.el-aside {
-  line-height: 200px;
-}
-
-.el-main {
-  line-height: 160px;
-}
-
-body > .el-container {
-  margin-bottom: 40px;
-}
-
-.el-container:nth-child(5) .el-aside,
-.el-container:nth-child(6) .el-aside {
-  line-height: 260px;
-}
-
-.el-container:nth-child(7) .el-aside {
-  line-height: 320px;
-}
 </style>

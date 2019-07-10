@@ -38,7 +38,7 @@ export default {
 };
 </script>
 
-<style>
+<style scope>
 .custom-tree-node {
   flex: 1;
   display: flex;

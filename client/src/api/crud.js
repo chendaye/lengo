@@ -16,11 +16,23 @@ export default {
           method: 'post',
           data: data
         });
+      },
+      form: (action, data) => {
+        return request({
+          url: `${clientAdmin}/${module}/${action}`,
+          method: 'post',
+          data: data,
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        });
       }
+
     }
     return {
       get: common.get,
       post: common.post,
+      form: common.form,
       getList: (where = [], page = 1, limit = 10, order = []) => {
         return common.get('index', {
           where: where,
