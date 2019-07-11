@@ -177,16 +177,22 @@ export default {
           cover: this.coverImg,
           tags: this.checks,
           tagsNew: this.checksNew, // 要更新的tag
-          category: this.categorys,
-          categoryNew: this.categorysNew, // 要更新的分类
+          categorys: this.categorys,
+          categorysNew: this.categorysNew, // 要更新的分类
           title: this.article.title,
           abstract: this.article.abstract
         }
         wtuCrud.post('updateArticle', article).then(res => {
-          console.log(res);
-          console.log('更新', article);
-          this.checks = this.checksNew;
-          this.categorys = this.categorysNew;
+          if(res.status === 200){
+            const info = res.data.data;
+            console.log('info', info);
+            // 保存最新的的数据库里的值
+            this.checks = info[0].tagsNew;
+            this.categorys = info[0].categorysNew;
+            console.log('更新成功', this.checks, this.categorys)
+            this.$message.success("笔记更新成功，开始新的知识之旅吧！");
+          }
+
         });
       } else {
         this.$notify.info({
@@ -276,11 +282,6 @@ export default {
             data.check.halfCheckedKeys
           );
         }
-      } else {
-        this.$notify.error({
-          title: "错误",
-          message: "选择出错！"
-        });
       }
     },
 
@@ -320,15 +321,17 @@ export default {
 
     // 检查标题是否重复
     title(data) {
-      wtuCrud.get('title', { title: this.article.title }).then(res => {
+      if(this.articleId === null){
+        wtuCrud.get('title', { title: this.article.title }).then(res => {
         if (res.status && res.data.data) {
-          this.$message({
-            message: '标题重复！',
-            type: 'warning'
-          });
-          this.article.title = '';
-        }
-      });
+            this.$message({
+              message: '标题重复！',
+              type: 'warning'
+            });
+            this.article.title = '';
+          }
+        });
+      }
     }
   }
 };

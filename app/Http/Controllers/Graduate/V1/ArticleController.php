@@ -127,24 +127,14 @@ class ArticleController extends AuthController
         // 保存文章标签
         $articleModel = Article::find($articleId); // 获取要关联的文章
         $tag = new Tag();
-        foreach ($data['tags'] as $val) {
-            try {
-                // 文章标签关联
-                $articleModel->tags()->attach($val);
-                // 标签使用次数
-                $tag->countPlus($val);
-            } catch (\Expectation $e) {
-                return $this->error($e->getMessage());
-            }
+        if ($data['tags']) {
+            // 文章标签关联
+            $articleModel->tags()->attach($data['tags']);
+            // 标签使用次数
+            $tag->countPlus($data['tags']);
         }
         // 保存文章分类
-        foreach ($data['category'] as $val) {
-            try {
-                $articleModel->categorys()->attach($val);
-            } catch (\Expectation $e) {
-                return $this->error($e->getMessage());
-            }
-        }
+        if ($data['category']) $articleModel->categorys()->attach($data['category']);
         // 返回文章信息
         return $this->success(['article' => $articleInfo, 'tag' => $data['tags'], 'category' => $data['category']]);
     }
@@ -170,14 +160,25 @@ class ArticleController extends AuthController
             'user_id' => Auth::guard('api')->id()
         ];
         //更新
-        // $status = $this->model->alert($article, ['id' => $data['id']]);
-        // if(!$status) return $this->error('文章更新失败！');
+        $status = $this->model->where('id', '=', $data['id'])->update($article);
+        if(!$status) return $this->error('文章更新失败！');
 
+        $tagModel = new Tag();
+        $articleModel = Article::find($data['id']);
         // 更新标签
         $tag = $this->differ($data['tagsNew'], $data['tags']);
+        if ($tag['add']){
+            $articleModel->tags()->attach($tag['add']);    // 增加标签关联
+            $tagModel->countPlus($tag['add']);
+        }
+        if ($tag['del']){
+            $articleModel->tags()->detach($tag['del']);  // 删除标签关联
+            $tagModel->countPlus($tag['del'], false);
+        }
         // 更新分类
-        $category = $this->differ($data[ 'categoryNew'],$data[ 'category']);
-
+        $category = $this->differ($data['categorysNew'], $data['categorys']);
+        if ($category['add']) $articleModel->categorys()->attach($category['add']);    // 增加分类关联
+        if ($category['del']) $articleModel->categorys()->detach($category['del']);  // 删除标分类关联
         return $this->success([$data, $tag, $category]);
     }
 
@@ -189,7 +190,7 @@ class ArticleController extends AuthController
      * @return array
      * @author chendaye
      */
-    protected function differ(array $new,array $old)
+    protected function differ(array $new, array $old)
     {
         // 数组交集
         $common = array_intersect($new, $old);

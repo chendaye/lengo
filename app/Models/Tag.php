@@ -22,21 +22,24 @@ class Tag extends Model
     /**
      * 设置标签使用次数
      *
-     * @param integer $tagId
+     * @param integer|array $tagId
      * @param boolean $plus
      * @return void
      * @author chendaye
      */
-    public function countPlus(int $tagId, $plus = true)
-    { 
-        $tag = $this->find($tagId);
-        if($tag){
-            if($plus){
-                $tag->count++;
-            }else{
-                $tag->count--;
+    public function countPlus($tagId, $plus = true)
+    {
+        $tagId = (array)$tagId;
+        foreach ($tagId as $val) {
+            $tag = $this->find($val);
+            if ($tag) {
+                if ($plus) {
+                    $tag->count++;
+                } else {
+                    $tag->count--;
+                }
+                $tag->save();
             }
-            $tag->save();
         }
     }
 }
