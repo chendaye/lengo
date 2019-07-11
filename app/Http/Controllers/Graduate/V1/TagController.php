@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Graduate\V1;
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Http\Request;
 use App\Models\Tag;
+use phpDocumentor\Reflection\Types\Boolean;
 
 class TagController extends AuthController
 {
@@ -17,4 +18,6 @@ class TagController extends AuthController
         $this->del($request);
         //TODO：删除关联
     }
+
+    
 }

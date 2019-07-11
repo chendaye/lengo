@@ -65,14 +65,19 @@
           :ishljs="true"
           style="min-height: 600px"
           @imgAdd="$imgAdd"
+          @imgDel="$imgDel"
           @save="$save"
           @change="change"
         />
       </div>
     </el-main>
     <el-footer>
-      <el-button type="success" round plain @click="submit(0)">
+      <el-button v-if="articleId === null" type="success" round plain @click="submit(0)">
         上传文章
+        <i class="el-icon-upload el-icon--right" />
+      </el-button>
+      <el-button v-else type="success" round plain @click="update()">
+        更新文章
         <i class="el-icon-upload el-icon--right" />
       </el-button>
     </el-footer>
@@ -98,6 +103,8 @@ export default {
   },
   data: function() {
     return {
+      // 文章id
+      articleId: null,
       // markDown
       content: "",
       html: "",
@@ -108,10 +115,18 @@ export default {
       },
       // 所有分类
       categorys: [],
-      // 上传的封面
-      coverImg: {},
+      categorysNew: [], // 上一次保存的 分类
       // 选中的标签
-      checks: []
+      checks: [],
+      checksNew: [], // articleId 非空时有值 上一次选中的 tag
+      // 上传的封面
+      coverImg: {
+        filename: '',
+        group_name: '',
+        sortUrl: '',
+        url: ''
+      }
+
     };
   },
   methods: {
@@ -127,14 +142,60 @@ export default {
         }
       });
     },
+    // 删除图片
+    $imgDel($file) {
+      console.log($file, process.env.VUE_APP_PIC)
+      const sort = $file[0].replace(process.env.VUE_APP_PIC, '');
+      console.log(sort);
+      wtuCrud.post('imgDel', { sort: sort }).then(res => {
+        if (res.data.data) {
+          this.$message.success("原有图片已经删除！");
+        }
+      });
+    },
     // 存草稿
     $save() {
-      this.submit(1);
+      if (this.articleId === null) {
+        this.submit(1);
+      } else {
+        // 更新操作
+      }
     },
     change(value, render) {
       // render 为 markdown 解析后的结果
       this.html = render;
     },
+
+    // update 更新文章
+    update() {
+      if (this.articleId !== null) {
+        // 更新文章
+        const article = {
+          id: this.articleId,
+          markdown: this.content,
+          html: this.html,
+          cover: this.coverImg,
+          tags: this.checks,
+          tagsNew: this.checksNew, // 要更新的tag
+          category: this.categorys,
+          categoryNew: this.categorysNew, // 要更新的分类
+          title: this.article.title,
+          abstract: this.article.abstract
+        }
+        wtuCrud.post('updateArticle', article).then(res => {
+          console.log(res);
+          console.log('更新', article);
+          this.checks = this.checksNew;
+          this.categorys = this.categorysNew;
+        });
+      } else {
+        this.$notify.info({
+          title: '消息',
+          message: '文章ID 为空！'
+        });
+      }
+    },
+
     // 提交文章
     submit(draft) {
       if (!this.article.title || !this.article.abstract) {
@@ -168,7 +229,7 @@ export default {
         });
         return false;
       } else {
-        wtuCrud.post('article', {
+        const article = {
           markdown: this.content,
           html: this.html,
           cover: this.coverImg,
@@ -177,19 +238,44 @@ export default {
           title: this.article.title,
           abstract: this.article.abstract,
           draft: draft
-        }).then(res => {
-          console.log(res);
+        };
+        wtuCrud.post('article', article).then(res => {
+          // 文章已经保存，生成文章id
+          this.articleId = res.data.data.article.id;
+          console.log('原文', res.data.data)
           this.$message.success("笔记保存成功，开始新的知识之旅吧！");
         })
       }
     },
-    // 选中分类树
+
+    // 封面上传
+    upcover(data) {
+      if (this.coverImg.sortUrl) {
+        // 上传图片 删除原有图片
+        wtuCrud.post('imgDel', { sort: this.coverImg.sortUrl }).then(res => {
+          if (res.data.data) {
+            this.$message.success("原有图片已经删除！");
+          }
+        });
+      }
+      this.coverImg = data;
+    },
+
+    // 选中分类树 一次性获取
     handchecked(data) {
       // 半选和全选都存入数据库
       if (data.check.checkedKeys.length > 0) {
-        this.categorys = data.check.checkedKeys.concat(
-          data.check.halfCheckedKeys
-        );
+        if (this.articleId === null) {
+          // 新建文章
+          this.categorys = data.check.checkedKeys.concat(
+            data.check.halfCheckedKeys
+          );
+        } else {
+          // 编辑文章
+          this.categorysNew = data.check.checkedKeys.concat(
+            data.check.halfCheckedKeys
+          );
+        }
       } else {
         this.$notify.error({
           title: "错误",
@@ -198,25 +284,38 @@ export default {
       }
     },
 
-    // 封面上传
-    upcover(data) {
-      this.coverImg = data;
-      console.log(data);
-    },
-
-    // 标签选中事件
+    // 标签选中事件 逐个选取
     check(data) {
-      this.checks.push(data);
+      if (this.articleId === null) {
+        // todo: 新文章 两个数组同步
+        this.checks.push(data);
+        this.checksNew.push(data);
+      } else {
+        // todo: 文章保存过，在原有的标签上变动
+        // todo: 文章编辑（同时初始化 checks checksNew），编辑在checksNew上变动
+        this.checksNew.push(data);
+      }
     },
     // 取消选中事件
     nocheck(data) {
+      // todo: 同选中事件
+      if (this.articleId === null) {
+        this.checks.splice(this.findIndex(this.checks, data), 1);
+        this.checksNew.splice(this.findIndex(this.checks, data), 1);
+      } else {
+        this.checksNew.splice(this.findIndex(this.checks, data), 1);
+      }
+    },
+
+    // 确定取消选中的标签的索引
+    findIndex(list, data) {
       let index = null;
-      for (let i = 0; i < this.checks.length; i++) {
+      for (let i = 0; i < list.length; i++) {
         if (this.checks[i] === data) {
           index = i;
         }
       }
-      this.checks.splice(index, 1);
+      return index;
     },
 
     // 检查标题是否重复

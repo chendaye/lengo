@@ -82,6 +82,10 @@ $api->version('v1', function ($api) {
                 $api->get('title', 'ArticleController@checkTitle');
                 // 保存文章
                 $api->post('article', 'ArticleController@article');
+                // 删除图片
+                $api->post( 'imgDel', 'ArticleController@imgDel');
+                // 更新文章
+                $api->post( 'updateArticle', 'ArticleController@updateArticle');
             });
         });
     });

@@ -171,13 +171,16 @@ class Lm extends \FastDFS
      * @return bool
      * @author long
      */
-    public function del(string $group, string $filename, $tracker = [], $storage = [])
+    public function del(string $group, string $filename)
     {
-        if (!$group || !$filename) {
-            return false;
-        } else {
-            $res = $this->storage_delete_file($group, $filename, $tracker, $storage);
-            return $res ?? $this->error();
+         // $tracker = $this->tracker_get_connection();
+        // $storage =  $this->tracker_query_storage_store();
+        // $server = $this->connect_server($storage['ip_addr'], $storage['port']);
+        // $storage['sock'] = $server['sock'];
+        if($group && $filename && $this->storage_file_exist($group, $filename)){
+            return $this->storage_delete_file($group, $filename);
+        }else{
+            return $this->error();
         }
     }
 

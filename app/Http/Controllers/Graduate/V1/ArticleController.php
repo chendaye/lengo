@@ -8,6 +8,8 @@ use Validator;
 use Lib\Fdfs\Lm;
 use App\Models\Article;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Tag;
+use Illuminate\Support\Str;
 
 class ArticleController extends AuthController
 {
@@ -124,9 +126,13 @@ class ArticleController extends AuthController
         $articleId = $articleInfo['id'];
         // 保存文章标签
         $articleModel = Article::find($articleId); // 获取要关联的文章
+        $tag = new Tag();
         foreach ($data['tags'] as $val) {
             try {
+                // 文章标签关联
                 $articleModel->tags()->attach($val);
+                // 标签使用次数
+                $tag->countPlus($val);
             } catch (\Expectation $e) {
                 return $this->error($e->getMessage());
             }
@@ -140,7 +146,63 @@ class ArticleController extends AuthController
             }
         }
         // 返回文章信息
-        return $this->success($articleInfo);
+        return $this->success(['article' => $articleInfo, 'tag' => $data['tags'], 'category' => $data['category']]);
+    }
+
+    /**
+     * 更新文章
+     *
+     * @param Request $request
+     * @return array
+     * @author chendaye
+     */
+    public function updateArticle(Request $request)
+    {
+        $data = $this->json($request->all());
+        // 文章内容
+        $article = [
+            'id' => $data['id'],
+            'title' => $data['title'],
+            'abstract' => $data['abstract'],
+            'cover' => $data['cover']['sortUrl'],
+            'content' => $data['markdown'],
+            'html' => $data['html'],
+            'user_id' => Auth::guard('api')->id()
+        ];
+        //更新
+        // $status = $this->model->alert($article, ['id' => $data['id']]);
+        // if(!$status) return $this->error('文章更新失败！');
+
+        // 更新标签
+        $tag = $this->differ($data['tagsNew'], $data['tags']);
+        // 更新分类
+        $category = $this->differ($data[ 'categoryNew'],$data[ 'category']);
+
+        return $this->success([$data, $tag, $category]);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param array $new
+     * @param array $old
+     * @return array
+     * @author chendaye
+     */
+    protected function differ(array $new,array $old)
+    {
+        // 数组交集
+        $common = array_intersect($new, $old);
+        // 要删除的值
+        $del = array_diff($old, $common);
+        // 要新增的值
+        $add = array_diff($new, $common);
+
+        return [
+            'common' => $common,
+            'del' => $del,
+            'add' => $add
+        ];
     }
 
     /**
@@ -153,6 +215,29 @@ class ArticleController extends AuthController
             return $this->success(true);
         } else {
             return $this->success(false);
+        }
+    }
+
+    /**
+     * 根据短地址删除图片
+     *
+     * @param Request $request
+     * @return array
+     * @author chendaye
+     */
+    public function imgDel(Request $request)
+    {
+        $lm = new Lm();
+        // $sort = 'group1/M00/00/00/rBIAC10kAjeAKJZnAAAEIXjSYjYd148.png';
+        $sort = $request->input('sort');
+        $filename = Str::after($sort, '/');
+        $group = Str::before($sort, '/');
+        // 删除图片
+        $res = $lm->del($group, $filename);
+        if ($res === true) {
+            return $this->success($res);
+        } else {
+            return $this->error($res);
         }
     }
 }

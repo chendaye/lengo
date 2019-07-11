@@ -63,14 +63,12 @@ service.interceptors.response.use(
     }
 
     // return response
-    const res = response.data.meta !== undefined ? response.data.meta : {
-      code: 200000
-    }
+    const res = response.data.meta !== undefined ? response.data.meta : { code: 200000 }
 
     // if the custom code is not 200000, it is judged as an error.
     if (res.code !== 200000) {
       Message({
-        message: res.message || 'error',
+        message: response.data.message || res.message || 'error',
         type: 'error',
         duration: 5 * 1000
       })

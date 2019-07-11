@@ -18,4 +18,25 @@ class Tag extends Model
     {
         return $this->belongsToMany(Article::class, 'article_has_tags', 'tag_id',  'article_id')->withTimestamps();
     }
+
+    /**
+     * 设置标签使用次数
+     *
+     * @param integer $tagId
+     * @param boolean $plus
+     * @return void
+     * @author chendaye
+     */
+    public function countPlus(int $tagId, $plus = true)
+    { 
+        $tag = $this->find($tagId);
+        if($tag){
+            if($plus){
+                $tag->count++;
+            }else{
+                $tag->count--;
+            }
+            $tag->save();
+        }
+    }
 }
