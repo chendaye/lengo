@@ -1,284 +1,264 @@
 <template>
-  <el-container>
-    <el-header>
-      <h2>文章编辑</h2>
-    </el-header>
-    <el-main class="cover">
-      <el-row>
-        <el-col :span="24">
-          <div class="grid-content bg-purple">
-            <el-input v-model="article.title" placeholder="请输入内容" @blur="title">
-              <template slot="prepend">文章标题：</template>
-            </el-input>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="24">
-          <div class="grid-content bg-purple">
-            <el-input v-model="article.abstract" placeholder="请输入内容">
-              <template slot="prepend">文章摘要：</template>
-            </el-input>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <div class="grid-content bg-purple">
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span class="header-attr">文章封面</span>
-              </div>
-              <!-- 封面图片上传 -->
-              <cover @upcover="upcover" />
-            </el-card>
-          </div>
-        </el-col>
-        <el-col :span="8">
-          <div class="grid-content bg-purple">
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span class="header-attr">文章分类</span>
-              </div>
-              <!-- 分类选择 -->
-              <category :is-check="true" :is-filter="true" @handchecked="handchecked" />
-            </el-card>
-          </div>
-        </el-col>
-        <el-col :span="8">
-          <div class="grid-content bg-purple">
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span class="header-attr">文章标签</span>
-              </div>
-              <tag @check="check" @nocheck="nocheck" />
-            </el-card>
-          </div>
-        </el-col>
-      </el-row>
-    </el-main>
-    <el-main>
-      <div class="container">
-        <mavon-editor
-          ref="md"
-          v-model="content"
-          :ishljs="true"
-          style="min-height: 600px"
-          @imgAdd="$imgAdd"
-          @save="$save"
-          @change="change"
-        />
+  <div class="app-container">
+    <div class="filter-container">
+      <el-button type="success" class="filter-item" icon="el-icon-edit" @click="handleCreate">新建标签</el-button>
+      <el-input
+        v-model="listQuery.tag"
+        placeholder="Tag"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-search"
+        @click="handleFilter"
+      >Search</el-button>
+    </div>
+
+    <el-table
+      v-loading="listLoading"
+      :data="list"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%;"
+    >
+      <el-table-column label="ID" prop="id" align="center" width="80">
+        <template slot-scope="scope">
+          <span>{{ scope.row.id }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Tag" min-width="150px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.tag }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Created Date" width="300px" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.created_at }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="Actions"
+        align="center"
+        width="230"
+        class-name="small-padding fixed-width"
+      >
+        <template slot-scope="{row}">
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">Edit</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(row)">Delete</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.limit"
+      @pagination="getList"
+    />
+
+    <!-- tag弹窗 -->
+    <el-dialog :title="dialogTitle[dialogStatus]" :visible.sync="dialogVisible">
+      <el-form ref="dataForm" :model="dataForm" :rules="rules" label-width="100px">
+        <el-form-item label="标签名" prop="tag">
+          <el-input v-model="dataForm.tag" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button
+          type="primary"
+          plain
+          @click="submitForm('dataForm')"
+        >{{ dialogTitle[dialogStatus] }}</el-button>
+        <el-button type="info" plain @click="resetForm('dataForm')">重置</el-button>
+        <el-button type="warning" plain @click="dialogVisible = false">取 消</el-button>
       </div>
-    </el-main>
-    <el-footer>
-      <el-button type="success" round plain @click="submit(0)">
-        上传文章
-        <i class="el-icon-upload el-icon--right" />
-      </el-button>
-    </el-footer>
-  </el-container>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
-import { mavonEditor } from "mavon-editor";
-import "mavon-editor/dist/css/index.css";
-import cover from "@/components/cover/index";
-import category from "@/components/Tree/index";
-import tag from "@/components/Tag/tagFilter";
-import crud from "@/api/crud";
-const wtuCrud = crud.factory("wtu");
+import crud from '@/api/crud';
+import waves from '@/directive/waves'; // waves directive
+import Pagination from '@/components/Pagination';
+import { deleteItem, updateItem } from '@/utils/index';
+const wtuCrud = crud.factory('wtu');
 
 export default {
-  name: "Markdown",
-  components: {
-    mavonEditor,
-    cover,
-    category,
-    tag
-  },
-  data: function() {
+  name: 'Tag',
+  components: { Pagination },
+  directives: { waves },
+  data() {
     return {
-      // markDown
-      content: "",
-      html: "",
-      // 文章
-      article: {
-        title: "",
-        abstract: ""
+      dialogVisible: false,
+      dialogTitle: {
+        update: '更新标签',
+        create: '创建标签'
       },
-      // 所有分类
-      categorys: [],
-      // 上传的封面
-      coverImg: {},
-      // 选中的标签
-      checks: []
+      dataForm: {
+        tag: ''
+      },
+      rules: {
+        name: [{ required: true, message: '请输标签名', trigger: 'blur' }]
+      },
+      // table
+      list: null,
+      total: 0,
+      listLoading: true,
+      listQuery: {
+        page: 1,
+        limit: 10,
+        order: {},
+        where: {},
+        tag: null
+      },
+      dialogFormVisible: false,
+      dialogStatus: '',
+
+      dialogPvVisible: false,
+      pvData: [],
+      downloadLoading: false
     };
   },
+  created() {
+    this.getList();
+  },
   methods: {
-    // 将图片上传到服务器，返回地址替换到md中
-    $imgAdd(pos, $file) {
-      var formdata = new FormData();
-      formdata.append("file", $file);
+    submitForm(formName) {
+      if (this.dialogStatus === 'create') {
+        this.createData();
+      } else {
+        this.updateData();
+      }
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
 
-      wtuCrud.post("markDownPic", formdata).then(res => {
-        if (res.status === 200) {
-          this.$refs.md.$img2Url(pos, res.data.url);
-          console.log(res.data.url);
-        }
+    // table
+    getList() {
+      this.listLoading = true;
+      this.listQuery.order = { id: 'desc', created_at: 'asc' };
+      this.listQuery.where.created_at = { op: '!=', va: '', ex: 'cp' };
+      if (this.listQuery.tag !== null) {
+        this.listQuery.where.tag = { op: 'like', va: '%' + this.listQuery.tag + '%', ex: 'cp' };
+      }
+      wtuCrud.get('indexTag', this.listQuery).then(res => {
+        this.list = res.data.data;
+        this.total = res.data.total;
+        console.log(this.list);
+
+        this.listLoading = false;
       });
     },
-    // 存草稿
-    $save() {
-      this.submit(1);
+    handleFilter() {
+      this.listQuery.page = 1;
+      this.getList();
     },
-    change(value, render) {
-      // render 为 markdown 解析后的结果
-      this.html = render;
-    },
-    // 提交文章
-    submit(draft) {
-      if (!this.article.title || !this.article.abstract) {
-        this.$notify.info({
-          title: '消息',
-          message: '请编辑文章标题和摘要！'
-        });
-        return false;
-      } else if (this.content === '' || this.html === '') {
-        this.$notify.info({
-          title: '消息',
-          message: '请编辑文章内容！'
-        });
-        return false;
-      } else if (this.coverImg === {}) {
-        this.$notify.info({
-          title: '消息',
-          message: '请编辑文章内容！'
-        });
-        return false;
-      } else if (this.checks.length === 0) {
-        this.$notify.info({
-          title: '消息',
-          message: '请选择文章标签！'
-        });
-        return false;
-      } else if (this.categorys.length === 0) {
-        this.$notify.info({
-          title: '消息',
-          message: '请选择文章分类！'
-        });
-        return false;
-      } else {
-        wtuCrud.post('article', {
-          markdown: this.content,
-          html: this.html,
-          cover: this.coverImg,
-          tags: this.checks,
-          category: this.categorys,
-          title: this.article.title,
-          abstract: this.article.abstract,
-          draft: draft
-        }).then(res => {
-          console.log(res);
-          this.$message.success("笔记保存成功，开始新的知识之旅吧！");
-        })
+    resetDataForm() {
+      this.dataForm = {
+        id: null,
+        tag: null
       }
     },
-    // 选中分类树
-    handchecked(data) {
-      // 半选和全选都存入数据库
-      if (data.check.checkedKeys.length > 0) {
-        this.categorys = data.check.checkedKeys.concat(
-          data.check.halfCheckedKeys
-        );
-      } else {
-        this.$notify.error({
-          title: "错误",
-          message: "选择出错！"
-        });
-      }
+    handleCreate() {
+      this.dialogStatus = 'create';
+      this.resetDataForm();
+      this.dialogVisible = true;
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate();
+      });
     },
-
-    // 封面上传
-    upcover(data) {
-      this.coverImg = data;
-      console.log(data);
-    },
-
-    // 标签选中事件
-    check(data) {
-      this.checks.push(data);
-    },
-    // 取消选中事件
-    nocheck(data) {
-      let index = null;
-      for (let i = 0; i < this.checks.length; i++) {
-        if (this.checks[i] === data) {
-          index = i;
-        }
-      }
-      this.checks.splice(index, 1);
-    },
-
-    // 检查标题是否重复
-    title(data) {
-      wtuCrud.get('title', { title: this.article.title }).then(res => {
-        if (res.status && res.data.data) {
-          this.$message({
-            message: '标题重复！',
-            type: 'warning'
+    createData() {
+      this.$refs['dataForm'].validate(valid => {
+        if (valid) {
+          wtuCrud.post('addTag', this.dataForm).then(res => {
+            if (res.status === 200) {
+              console.log(res.data);
+              updateItem(this.list, res.data.data);
+              this.dialogVisible = false;
+              this.$message({
+                message: '创建标签成功！',
+                type: 'success'
+              });
+            }
           });
-          this.article.title = '';
+        } else {
+          this.$message({
+            message: 'error submit!!',
+            type: 'error'
+          });
+          return false;
         }
       });
+    },
+    // 更新标签
+    handleUpdate(row) {
+      this.dataForm = Object.assign({}, row); // copy obj
+      this.dialogStatus = 'update';
+      this.dialogVisible = true;
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate();
+      });
+    },
+    updateData() {
+      this.$refs['dataForm'].validate(valid => {
+        if (valid) {
+          wtuCrud
+            .post('updateTag', {
+              data: this.dataForm,
+              where: { id: { op: '=', va: this.dataForm.id, ex: 'cp' }}
+            })
+            .then(res => {
+              if (res.status === 200) {
+                updateItem(this.list, this.dataForm);
+                this.dialogVisible = false;
+                this.$notify({
+                  title: 'Success',
+                  message: '标签更新成功！',
+                  type: 'success',
+                  duration: 2000
+                });
+              } else {
+                this.$notify({
+                  title: 'Success',
+                  message: '标签更新失败！',
+                  type: 'fail',
+                  duration: 2000
+                });
+              }
+            });
+        }
+      });
+    },
+    // 删除标签
+    handleDelete(row) {
+      this.$notify({
+        title: 'Success',
+        message: 'Delete Successfully',
+        type: 'success',
+        duration: 2000
+      });
+      wtuCrud
+        .post('delTag', {
+          where: { id: { op: '=', va: row.id, ex: 'cp' }}
+        })
+        .then(res => {
+          if (res.status === 200) {
+            deleteItem(this.list, row.id);
+            console.log(res);
+          }
+        });
     }
   }
 };
 </script>
-<style scoped>
-.editor-btn {
-  margin-top: 20px;
-}
-.el-row {
-  margin-bottom: 20px;
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-.el-col {
-  border-radius: 4px;
-}
 
-.el-header {
-  color: #333;
-  text-align: center;
-  line-height: 60px;
-}
-.cover {
-  overflow-x: hidden;
-  overflow-y: hidden;
-}
-.el-footer {
-  text-align: center;
-  margin-bottom: 80px;
-}
-.box-card {
-  width: 100%;
-  min-width: 400px;
-}
+<style scope>
 
-.content-title {
-  font-weight: 400;
-  line-height: 50px;
-  margin: 10px 0;
-  font-size: 22px;
-  color: #1f2f3d;
-}
-.header-attr {
-  font-size: 18px;
-  font-weight: bold;
-  font-family: "Courier New", Courier, monospace;
-}
-.clearfix {
-  text-align: center;
-}
 </style>

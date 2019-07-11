@@ -159,6 +159,7 @@ export default {
         this.submit(1);
       } else {
         // 更新操作
+        this.update();
       }
     },
     change(value, render) {
@@ -185,11 +186,9 @@ export default {
         wtuCrud.post('updateArticle', article).then(res => {
           if(res.status === 200){
             const info = res.data.data;
-            console.log('info', info);
             // 保存最新的的数据库里的值
             this.checks = info[0].tagsNew;
             this.categorys = info[0].categorysNew;
-            console.log('更新成功', this.checks, this.categorys)
             this.$message.success("笔记更新成功，开始新的知识之旅吧！");
           }
 

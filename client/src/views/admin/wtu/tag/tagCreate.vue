@@ -36,6 +36,11 @@
           <span>{{ row.tag }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Count" min-width="150px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.count }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="Created Date" width="300px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.created_at }}</span>
@@ -143,7 +148,7 @@ export default {
     // table
     getList() {
       this.listLoading = true;
-      this.listQuery.order = { id: 'desc', created_at: 'asc' };
+      this.listQuery.order = { count: 'desc', id: 'desc' };
       this.listQuery.where.created_at = { op: '!=', va: '', ex: 'cp' };
       if (this.listQuery.tag !== null) {
         this.listQuery.where.tag = { op: 'like', va: '%' + this.listQuery.tag + '%', ex: 'cp' };
