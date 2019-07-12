@@ -131,7 +131,7 @@ export default {
 };
 </script>
 
-<style scope>
+<style scoped>
 .tag {
   /* background-color:saddlebrown */
 }

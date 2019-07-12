@@ -93,7 +93,7 @@ export default {
 }
 </script>
 
-<style scope>
+<style scoped>
   .tag-content {
     float:left; margin:6px;
   }

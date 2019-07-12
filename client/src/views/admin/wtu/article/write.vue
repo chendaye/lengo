@@ -184,14 +184,13 @@ export default {
           abstract: this.article.abstract
         }
         wtuCrud.post('updateArticle', article).then(res => {
-          if(res.status === 200){
+          if (res.status === 200) {
             const info = res.data.data;
             // 保存最新的的数据库里的值
             this.checks = info[0].tagsNew;
             this.categorys = info[0].categorysNew;
             this.$message.success("笔记更新成功，开始新的知识之旅吧！");
           }
-
         });
       } else {
         this.$notify.info({
@@ -320,9 +319,9 @@ export default {
 
     // 检查标题是否重复
     title(data) {
-      if(this.articleId === null){
+      if (this.articleId === null) {
         wtuCrud.get('title', { title: this.article.title }).then(res => {
-        if (res.status && res.data.data) {
+          if (res.status && res.data.data) {
             this.$message({
               message: '标题重复！',
               type: 'warning'

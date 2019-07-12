@@ -76,7 +76,7 @@ export default [{
       component: () => import('@/views/admin/wtu/tag/index'),
       name: 'Tag',
       meta: {
-        title: '标签管理',
+        title: '标签',
         icon: 'tag'
       },
       redirect: '/admin/wtu/tag',
@@ -85,7 +85,7 @@ export default [{
         component: () => import('@/views/admin/wtu/tag/tagCreate'),
         name: 'Menu1-1',
         meta: {
-          title: '标签创建',
+          title: '标签',
           icon: 'tag'
         }
       }
@@ -97,7 +97,7 @@ export default [{
       component: () => import('@/views/admin/wtu/category/index'),
       name: 'Category',
       meta: {
-        title: '分类管理',
+        title: '分类',
         icon: 'plane'
       },
       redirect: '/admin/wtu/category',
@@ -106,7 +106,7 @@ export default [{
         component: () => import('@/views/admin/wtu/category/categoryCreate'),
         name: 'CategoryCreate',
         meta: {
-          title: '分类创建',
+          title: '分类',
           icon: 'plane'
         }
       }
