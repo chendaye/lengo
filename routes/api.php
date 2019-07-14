@@ -46,6 +46,8 @@ $api->version('v1', function ($api) {
                 $api->post('avatar', 'UserController@avatar');
                 // 添加管理员
                 $api->post('addUser', 'UserController@addUser');
+                // user detail
+                $api->get('user', 'UserController@userInfo');
             });
         });
 
@@ -83,9 +85,17 @@ $api->version('v1', function ($api) {
                 // 保存文章
                 $api->post('article', 'ArticleController@article');
                 // 删除图片
-                $api->post( 'imgDel', 'ArticleController@imgDel');
+                $api->post('imgDel', 'ArticleController@imgDel');
                 // 更新文章
-                $api->post( 'updateArticle', 'ArticleController@updateArticle');
+                $api->post('updateArticle', 'ArticleController@updateArticle');
+                // 文章列表
+                $api->get('indexArticle', 'ArticleController@index');
+                // 文章删除
+                $api->post('articleDel', 'ArticleController@del');
+                // 文章发表
+                $api->post('articleUpdate', 'ArticleController@update');
+                // 获取文章详情
+                $api->get('detailArticle', 'ArticleController@detail');
             });
         });
     });

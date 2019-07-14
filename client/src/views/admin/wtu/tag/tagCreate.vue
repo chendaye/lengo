@@ -122,12 +122,7 @@ export default {
         where: {},
         tag: null
       },
-      dialogFormVisible: false,
-      dialogStatus: '',
-
-      dialogPvVisible: false,
-      pvData: [],
-      downloadLoading: false
+      dialogStatus: ''
     };
   },
   created() {

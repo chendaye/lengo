@@ -87,6 +87,12 @@ export default {
   components: {
     VueCropper
   },
+  props: {
+    article: {
+      type: Object,
+      default: null
+    }
+  },
   data: function() {
     return {
       dialogVisible: false,

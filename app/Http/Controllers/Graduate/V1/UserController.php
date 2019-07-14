@@ -58,9 +58,29 @@ class UserController extends AuthController
         $tmp = $request->file('avatar');
         $file = $lm->up((string) $tmp);
         unlink($tmp); // 删除文件
-        if(! $file){
-            return $this->error( 'FastDfs挂了，上传头像失败');
+        if (!$file) {
+            return $this->error('FastDfs挂了，上传头像失败');
         }
         return $this->response->array($file);
+    }
+
+    /**
+     * 根据id获取用户
+     *
+     * @param User $user
+     * @param Request $request
+     * @return array
+     * @author chendaye
+     */
+    public function userInfo(User $user, Request $request)
+    {
+        $where = $request->input('user_id');
+        // 获取的请求数据 只是把第一层转化维数组了， 第二层需要手动转换
+        if ($where) {
+            $res =  $user->where('id', '=', $where)->first();
+            return $this->success($res);
+        } else {
+            return $this->error('获取用户失败！');
+        }
     }
 }

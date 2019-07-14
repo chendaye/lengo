@@ -109,6 +109,7 @@ class ArticleController extends AuthController
     {
         $data = $this->json($request->all());
         // 文章内容
+        $user =  Auth::guard('api')->user();
         $article = [
             'title' => $data['title'],
             'abstract' => $data['abstract'],
@@ -116,7 +117,8 @@ class ArticleController extends AuthController
             'content' => $data['markdown'],
             'html' => $data['html'],
             'draft' => $data['draft'],
-            'user_id' => Auth::guard('api')->id()
+            'user_id' => $user->id,
+            'user_name' => $user->name
         ];
         // 保存文章
         if ($this->model->where('title', '=', $article['title'])->exists()) return $this->error('文章标题重复！');

@@ -105,6 +105,7 @@ export default {
     return {
       // 文章id
       articleId: null,
+      detail: null,
       // markDown
       content: "",
       html: "",
@@ -128,6 +129,21 @@ export default {
       }
 
     };
+  },
+  created() {
+    if (this.$route.params.id) {
+      wtuCrud.get('detailArticle', {
+        where: {
+          id: { op: '=', va: this.$route.params.id, ex: 'cp' }
+        }
+      }).then(res => {
+        if (res.status === 200) {
+          this.articleId = this.$route.params.id;
+          this.detail = res.data;
+          this.coverImg = res.data.cover;
+        }
+      });
+    }
   },
   methods: {
     // 将图片上传到服务器，返回地址替换到md中

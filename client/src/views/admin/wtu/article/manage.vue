@@ -1,21 +1,13 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button type="success" class="filter-item" icon="el-icon-edit" @click="handleCreate">新建标签</el-button>
       <el-input
-        v-model="listQuery.tag"
-        placeholder="Tag"
+        v-model="listQuery.title"
+        placeholder="Title"
         style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
+        prefix-icon="el-icon-search"
+        @input="handleFilter"
       />
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter"
-      >Search</el-button>
     </div>
 
     <el-table
@@ -23,32 +15,72 @@
       :data="list"
       border
       fit
-      highlight-current-row
-      style="width: 100%;"
+      :row-class-name="tableRowClassName"
+      style="width: 100%"
     >
-      <el-table-column label="ID" prop="id" align="center" width="80">
-        <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Tag" min-width="150px" align="center">
+      <el-table-column label="ID" prop="id" align="center" width="60">
         <template slot-scope="{row}">
-          <span>{{ row.tag }}</span>
+          <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Created Date" width="300px" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.created_at }}</span>
+      <el-table-column label="Cover" width="100">
+        <template slot-scope="{row}">
+          <img :src="baseApi+row.cover" style="width: 65px;hight:65px">
+        </template>
+      </el-table-column>
+      <el-table-column label="Title" width="150" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.title }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Abstract" width="225" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.abstract }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Markdown" width="300" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.content | spliceArticle }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="View" width="60" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.view }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="评论" width="60" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.comment }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="作者" width="120" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.user_name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Status" class-name="status-col" width="100">
+        <template slot-scope="{row}">
+          <el-tag :type="row.draft | statusFilter">
+            {{ row.draft | statusName }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" width="160" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.updated_at }}</span>
         </template>
       </el-table-column>
       <el-table-column
         label="Actions"
         align="center"
-        width="230"
+        width="250"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">Edit</el-button>
+          <el-button type="success" size="mini" @click="handlePublish(row)">Publish</el-button>
+          <el-button type="primary" size="mini">
+            <router-link :to="{ name: 'NoteCreate', params: { id: row.id }}">Edit</router-link>
+          </el-button>
           <el-button size="mini" type="danger" @click="handleDelete(row)">Delete</el-button>
         </template>
       </el-table-column>
@@ -61,24 +93,6 @@
       :limit.sync="listQuery.limit"
       @pagination="getList"
     />
-
-    <!-- tag弹窗 -->
-    <el-dialog :title="dialogTitle[dialogStatus]" :visible.sync="dialogVisible">
-      <el-form ref="dataForm" :model="dataForm" :rules="rules" label-width="100px">
-        <el-form-item label="标签名" prop="tag">
-          <el-input v-model="dataForm.tag" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button
-          type="primary"
-          plain
-          @click="submitForm('dataForm')"
-        >{{ dialogTitle[dialogStatus] }}</el-button>
-        <el-button type="info" plain @click="resetForm('dataForm')">重置</el-button>
-        <el-button type="warning" plain @click="dialogVisible = false">取 消</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -90,21 +104,33 @@ import { deleteItem, updateItem } from '@/utils/index';
 const wtuCrud = crud.factory('wtu');
 
 export default {
-  name: 'Tag',
+  name: 'Article',
   components: { Pagination },
   directives: { waves },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        0: 'success',
+        1: 'info'
+      }
+      return statusMap[status]
+    },
+    statusName(status) {
+      const statusMap = {
+        0: '发表',
+        1: '草稿'
+      }
+      return statusMap[status]
+    },
+    spliceArticle(data) {
+      return data.substring(0, 32) + '......';
+    }
+  },
   data() {
     return {
-      dialogVisible: false,
-      dialogTitle: {
-        update: '更新标签',
-        create: '创建标签'
-      },
+      baseApi: process.env.VUE_APP_PIC,
       dataForm: {
         tag: ''
-      },
-      rules: {
-        name: [{ required: true, message: '请输标签名', trigger: 'blur' }]
       },
       // table
       list: null,
@@ -115,14 +141,9 @@ export default {
         limit: 10,
         order: {},
         where: {},
-        tag: null
+        title: null
       },
-      dialogFormVisible: false,
-      dialogStatus: '',
-
-      dialogPvVisible: false,
-      pvData: [],
-      downloadLoading: false
+      dialogStatus: ''
     };
   },
   created() {
@@ -145,13 +166,13 @@ export default {
       this.listLoading = true;
       this.listQuery.order = { id: 'desc', created_at: 'asc' };
       this.listQuery.where.created_at = { op: '!=', va: '', ex: 'cp' };
-      if (this.listQuery.tag !== null) {
-        this.listQuery.where.tag = { op: 'like', va: '%' + this.listQuery.tag + '%', ex: 'cp' };
+      if (this.listQuery.title !== null) {
+        this.listQuery.where.title = { op: 'like', va: '%' + this.listQuery.title + '%', ex: 'cp' };
       }
-      wtuCrud.get('indexTag', this.listQuery).then(res => {
+      wtuCrud.get('indexArticle', this.listQuery).then(res => {
         this.list = res.data.data;
         this.total = res.data.total;
-        console.log(this.list);
+        console.log(this.listQuery);
 
         this.listLoading = false;
       });
@@ -166,99 +187,63 @@ export default {
         tag: null
       }
     },
-    handleCreate() {
-      this.dialogStatus = 'create';
-      this.resetDataForm();
-      this.dialogVisible = true;
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate();
-      });
-    },
-    createData() {
-      this.$refs['dataForm'].validate(valid => {
-        if (valid) {
-          wtuCrud.post('addTag', this.dataForm).then(res => {
-            if (res.status === 200) {
-              console.log(res.data);
-              updateItem(this.list, res.data.data);
-              this.dialogVisible = false;
-              this.$message({
-                message: '创建标签成功！',
-                type: 'success'
-              });
-            }
-          });
-        } else {
-          this.$message({
-            message: 'error submit!!',
-            type: 'error'
-          });
-          return false;
-        }
-      });
-    },
-    // 更新标签
-    handleUpdate(row) {
-      this.dataForm = Object.assign({}, row); // copy obj
-      this.dialogStatus = 'update';
-      this.dialogVisible = true;
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate();
-      });
-    },
-    updateData() {
-      this.$refs['dataForm'].validate(valid => {
-        if (valid) {
-          wtuCrud
-            .post('updateTag', {
-              data: this.dataForm,
-              where: { id: { op: '=', va: this.dataForm.id, ex: 'cp' }}
-            })
-            .then(res => {
-              if (res.status === 200) {
-                updateItem(this.list, this.dataForm);
-                this.dialogVisible = false;
-                this.$notify({
-                  title: 'Success',
-                  message: '标签更新成功！',
-                  type: 'success',
-                  duration: 2000
-                });
-              } else {
-                this.$notify({
-                  title: 'Success',
-                  message: '标签更新失败！',
-                  type: 'fail',
-                  duration: 2000
-                });
-              }
-            });
-        }
-      });
-    },
     // 删除标签
     handleDelete(row) {
-      this.$notify({
-        title: 'Success',
-        message: 'Delete Successfully',
-        type: 'success',
-        duration: 2000
-      });
       wtuCrud
-        .post('delTag', {
+        .post('articleDel', {
           where: { id: { op: '=', va: row.id, ex: 'cp' }}
         })
         .then(res => {
           if (res.status === 200) {
             deleteItem(this.list, row.id);
-            console.log(res);
+            this.$notify({
+              title: 'Success',
+              message: 'Delete Successfully',
+              type: 'success',
+              duration: 2000
+            });
           }
         });
+    },
+    // 发布文章
+    handlePublish(row) {
+      this.$confirm('确定发表此文章此?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        wtuCrud.post('articleUpdate', {
+          where: { id: { op: '=', va: row.id, ex: 'cp' }},
+          data: { draft: 0 }
+        }).then(res => {
+          row.draft = 0;
+          updateItem(this.list, row);
+          this.$notify({
+            title: 'Success',
+            message: 'Delete Successfully',
+            type: 'success',
+            duration: 2000
+          });
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消发布'
+        });
+      });
+    },
+    // 行颜色
+    tableRowClassName({ row, rowIndex }) {
+      if (row.draft === 1) {
+        return 'warning-row';
+      } else {
+        return 'success-row';
+      }
     }
   }
 };
 </script>
 
-<style scope>
+<style scoped>
 
 </style>
