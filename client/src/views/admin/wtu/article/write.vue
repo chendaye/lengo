@@ -140,7 +140,6 @@ export default {
         if (res.status === 200) {
           this.articleId = this.$route.params.id;
           this.detail = res.data;
-          this.coverImg = res.data.cover;
         }
       });
     }
