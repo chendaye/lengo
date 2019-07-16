@@ -96,6 +96,10 @@ $api->version('v1', function ($api) {
                 $api->post('articleUpdate', 'ArticleController@update');
                 // 获取文章详情
                 $api->get('detailArticle', 'ArticleController@detail');
+                // 获取文章绑定的分类
+                $api->get('categorys', 'ArticleController@categorys');
+                // 获取文章绑定的标签
+                $api->get('tags', 'ArticleController@tags');
             });
         });
     });

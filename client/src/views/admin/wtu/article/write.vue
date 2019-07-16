@@ -30,7 +30,7 @@
                 <span class="header-attr">文章封面</span>
               </div>
               <!-- 封面图片上传 -->
-              <cover @upcover="upcover" />
+              <cover :article-id="articleId" @upcover="upcover" />
             </el-card>
           </div>
         </el-col>
@@ -41,7 +41,7 @@
                 <span class="header-attr">文章分类</span>
               </div>
               <!-- 分类选择 -->
-              <category :is-check="true" :is-filter="true" @handchecked="handchecked" />
+              <category :is-check="true" :article-id="articleId" :is-filter="true" @handchecked="handchecked" />
             </el-card>
           </div>
         </el-col>
@@ -51,7 +51,7 @@
               <div slot="header" class="clearfix">
                 <span class="header-attr">文章标签</span>
               </div>
-              <tag @check="check" @nocheck="nocheck" />
+              <tag :article-id="articleId" @check="check" @nocheck="nocheck" />
             </el-card>
           </div>
         </el-col>
@@ -103,6 +103,7 @@ export default {
   },
   data: function() {
     return {
+      baseUrl: process.env.VUE_APP_BASE_API,
       // 文章id
       articleId: null,
       detail: null,
@@ -132,15 +133,18 @@ export default {
   },
   created() {
     if (this.$route.params.id) {
+      // 文章id
+      this.articleId = this.$route.params.id;
       wtuCrud.get('detailArticle', {
         where: {
-          id: { op: '=', va: this.$route.params.id, ex: 'cp' }
+          id: { op: '=', va: this.articleId, ex: 'cp' }
         }
       }).then(res => {
         if (res.status === 200) {
-          this.articleId = this.$route.params.id;
-          this.detail = res.data;
-          this.coverImg = res.data.cover;
+          this.article.title = res.data.title;
+          this.article.abstract = res.data.abstract;
+          this.content = res.data.content;
+          this.html = res.data.html;
         }
       });
     }
@@ -270,6 +274,7 @@ export default {
 
     // 封面上传
     upcover(data) {
+      // todo： 注意浏览器图片缓存
       if (this.coverImg.sortUrl) {
         // 上传图片 删除原有图片
         wtuCrud.post('imgDel', { sort: this.coverImg.sortUrl }).then(res => {

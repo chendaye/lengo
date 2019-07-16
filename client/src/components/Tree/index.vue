@@ -8,7 +8,7 @@
       </el-col>
       <el-col :span="12">
         <div class="grid-content bg-purple">
-          <el-input v-model="filterText" placeholder="输入关键字"/>
+          <el-input v-model="filterText" placeholder="输入关键字" />
         </div>
       </el-col>
     </el-row>
@@ -16,7 +16,7 @@
     <el-row v-if="isFilter" :gutter="5">
       <el-col :span="24">
         <div class="grid-content bg-purple">
-          <el-input v-model="filterText" size="mini" placeholder="输入关键字"/>
+          <el-input v-model="filterText" size="mini" placeholder="输入关键字" />
         </div>
       </el-col>
     </el-row>
@@ -42,14 +42,14 @@
         </span>
         <span v-if="isCreate">
           <el-tooltip class="item" effect="dark" content="添加" placement="top">
-            <i class="el-icon-circle-plus" @click.stop="() => addSon(data)"/>
+            <i class="el-icon-circle-plus" @click.stop="() => addSon(data)" />
           </el-tooltip>
           <el-tooltip class="item" effect="dark" content="编辑" placement="top">
-            <i class="el-icon-edit" @click.stop="() => editNode(node, data)"/>
+            <i class="el-icon-edit" @click.stop="() => editNode(node, data)" />
           </el-tooltip>
 
           <el-tooltip class="item" effect="dark" content="删除" placement="top">
-            <i class="el-icon-delete" @click.stop="() => delNode(data)"/>
+            <i class="el-icon-delete" @click.stop="() => delNode(data)" />
           </el-tooltip>
         </span>
       </span>
@@ -66,7 +66,7 @@
           class="demo-categoryForm"
         >
           <el-form-item label="分类名" prop="desc">
-            <el-input v-model="categoryForm.desc"/>
+            <el-input v-model="categoryForm.desc" />
           </el-form-item>
         </el-form>
       </span>
@@ -110,6 +110,10 @@ export default {
     isRoot: {
       type: Boolean,
       default: false
+    },
+    articleId: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -176,6 +180,16 @@ export default {
     });
     // 当前登录管理员
     this.categoryForm.user_id = this.admin_id;
+    // todo: 文章分类详情
+    if (this.articleId !== null) {
+      wtuCrud.get('categorys', {
+        article_id: this.articleId
+      }).then(res => {
+        if (res.status === 200) {
+          console.log('category', res)
+        }
+      });
+    }
   },
   methods: {
     filterNode(value, data) {
@@ -222,7 +236,7 @@ export default {
         .then(() => {
           wtuCrud
             .post("delCategory", {
-              where: { id: { op: "=", va: data.id, ex: "cp" } }
+              where: { id: { op: "=", va: data.id, ex: "cp" }}
             })
             .then(() => {
               this.$refs.tree.remove(data.id);
@@ -305,7 +319,7 @@ export default {
       wtuCrud
         .post("updateCategory", {
           data: { desc: this.categoryForm.desc },
-          where: { id: { op: "=", va: this.categoryForm.id, ex: "cp" } }
+          where: { id: { op: "=", va: this.categoryForm.id, ex: "cp" }}
         })
         .then(res => {
           if (res.status === 200) {
@@ -339,8 +353,8 @@ export default {
         dropType === "inner"
           ? dropNode.data.id
           : dropNode.parent.data.length > 1
-          ? 0
-          : dropNode.parent.data.id;
+            ? 0
+            : dropNode.parent.data.id;
 
       // console.log('dropType', dropType);
       // console.log('draggingNode', draggingNode);
@@ -350,7 +364,7 @@ export default {
         wtuCrud
           .post("updateCategory", {
             data: { pid: pid },
-            where: { id: { op: "=", va: id, ex: "cp" } }
+            where: { id: { op: "=", va: id, ex: "cp" }}
           })
           .then(res => {
             if (res.status === 200) {
