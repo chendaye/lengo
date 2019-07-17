@@ -27,6 +27,8 @@
       class="filter-tree background"
       :props="mapProps"
       :filter-node-method="filterNode"
+      :default-expanded-keys="defaultExpandedKeys"
+      :default-checked-keys="defaultCheckedKeys"
       :data="treeData"
       node-key="id"
       :draggable="isDrag"
@@ -118,6 +120,8 @@ export default {
   },
   data() {
     return {
+      defaultExpandedKeys: [], // 默认展开的节点
+      defaultCheckedKeys: [], // 默认勾选的节点数组
       filterText: "",
       mapProps: {
         children: "children",
@@ -182,13 +186,17 @@ export default {
     this.categoryForm.user_id = this.admin_id;
     // todo: 文章分类详情
     if (this.articleId !== null) {
-      wtuCrud.get('categorys', {
-        article_id: this.articleId
-      }).then(res => {
-        if (res.status === 200) {
-          console.log('category', res)
-        }
-      });
+      wtuCrud
+        .get("categorys", {
+          article_id: this.articleId
+        })
+        .then(res => {
+          if (res.status === 200) {
+            this.defaultExpandedKeys = res.data.data; // 默认展开
+            this.defaultCheckedKeys = res.data.data; // 默认勾选
+            this.$emit("handDetailChecked", res.data.data);
+          }
+        });
     }
   },
   methods: {
@@ -236,7 +244,7 @@ export default {
         .then(() => {
           wtuCrud
             .post("delCategory", {
-              where: { id: { op: "=", va: data.id, ex: "cp" }}
+              where: { id: { op: "=", va: data.id, ex: "cp" } }
             })
             .then(() => {
               this.$refs.tree.remove(data.id);
@@ -319,7 +327,7 @@ export default {
       wtuCrud
         .post("updateCategory", {
           data: { desc: this.categoryForm.desc },
-          where: { id: { op: "=", va: this.categoryForm.id, ex: "cp" }}
+          where: { id: { op: "=", va: this.categoryForm.id, ex: "cp" } }
         })
         .then(res => {
           if (res.status === 200) {
@@ -353,8 +361,8 @@ export default {
         dropType === "inner"
           ? dropNode.data.id
           : dropNode.parent.data.length > 1
-            ? 0
-            : dropNode.parent.data.id;
+          ? 0
+          : dropNode.parent.data.id;
 
       // console.log('dropType', dropType);
       // console.log('draggingNode', draggingNode);
@@ -364,7 +372,7 @@ export default {
         wtuCrud
           .post("updateCategory", {
             data: { pid: pid },
-            where: { id: { op: "=", va: id, ex: "cp" }}
+            where: { id: { op: "=", va: id, ex: "cp" } }
           })
           .then(res => {
             if (res.status === 200) {

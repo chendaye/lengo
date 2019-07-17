@@ -31,6 +31,12 @@ export default {
   components: {
     tag
   },
+  props: {
+    articleId: {
+      type: Number,
+      default: null
+    }
+  },
   data: function() {
     return {
       // 筛选
@@ -47,16 +53,6 @@ export default {
       this.tags = this.list.filter(item => {
         return item.tag.indexOf(newVal) > -1;
       });
-      // wtuCrud
-      //   .get("listTag", {
-      //     order: { id: 'desc', created_at: 'asc' },
-      //     where: { tag: { op: 'like', va: '%' + newVal + '%', ex: 'cp' }}
-      //   })
-      //   .then(res => {
-      //     if (res.status === 200) {
-      //       this.tags = res.data;
-      //     }
-      //   });
     }
   },
   created() {
@@ -72,6 +68,10 @@ export default {
           this.list = res.data;
         }
       });
+    // 获取文章标签
+    if(this.articleId !== null){
+      
+    }
   },
   methods: {
     // 标签选中事件

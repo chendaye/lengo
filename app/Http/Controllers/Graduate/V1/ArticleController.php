@@ -163,17 +163,17 @@ class ArticleController extends AuthController
         ];
         //更新
         $status = $this->model->where('id', '=', $data['id'])->update($article);
-        if(!$status) return $this->error('文章更新失败！');
+        if (!$status) return $this->error('文章更新失败！');
 
         $tagModel = new Tag();
         $articleModel = Article::find($data['id']);
         // 更新标签
         $tag = $this->differ($data['tagsNew'], $data['tags']);
-        if ($tag['add']){
+        if ($tag['add']) {
             $articleModel->tags()->attach($tag['add']);    // 增加标签关联
             $tagModel->countPlus($tag['add']);
         }
-        if ($tag['del']){
+        if ($tag['del']) {
             $articleModel->tags()->detach($tag['del']);  // 删除标签关联
             $tagModel->countPlus($tag['del'], false);
         }
@@ -195,7 +195,27 @@ class ArticleController extends AuthController
     {
         $article_id = $request->input('article_id');
         $articleModel = Article::find($article_id);
-        return $this->success($articleModel->categorys);
+        $category = $articleModel->categorys->map(function ($item) {
+            return $item->id;
+        });
+        return $this->success($category);
+    }
+
+    /**
+     * article绑定的标签
+     *
+     * @param Request $request
+     * @return void
+     * @author chendaye
+     */
+    public function tags(Request $request)
+    {
+        $article_id = $request->input('article_id');
+        $articleModel = Article::find($article_id);
+        $tag = $articleModel->tags->map(function ($item) {
+            return $item->id;
+        });
+        return $this->success($tag);
     }
 
     /**

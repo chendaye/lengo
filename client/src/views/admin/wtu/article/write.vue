@@ -41,7 +41,7 @@
                 <span class="header-attr">文章分类</span>
               </div>
               <!-- 分类选择 -->
-              <category :is-check="true" :article-id="articleId" :is-filter="true" @handchecked="handchecked" />
+              <category :is-check="true" :article-id="articleId" :is-filter="true" @handchecked="handchecked" @handDetailChecked="handDetailChecked" />
             </el-card>
           </div>
         </el-col>
@@ -301,6 +301,13 @@ export default {
             data.check.halfCheckedKeys
           );
         }
+      }
+    },
+    // 文章详情初始化分类
+    handDetailChecked(data) {
+      if (this.articleId > 0 && data.length > 0) {
+        this.categorys = data;
+        this.categorysNew = data;
       }
     },
 
