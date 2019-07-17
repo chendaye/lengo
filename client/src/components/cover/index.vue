@@ -3,8 +3,8 @@
     <div v-if="modelSrc === null" class="cover" @click="dialogVisible = true">
       <i class="el-icon-plus avatar-uploader-icon" />
     </div>
-    <div v-else>
-      <img width="100%" :src="modelSrc" alt="" @click="dialogVisible = true">
+    <div v-else @click="dialogVisible = true">
+      <img width="100%" :src="modelSrc" alt="">
     </div>
 
     <el-dialog title="裁剪图片" :visible.sync="dialogVisible" width="50%">
@@ -88,13 +88,14 @@ export default {
     VueCropper
   },
   props: {
-    article: {
-      type: Object,
+    articleId: {
+      type: Number,
       default: null
     }
   },
   data: function() {
     return {
+      baseUrl: process.env.VUE_APP_PIC,
       dialogVisible: false,
       model: false,
       modelSrc: null,
@@ -119,13 +120,26 @@ export default {
       show: true
     };
   },
-  computed: {
-    // url: function() {
-    //   return process.env.VUE_APP_BASE_API + "/admin/rbac/avatar";
-    // }
-  },
   created() {
-
+    // 文章id-> 封面
+    if (this.articleId !== null) {
+      wtuCrud.get('detailArticle', {
+        where: {
+          id: { op: '=', va: this.articleId, ex: 'cp' }
+        }
+      }).then(res => {
+        if (res.status === 200) {
+          const img = this.baseUrl + res.data.cover;
+          this.modelSrc = img;
+          this.$emit('upcover', {
+            filename: '',
+            group_name: '',
+            url: img,
+            sortUrl: res.data.cover
+          });
+        }
+      });
+    }
   },
   mounted: function() {
     this.$nextTick(function() {

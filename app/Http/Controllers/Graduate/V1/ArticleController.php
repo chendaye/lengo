@@ -185,6 +185,20 @@ class ArticleController extends AuthController
     }
 
     /**
+     * 获取文章的标签
+     *
+     * @param Request $request
+     * @return array
+     * @author chendaye
+     */
+    public function categorys(Request $request)
+    {
+        $article_id = $request->input('article_id');
+        $articleModel = Article::find($article_id);
+        return $this->success($articleModel->categorys);
+    }
+
+    /**
      * Undocumented function
      *
      * @param array $new
