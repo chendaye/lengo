@@ -11,23 +11,28 @@
       <el-col :span="24">
         <div class="grid-content bg-purple">
           <div v-for="item in tags" :key="item.id" class="tag-content">
-            <tag :size-val="size" :content="item" :is-check="true" @check="check" @nocheck="nocheck" />
+            <tag
+              :size-val="size"
+              :content="item"
+              :is-check="true"
+              @check="check"
+              @nocheck="nocheck"
+            />
           </div>
         </div>
       </el-col>
     </el-row>
   </div>
-
 </template>
 
 <script>
-import tag from '@/components/Tag/index'
+import tag from "@/components/Tag/index";
 import crud from "@/api/crud";
-import { bubbleItem } from '@/utils/index';
+import { bubbleItem } from "@/utils/index";
 const wtuCrud = crud.factory("wtu");
 
 export default {
-  name: 'TagFilter',
+  name: "TagFilter",
   components: {
     tag
   },
@@ -40,13 +45,15 @@ export default {
   data: function() {
     return {
       // 筛选
-      filterText: '',
+      filterText: "",
       // 标签尺寸
-      size: 'mini',
+      size: "mini",
       // 所有标签
       tags: [],
-      list: []
-    }
+      list: [],
+      // 选中的tag
+      checkedtag: []
+    };
   },
   watch: {
     filterText: function(newVal, oldVal) {
@@ -59,42 +66,54 @@ export default {
     // 获取标签
     wtuCrud
       .get("listTag", {
-        order: { id: 'desc', created_at: 'asc' },
-        where: { created_at: { op: '!=', va: '', ex: 'cp' }}
+        order: { id: "desc", created_at: "asc" },
+        where: { created_at: { op: "!=", va: "", ex: "cp" }}
       })
       .then(res => {
         if (res.status === 200) {
           this.tags = res.data;
           this.list = res.data;
+          // 获取文章标签
+          if (this.articleId !== null) {
+            wtuCrud
+              .get("tags", {
+                article_id: this.articleId
+              })
+              .then(res => {
+                if (res.status === 200) {
+                  this.checkedtag = res.data.data;
+                  for (const elem of this.checkedtag.values()) {
+                    // 把选中的元素移动到最前面
+                    bubbleItem(this.tags, elem, true, true);
+                  }
+                }
+              });
+          }
         }
       });
-    // 获取文章标签
-    if(this.articleId !== null){
-      
-    }
   },
   methods: {
     // 标签选中事件
     check(data) {
       // 把选中的元素移动到最前面
       bubbleItem(this.tags, data);
-      // 出发父组件
-      this.$emit('check', data);
+      // 触发父组件
+      this.$emit("check", data);
     },
     // 取消选中事件
     nocheck(data) {
       // 把取消选中的元素，移动到最后面
       bubbleItem(this.tags, data, false);
-      // 出发父组件
-      this.$emit('nocheck', data);
+      // 触发父组件
+      this.$emit("nocheck", data);
     }
-
   }
-}
+};
 </script>
 
 <style scoped>
-  .tag-content {
-    float:left; margin:6px;
-  }
+.tag-content {
+  float: left;
+  margin: 6px;
+}
 </style>

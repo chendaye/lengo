@@ -159,11 +159,12 @@ export const deleteItem = (list, id, field = 'id') => {
  * @param {bool} up
  * @param {string} field
  */
-export const bubbleItem = (list, id, up = true, field = 'id') => {
+export const bubbleItem = (list, id, up = true, checked = false, field = 'id') => {
   const index = getIndexByID(list, id, field); // 找到元素对应的索引
 
   if (index >= 0) {
     const tmp = list[index]; // 暂存元素
+    tmp.checked = checked; // 是否选中
     // 删除元素
     list.splice(index, 1);
     if (up) {

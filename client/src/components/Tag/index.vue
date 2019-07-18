@@ -83,19 +83,8 @@ export default {
       return this.color[index];
     }
   },
-  created() {},
-  mounted: function() {
-    // 页面渲染完之后，再执行
-    this.$nextTick(function() {
-      // 获取标签detail
-      // wtuCrud
-      //   .get("detailTag", { where: { op: "id", va: this.idVal, ex: "cp" }})
-      //   .then(res => {
-      //     if (res.status === 200) {
-      //       this.tag = res.data;
-      //     }
-      //   });
-    });
+  created() {
+    this.icon = "el-icon-star-on";
   },
   methods: {
     check() {
@@ -119,6 +108,7 @@ export default {
           this.$emit("nosearch", this.tagId);
         }
         if (this.isCheck) {
+          alert()
           // 取消选中
           this.$emit("nocheck", this.tagId);
         }

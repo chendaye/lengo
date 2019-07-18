@@ -6,19 +6,19 @@
       <el-dialog :title="dialogTitle" :visible.sync="dialogVisible">
         <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
           <el-form-item label="昵称" prop="name">
-            <el-input v-model="ruleForm.name"/>
+            <el-input v-model="ruleForm.name" />
           </el-form-item>
           <el-form-item label="邮箱" prop="email">
-            <el-input v-model="ruleForm.email"/>
+            <el-input v-model="ruleForm.email" />
           </el-form-item>
           <el-form-item label="密码" prop="password">
-            <el-input v-model="ruleForm.password"/>
+            <el-input v-model="ruleForm.password" />
           </el-form-item>
           <el-form-item label="个性签名" prop="remark">
-            <el-input v-model="ruleForm.remark"/>
+            <el-input v-model="ruleForm.remark" />
           </el-form-item>
           <el-form-item label="上传头像" prop="avatar">
-            <pic @getAvatar="getAvatar"/>
+            <pic @getAvatar="getAvatar" />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" plain @click="submitForm('ruleForm')">立即创建</el-button>
@@ -28,7 +28,7 @@
         </el-form>
       </el-dialog>
     </el-header>
-    <el-main/>
+    <el-main />
   </el-container>
 </template>
 
