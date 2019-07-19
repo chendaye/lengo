@@ -235,13 +235,6 @@ class ArticleController extends AuthController
         $del = array_diff($old, $common);
         // 要新增的值
         $add = array_diff($new, $common);
-        // var_dump([
-        //     'old' => $old,
-        //     'new' => $new,
-        //     'common' => $common,
-        //     'del' => $del,
-        //     'add' => $add
-        // ]);exit;
         return [
             'common' => $common,
             'del' => $del,

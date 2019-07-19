@@ -25,7 +25,7 @@
       </el-table-column>
       <el-table-column label="Cover" width="100">
         <template slot-scope="{row}">
-          <img :src="baseApi+row.cover" style="width: 65px;hight:65px" >
+          <img :src="baseApi+row.cover" style="width: 65px;hight:65px">
         </template>
       </el-table-column>
       <el-table-column label="Title" width="150" align="center">
@@ -75,7 +75,7 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{row}">
-          <el-button type="success" size="mini" @click="handlePublish(row)">Publish</el-button>
+          <el-button v-if="row.draft === 1" type="success" size="mini" @click="handlePublish(row)">Publish</el-button>
           <el-button type="primary" size="mini">
             <router-link :to="{ name: 'NoteCreate', params: { id: row.id }}">Edit</router-link>
           </el-button>
@@ -187,7 +187,7 @@ export default {
         tag: null
       };
     },
-    // 删除标签
+    // 删除文章
     handleDelete(row) {
       wtuCrud
         .post("articleDel", {

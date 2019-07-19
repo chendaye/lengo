@@ -160,10 +160,6 @@ export default {
           }
         });
     }
-    console.log("checks-init", this.checks);
-    console.log("checksNew-init", this.checksNew);
-    console.log("cate-init", this.categorys);
-    console.log("cateNew-init", this.categorysNew);
   },
   methods: {
     // 将图片上传到服务器，返回地址替换到md中
