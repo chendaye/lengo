@@ -41,7 +41,13 @@
                 <span class="header-attr">文章分类</span>
               </div>
               <!-- 分类选择 -->
-              <category :is-check="true" :article-id="articleId" :is-filter="true" @handchecked="handchecked" @handDetailChecked="handDetailChecked" />
+              <category
+                :is-check="true"
+                :article-id="articleId"
+                :is-filter="true"
+                @handchecked="handchecked"
+                @handDetailChecked="handDetailChecked"
+              />
             </el-card>
           </div>
         </el-col>
@@ -51,7 +57,12 @@
               <div slot="header" class="clearfix">
                 <span class="header-attr">文章标签</span>
               </div>
-              <tag :article-id="articleId" @check="check" @nocheck="nocheck" />
+              <tag
+                :article-id="articleId"
+                @check="check"
+                @nocheck="nocheck"
+                @defaultChecked="defaultChecked"
+              />
             </el-card>
           </div>
         </el-col>
@@ -123,31 +134,36 @@ export default {
       checksNew: [], // articleId 非空时有值 上一次选中的 tag
       // 上传的封面
       coverImg: {
-        filename: '',
-        group_name: '',
-        sortUrl: '',
-        url: ''
+        filename: "",
+        group_name: "",
+        sortUrl: "",
+        url: ""
       }
-
     };
   },
   created() {
     if (this.$route.params.id) {
       // 文章id
       this.articleId = this.$route.params.id;
-      wtuCrud.get('detailArticle', {
-        where: {
-          id: { op: '=', va: this.articleId, ex: 'cp' }
-        }
-      }).then(res => {
-        if (res.status === 200) {
-          this.article.title = res.data.title;
-          this.article.abstract = res.data.abstract;
-          this.content = res.data.content;
-          this.html = res.data.html;
-        }
-      });
+      wtuCrud
+        .get("detailArticle", {
+          where: {
+            id: { op: "=", va: this.articleId, ex: "cp" }
+          }
+        })
+        .then(res => {
+          if (res.status === 200) {
+            this.article.title = res.data.title;
+            this.article.abstract = res.data.abstract;
+            this.content = res.data.content;
+            this.html = res.data.html;
+          }
+        });
     }
+    console.log("checks-init", this.checks);
+    console.log("checksNew-init", this.checksNew);
+    console.log("cate-init", this.categorys);
+    console.log("cateNew-init", this.categorysNew);
   },
   methods: {
     // 将图片上传到服务器，返回地址替换到md中
@@ -158,16 +174,13 @@ export default {
       wtuCrud.post("markDownPic", formdata).then(res => {
         if (res.status === 200) {
           this.$refs.md.$img2Url(pos, res.data.url);
-          console.log(res.data.url);
         }
       });
     },
     // 删除图片
     $imgDel($file) {
-      console.log($file, process.env.VUE_APP_PIC)
-      const sort = $file[0].replace(process.env.VUE_APP_PIC, '');
-      console.log(sort);
-      wtuCrud.post('imgDel', { sort: sort }).then(res => {
+      const sort = $file[0].replace(process.env.VUE_APP_PIC, "");
+      wtuCrud.post("imgDel", { sort: sort }).then(res => {
         if (res.data.data) {
           this.$message.success("原有图片已经删除！");
         }
@@ -202,20 +215,28 @@ export default {
           categorysNew: this.categorysNew, // 要更新的分类
           title: this.article.title,
           abstract: this.article.abstract
-        }
-        wtuCrud.post('updateArticle', article).then(res => {
+        };
+        console.log("更新内容", article);
+        wtuCrud.post("updateArticle", article).then(res => {
           if (res.status === 200) {
             const info = res.data.data;
             // 保存最新的的数据库里的值
             this.checks = info[0].tagsNew;
             this.categorys = info[0].categorysNew;
-            this.$message.success("笔记更新成功，开始新的知识之旅吧！");
+            this.$message({
+              message: '"笔记更新成功，开始新的知识之旅吧！"',
+              type: "success",
+              duration: 1500,
+              onClose: () => {
+                this.$router.push({ path: "/admin/wtu/note/noteManage" });
+              }
+            });
           }
         });
       } else {
         this.$notify.info({
-          title: '消息',
-          message: '文章ID 为空！'
+          title: "消息",
+          message: "文章ID 为空！"
         });
       }
     },
@@ -224,32 +245,32 @@ export default {
     submit(draft) {
       if (!this.article.title || !this.article.abstract) {
         this.$notify.info({
-          title: '消息',
-          message: '请编辑文章标题和摘要！'
+          title: "消息",
+          message: "请编辑文章标题和摘要！"
         });
         return false;
-      } else if (this.content === '' || this.html === '') {
+      } else if (this.content === "" || this.html === "") {
         this.$notify.info({
-          title: '消息',
-          message: '请编辑文章内容！'
+          title: "消息",
+          message: "请编辑文章内容！"
         });
         return false;
       } else if (this.coverImg === {}) {
         this.$notify.info({
-          title: '消息',
-          message: '请编辑文章内容！'
+          title: "消息",
+          message: "请编辑文章内容！"
         });
         return false;
       } else if (this.checks.length === 0) {
         this.$notify.info({
-          title: '消息',
-          message: '请选择文章标签！'
+          title: "消息",
+          message: "请选择文章标签！"
         });
         return false;
       } else if (this.categorys.length === 0) {
         this.$notify.info({
-          title: '消息',
-          message: '请选择文章分类！'
+          title: "消息",
+          message: "请选择文章分类！"
         });
         return false;
       } else {
@@ -263,12 +284,18 @@ export default {
           abstract: this.article.abstract,
           draft: draft
         };
-        wtuCrud.post('article', article).then(res => {
+        wtuCrud.post("article", article).then(res => {
           // 文章已经保存，生成文章id
           this.articleId = res.data.data.article.id;
-          console.log('原文', res.data.data)
-          this.$message.success("笔记保存成功，开始新的知识之旅吧！");
-        })
+          this.$message({
+            message: '"笔记更新成功，开始新的知识之旅吧！"',
+            type: "success",
+            duration: 1500,
+            onClose: () => {
+              this.$router.push({ path: "/admin/wtu/note/noteManage" });
+            }
+          });
+        });
       }
     },
 
@@ -277,7 +304,7 @@ export default {
       // todo： 注意浏览器图片缓存
       if (this.coverImg.sortUrl) {
         // 上传图片 删除原有图片
-        wtuCrud.post('imgDel', { sort: this.coverImg.sortUrl }).then(res => {
+        wtuCrud.post("imgDel", { sort: this.coverImg.sortUrl }).then(res => {
           if (res.data.data) {
             this.$message.success("原有图片已经删除！");
           }
@@ -302,12 +329,14 @@ export default {
           );
         }
       }
+      console.log("cate", this.categorys);
+      console.log("cateNew", this.categorysNew);
     },
     // 文章详情初始化分类
     handDetailChecked(data) {
       if (this.articleId > 0 && data.length > 0) {
-        this.categorys = data;
-        this.categorysNew = data;
+        this.categorys = Object.assign([], data);
+        this.categorysNew = Object.assign([], data);
       }
     },
 
@@ -322,6 +351,8 @@ export default {
         // todo: 文章编辑（同时初始化 checks checksNew），编辑在checksNew上变动
         this.checksNew.push(data);
       }
+      console.log("checks", this.checks);
+      console.log("checksNew", this.checksNew);
     },
     // 取消选中事件
     nocheck(data) {
@@ -331,6 +362,16 @@ export default {
         this.checksNew.splice(this.findIndex(this.checks, data), 1);
       } else {
         this.checksNew.splice(this.findIndex(this.checks, data), 1);
+      }
+      console.log("checks", this.checks);
+      console.log("checksNew", this.checksNew);
+    },
+    // 文章详情默认选中标签
+    defaultChecked(tag) {
+      if (tag.length > 0) {
+        // 同步
+        this.checks = Object.assign([], tag);
+        this.checksNew = Object.assign([], tag); // 按值传递， 直接赋值是引用
       }
     },
 
@@ -348,13 +389,13 @@ export default {
     // 检查标题是否重复
     title(data) {
       if (this.articleId === null) {
-        wtuCrud.get('title', { title: this.article.title }).then(res => {
+        wtuCrud.get("title", { title: this.article.title }).then(res => {
           if (res.status && res.data.data) {
             this.$message({
-              message: '标题重复！',
-              type: 'warning'
+              message: "标题重复！",
+              type: "warning"
             });
-            this.article.title = '';
+            this.article.title = "";
           }
         });
       }

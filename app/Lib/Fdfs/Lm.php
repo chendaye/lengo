@@ -180,7 +180,7 @@ class Lm extends \FastDFS
         if($group && $filename && $this->storage_file_exist($group, $filename)){
             return $this->storage_delete_file($group, $filename);
         }else if(!$this->storage_file_exist($group, $filename)){
-            return '图片已经删除,可能是浏览器缓存,切换无痕模式'
+            return '图片已经删除,可能是浏览器缓存,切换无痕模式';
         }else{
             return $this->error();
         }

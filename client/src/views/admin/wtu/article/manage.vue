@@ -25,7 +25,7 @@
       </el-table-column>
       <el-table-column label="Cover" width="100">
         <template slot-scope="{row}">
-          <img :src="baseApi+row.cover" style="width: 65px;hight:65px">
+          <img :src="baseApi+row.cover" style="width: 65px;hight:65px" >
         </template>
       </el-table-column>
       <el-table-column label="Title" width="150" align="center">
@@ -60,9 +60,7 @@
       </el-table-column>
       <el-table-column label="Status" class-name="status-col" width="100">
         <template slot-scope="{row}">
-          <el-tag :type="row.draft | statusFilter">
-            {{ row.draft | statusName }}
-          </el-tag>
+          <el-tag :type="row.draft | statusFilter">{{ row.draft | statusName }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="更新时间" width="160" align="center">
@@ -97,40 +95,40 @@
 </template>
 
 <script>
-import crud from '@/api/crud';
-import waves from '@/directive/waves'; // waves directive
-import Pagination from '@/components/Pagination';
-import { deleteItem, updateItem } from '@/utils/index';
-const wtuCrud = crud.factory('wtu');
+import crud from "@/api/crud";
+import waves from "@/directive/waves"; // waves directive
+import Pagination from "@/components/Pagination";
+import { deleteItem, updateItem } from "@/utils/index";
+const wtuCrud = crud.factory("wtu");
 
 export default {
-  name: 'Article',
+  name: "Article",
   components: { Pagination },
   directives: { waves },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        0: 'success',
-        1: 'info'
-      }
-      return statusMap[status]
+        0: "success",
+        1: "info"
+      };
+      return statusMap[status];
     },
     statusName(status) {
       const statusMap = {
-        0: '发表',
-        1: '草稿'
-      }
-      return statusMap[status]
+        0: "发表",
+        1: "草稿"
+      };
+      return statusMap[status];
     },
     spliceArticle(data) {
-      return data.substring(0, 32) + '......';
+      return data.substring(0, 32) + "......";
     }
   },
   data() {
     return {
       baseApi: process.env.VUE_APP_PIC,
       dataForm: {
-        tag: ''
+        tag: ""
       },
       // table
       list: null,
@@ -143,7 +141,7 @@ export default {
         where: {},
         title: null
       },
-      dialogStatus: ''
+      dialogStatus: ""
     };
   },
   created() {
@@ -151,7 +149,7 @@ export default {
   },
   methods: {
     submitForm(formName) {
-      if (this.dialogStatus === 'create') {
+      if (this.dialogStatus === "create") {
         this.createData();
       } else {
         this.updateData();
@@ -164,16 +162,18 @@ export default {
     // table
     getList() {
       this.listLoading = true;
-      this.listQuery.order = { id: 'desc', created_at: 'asc' };
-      this.listQuery.where.created_at = { op: '!=', va: '', ex: 'cp' };
+      this.listQuery.order = { id: "desc", created_at: "asc" };
+      this.listQuery.where.created_at = { op: "!=", va: "", ex: "cp" };
       if (this.listQuery.title !== null) {
-        this.listQuery.where.title = { op: 'like', va: '%' + this.listQuery.title + '%', ex: 'cp' };
+        this.listQuery.where.title = {
+          op: "like",
+          va: "%" + this.listQuery.title + "%",
+          ex: "cp"
+        };
       }
-      wtuCrud.get('indexArticle', this.listQuery).then(res => {
+      wtuCrud.get("indexArticle", this.listQuery).then(res => {
         this.list = res.data.data;
         this.total = res.data.total;
-        console.log(this.listQuery);
-
         this.listLoading = false;
       });
     },
@@ -185,21 +185,21 @@ export default {
       this.dataForm = {
         id: null,
         tag: null
-      }
+      };
     },
     // 删除标签
     handleDelete(row) {
       wtuCrud
-        .post('articleDel', {
-          where: { id: { op: '=', va: row.id, ex: 'cp' }}
+        .post("articleDel", {
+          where: { id: { op: "=", va: row.id, ex: "cp" }}
         })
         .then(res => {
           if (res.status === 200) {
             deleteItem(this.list, row.id);
             this.$notify({
-              title: 'Success',
-              message: 'Delete Successfully',
-              type: 'success',
+              title: "Success",
+              message: "Delete Successfully",
+              type: "success",
               duration: 2000
             });
           }
@@ -207,37 +207,41 @@ export default {
     },
     // 发布文章
     handlePublish(row) {
-      this.$confirm('确定发表此文章此?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        wtuCrud.post('articleUpdate', {
-          where: { id: { op: '=', va: row.id, ex: 'cp' }},
-          data: { draft: 0 }
-        }).then(res => {
-          row.draft = 0;
-          updateItem(this.list, row);
-          this.$notify({
-            title: 'Success',
-            message: 'Delete Successfully',
-            type: 'success',
-            duration: 2000
+      this.$confirm("确定发表此文章此?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          wtuCrud
+            .post("articleUpdate", {
+              where: { id: { op: "=", va: row.id, ex: "cp" }},
+              data: { draft: 0 }
+            })
+            .then(res => {
+              row.draft = 0;
+              updateItem(this.list, row);
+              this.$notify({
+                title: "Success",
+                message: "Delete Successfully",
+                type: "success",
+                duration: 2000
+              });
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消发布"
           });
         });
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消发布'
-        });
-      });
     },
     // 行颜色
     tableRowClassName({ row, rowIndex }) {
       if (row.draft === 1) {
-        return 'warning-row';
+        return "warning-row";
       } else {
-        return 'success-row';
+        return "success-row";
       }
     }
   }
@@ -245,5 +249,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
