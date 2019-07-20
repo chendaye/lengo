@@ -84,7 +84,10 @@ export default {
     }
   },
   created() {
-    this.icon = "el-icon-star-on";
+    if (this.content.checked === true) {
+      this.icon = "el-icon-star-on";
+      this.tagId = this.content.id;
+    }
   },
   methods: {
     check() {
@@ -108,7 +111,6 @@ export default {
           this.$emit("nosearch", this.tagId);
         }
         if (this.isCheck) {
-          alert()
           // 取消选中
           this.$emit("nocheck", this.tagId);
         }
