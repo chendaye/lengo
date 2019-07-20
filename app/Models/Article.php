@@ -16,7 +16,7 @@ class Article extends Model
     public function tags()
     {
         // 自动维护中间表的时间戳
-        return $this->belongsToMany(Tag::class, 'article_has_tags', 'article_id', 'tag_id')->withTimestamps();
+        return $this->belongsToMany(Tag::class, 'article_has_tags', 'article_id', 'tag_id')->whereNull('article_has_tags.deleted_at')->withTimestamps();
     }
 
     /**

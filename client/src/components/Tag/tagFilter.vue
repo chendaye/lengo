@@ -71,23 +71,30 @@ export default {
       })
       .then(res => {
         if (res.status === 200) {
-          this.tags = res.data;
-          this.list = res.data;
+          for (const el of res.data.values()) {
+            el["checked"] = false;
+          }
+          this.list = Object.assign([], res.data);
           // 获取文章标签
           if (this.articleId !== null) {
             wtuCrud
               .get("tags", {
                 article_id: this.articleId
               })
-              .then(res => {
-                if (res.status === 200) {
-                  this.checkedtag = res.data.data;
+              .then(resp => {
+                if (resp.status === 200) {
+                  this.checkedtag = resp.data.data.tag; // 文章绑定的标签
+                  // todo: 文章绑定的标签
+                  this.$emit('defaultChecked', this.checkedtag);
+                  this.tags = this.list;
                   for (const elem of this.checkedtag.values()) {
                     // 把选中的元素移动到最前面
                     bubbleItem(this.tags, elem, true, true);
                   }
                 }
               });
+          } else {
+            this.tags = this.list = Object.assign([], res.data);
           }
         }
       });

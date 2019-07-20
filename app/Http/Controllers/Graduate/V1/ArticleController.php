@@ -212,10 +212,11 @@ class ArticleController extends AuthController
     {
         $article_id = $request->input('article_id');
         $articleModel = Article::find($article_id);
-        $tag = $articleModel->tags->map(function ($item) {
+        $list = $articleModel->tags;
+        $tag = $list->map(function ($item) {
             return $item->id;
         });
-        return $this->success($tag);
+        return $this->success(['tag' => $tag, 'list' => $list]);
     }
 
     /**
@@ -234,7 +235,6 @@ class ArticleController extends AuthController
         $del = array_diff($old, $common);
         // 要新增的值
         $add = array_diff($new, $common);
-
         return [
             'common' => $common,
             'del' => $del,

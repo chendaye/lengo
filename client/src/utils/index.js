@@ -164,7 +164,7 @@ export const bubbleItem = (list, id, up = true, checked = false, field = 'id') =
 
   if (index >= 0) {
     const tmp = list[index]; // 暂存元素
-    tmp.checked = checked; // 是否选中
+    tmp.checked = checked;
     // 删除元素
     list.splice(index, 1);
     if (up) {
