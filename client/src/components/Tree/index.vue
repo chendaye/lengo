@@ -34,6 +34,7 @@
       :show-checkbox="isCheck"
       :allow-drop="allowDrop"
       :allow-drag="allowDrag"
+      @node-click="nodeClick"
       @node-drop="handleDrop"
       @check="handChecked"
     >
@@ -109,6 +110,10 @@ export default {
       type: Boolean,
       default: false
     },
+    isSearch: {
+      type: Boolean,
+      default: false
+    },
     isRoot: {
       type: Boolean,
       default: false
@@ -175,6 +180,7 @@ export default {
     wtuCrud.get("tree", {}).then(res => {
       if (res.status === 200) {
         this.treeData = res.data.data;
+        console.log(this.treeData)
         // todo: 文章分类详情
         if (this.articleId !== null) {
           wtuCrud
@@ -282,6 +288,10 @@ export default {
           return false;
         }
       });
+    },
+    // 点击节点
+    nodeClick(data) {
+      this.$emit('searchCategory', data)
     },
     // 添加根分类
     submitCategory() {

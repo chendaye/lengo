@@ -176,3 +176,28 @@ export const bubbleItem = (list, id, up = true, checked = false, field = 'id') =
     }
   }
 };
+
+// 子分类
+export function son(data, arr = []) {
+  if (data.children !== undefined && data.children.length > 0) {
+    arr.push(data.id);
+    for (const elem of data.children.values()) {
+      son(elem, arr);
+    }
+    return arr;
+  } else {
+    arr.push(data.id);
+    return arr;
+  }
+}
+
+// 确定取消选中的标签的索引
+export function findIndex(list, data) {
+  let index = null;
+  for (let i = 0; i < list.length; i++) {
+    if (list[i] === data) {
+      index = i;
+    }
+  }
+  return index;
+}

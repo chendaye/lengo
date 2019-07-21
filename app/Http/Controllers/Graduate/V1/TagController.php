@@ -25,7 +25,7 @@ class TagController extends AuthController
         //TODO：软删除关联
         $where = $request->input('where');
         $tag = Tag::find($where['id']['va']);
-        if(!$tag) return $this->error('没有找到此篇的文章！');
+        if(!$tag) return $this->error('没有找到此tag！');
         // $tag->articles()->detach(); // 移除所有关联的文章 硬删除
         $tag->articles->map(function ($item) use($tag) {
              ArticleHasTag::where([

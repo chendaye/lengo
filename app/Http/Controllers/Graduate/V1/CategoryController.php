@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Graduate\V1;
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\ArticleHasCategory;
 
 class CategoryController extends AuthController
 {
@@ -33,12 +34,12 @@ class CategoryController extends AuthController
      */
     public function allSon(int $pid, array $tree = [], $detail = true)
     {
-         $child = $this->nextNode($pid)->toArray();
-         foreach($child as $val){
+        $child = $this->nextNode($pid)->toArray();
+        foreach ($child as $val) {
             $tree[] = $detail ? $val : $val['id'];
             $tree = $detail ? $this->allSon($val['id'], $tree) : $this->allSon($val['id'], $tree, false);
-         }
-         return $tree;
+        }
+        return $tree;
     }
 
 
@@ -109,18 +110,31 @@ class CategoryController extends AuthController
         // parentId
         $parentId = $where['id']['va'];
 
-        if(! $parentId){
+        if (!$parentId) {
             return $this->error('请传递分类id');
         }
         // 获取所有次级分类
         $son = $this->allSon($parentId, [], false);
         $son[] = $parentId;
 
+        // 软删除中间表
+        foreach($son as $val){
+            $category = Category::find($val);
+            if (!$category) return $this->error('没有找到此分类！');
+            $category->articles->map(function ($item) use ($category) {
+                ArticleHasCategory::where([
+                    ['category_id', '=', $category->id],
+                    ['article_id', '=', $item->id],
+                ])->update(['deleted_at' => date('Y-m-d H:i:s')]);
+            });
+        }
+
+
         // 删除
         $res = $this->model->whereIn('id', $son)->delete();
-        if($res){
+        if ($res) {
             return $this->success('分类删除成功！');
-        }else{
+        } else {
             return $this->error('分类删除失败！');
         }
         //TODO：删除关联

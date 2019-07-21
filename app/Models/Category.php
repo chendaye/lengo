@@ -17,6 +17,6 @@ class Category extends Model
     public function articles()
     {
         // 自动维护中间表的时间戳
-        return $this->belongsToMany(Article::class, 'article_has_categorys', 'category_id',  'article_id')->withTimestamps();
+        return $this->belongsToMany(Article::class, 'article_has_categorys', 'category_id',  'article_id')->whereNull('article_has_categorys.deleted_at')->withTimestamps();
     }
 }

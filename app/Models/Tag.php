@@ -16,7 +16,7 @@ class Tag extends Model
      */
     public function articles()
     {
-        return $this->belongsToMany(Article::class, 'article_has_tags', 'tag_id',  'article_id')->withTimestamps();
+        return $this->belongsToMany(Article::class, 'article_has_tags', 'tag_id',  'article_id')->whereNull('article_has_tags.deleted_at')->withTimestamps();
     }
 
     /**

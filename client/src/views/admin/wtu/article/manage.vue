@@ -1,13 +1,29 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input
-        v-model="listQuery.title"
-        placeholder="Title"
-        style="width: 200px;"
-        prefix-icon="el-icon-search"
-        @input="handleFilter"
-      />
+
+      <el-row :gutter="10">
+        <el-col :span="6"><div class="grid-content bg-purple" />
+          <category :is-filter="true" :is-search="true" @searchCategory="searchCategory" />
+        </el-col>
+        <el-col :span="10"><div class="grid-content bg-purple" />
+          <tag
+            :is-search="true"
+            @check="check"
+            @nocheck="nocheck"
+          />
+        </el-col>
+        <el-col :span="6"><div class="grid-content bg-purple" />
+          <el-input
+            v-model="title"
+            placeholder="Title"
+            size="mini"
+            prefix-icon="el-icon-search"
+          />
+        </el-col>
+        <el-col :span="2"><div class="grid-content bg-purple" />
+          <el-button type="info" size="mini" plain @click="resetFilter">重置</el-button>
+      </el-col></el-row>
     </div>
 
     <el-table
@@ -98,12 +114,14 @@
 import crud from "@/api/crud";
 import waves from "@/directive/waves"; // waves directive
 import Pagination from "@/components/Pagination";
-import { deleteItem, updateItem } from "@/utils/index";
+import { deleteItem, updateItem, son, findIndex } from "@/utils/index";
+import category from "@/components/Tree/index";
+import tag from "@/components/Tag/tagFilter";
 const wtuCrud = crud.factory("wtu");
 
 export default {
   name: "Article",
-  components: { Pagination },
+  components: { Pagination, category, tag },
   directives: { waves },
   filters: {
     statusFilter(status) {
@@ -138,11 +156,33 @@ export default {
         page: 1,
         limit: 10,
         order: {},
-        where: {},
-        title: null
+        where: {}
       },
+      title: '',
+      tag: [],
+      category: [],
       dialogStatus: ""
     };
+  },
+  watch: {
+    title: function() {
+      this.listQuery.where.title = this.title;
+      this.handleFilter();
+    },
+    category: function() {
+      if (this.category !== []) {
+        let cate = [];
+        // 分类
+        cate = son(this.category);
+        this.listQuery.where.category = cate;
+        this.handleFilter();
+      }
+    },
+    tag: function() {
+      console.log('tag', this.tag);
+      this.listQuery.where.tag = this.tag;
+      this.handleFilter();
+    }
   },
   created() {
     this.getList();
@@ -162,15 +202,6 @@ export default {
     // table
     getList() {
       this.listLoading = true;
-      this.listQuery.order = { id: "desc", created_at: "asc" };
-      this.listQuery.where.created_at = { op: "!=", va: "", ex: "cp" };
-      if (this.listQuery.title !== null) {
-        this.listQuery.where.title = {
-          op: "like",
-          va: "%" + this.listQuery.title + "%",
-          ex: "cp"
-        };
-      }
       wtuCrud.get("indexArticle", this.listQuery).then(res => {
         this.list = res.data.data;
         this.total = res.data.total;
@@ -243,6 +274,22 @@ export default {
       } else {
         return "success-row";
       }
+    },
+    // 搜索分类
+    searchCategory(data) {
+      this.category = data;
+    },
+    // 标签搜搜
+    check(data) {
+      this.tag.push(data);
+    },
+    nocheck(data) {
+      this.tag.splice(findIndex(this.tag, data), 1);
+    },
+    // 重置搜索
+    resetFilter() {
+      this.listQuery.where = {};
+      this.handleFilter();
     }
   }
 };

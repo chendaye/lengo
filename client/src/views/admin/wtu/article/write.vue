@@ -102,6 +102,7 @@ import cover from "@/components/cover/index";
 import category from "@/components/Tree/index";
 import tag from "@/components/Tag/tagFilter";
 import crud from "@/api/crud";
+import { findIndex } from "@/utils/index";
 const wtuCrud = crud.factory("wtu");
 
 export default {
@@ -347,20 +348,16 @@ export default {
         // todo: 文章编辑（同时初始化 checks checksNew），编辑在checksNew上变动
         this.checksNew.push(data);
       }
-      console.log("checks", this.checks);
-      console.log("checksNew", this.checksNew);
     },
     // 取消选中事件
     nocheck(data) {
       // todo: 同选中事件
       if (this.articleId === null) {
-        this.checks.splice(this.findIndex(this.checks, data), 1);
-        this.checksNew.splice(this.findIndex(this.checks, data), 1);
+        this.checks.splice(findIndex(this.checks, data), 1);
+        this.checksNew.splice(findIndex(this.checks, data), 1);
       } else {
-        this.checksNew.splice(this.findIndex(this.checks, data), 1);
+        this.checksNew.splice(findIndex(this.checks, data), 1);
       }
-      console.log("checks", this.checks);
-      console.log("checksNew", this.checksNew);
     },
     // 文章详情默认选中标签
     defaultChecked(tag) {
@@ -370,18 +367,6 @@ export default {
         this.checksNew = Object.assign([], tag); // 按值传递， 直接赋值是引用
       }
     },
-
-    // 确定取消选中的标签的索引
-    findIndex(list, data) {
-      let index = null;
-      for (let i = 0; i < list.length; i++) {
-        if (this.checks[i] === data) {
-          index = i;
-        }
-      }
-      return index;
-    },
-
     // 检查标题是否重复
     title(data) {
       if (this.articleId === null) {
