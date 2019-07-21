@@ -70,7 +70,7 @@ export default [{
     icon: 'lengo'
   },
   children: [
-  // tag
+    // tag
     {
       path: 'tag',
       component: () => import('@/views/admin/wtu/tag/index'),
@@ -88,8 +88,7 @@ export default [{
           title: '标签',
           icon: 'tag'
         }
-      }
-      ]
+      }]
     },
     // 分类
     {
@@ -109,8 +108,7 @@ export default [{
           title: '分类',
           icon: 'plane'
         }
-      }
-      ]
+      }]
     },
     // 文章
     {
@@ -119,28 +117,27 @@ export default [{
       component: () => import('@/views/admin/wtu/article'),
       meta: {
         title: '笔记',
-        icon: 'notebook'
+        icon: 'wtu'
       },
       redirect: '/admin/wtu/article',
-      children: [
-        {
-          path: 'noteCreate',
-          component: () => import('@/views/admin/wtu/article/write'),
-          name: 'NoteCreate',
-          meta: {
-            title: '写笔记',
-            icon: 'notebook'
-          }
-        },
-        {
-          path: 'noteManage',
-          component: () => import('@/views/admin/wtu/article/manage'),
-          name: 'noteManage',
-          meta: {
-            title: '笔记管理',
-            icon: 'notebook'
-          }
+      children: [{
+        path: 'noteCreate',
+        component: () => import('@/views/admin/wtu/article/write'),
+        name: 'NoteCreate',
+        meta: {
+          title: '写笔记',
+          icon: 'notebook'
         }
+      },
+      {
+        path: 'noteManage',
+        component: () => import('@/views/admin/wtu/article/manage'),
+        name: 'noteManage',
+        meta: {
+          title: '笔记管理',
+          icon: 'txt'
+        }
+      }
       ]
     }
   ]

@@ -26,10 +26,6 @@ export default {
       type: Object,
       required: true
     },
-    isSearch: {
-      type: Boolean,
-      default: false
-    },
     isCheck: {
       type: Boolean,
       default: true
@@ -96,20 +92,11 @@ export default {
         this.icon = "el-icon-star-on";
         this.tagId = this.content.id;
         this.content.count++;
-        if (this.isSearch) {
-          // 触发搜索
-          this.$emit("search", this.tagId);
-        }
         if (this.isCheck) {
           // 触发选中
           this.$emit("check", this.tagId);
         }
       } else {
-        // 取消选中
-        if (this.isSearch) {
-          // 取消搜索
-          this.$emit("nosearch", this.tagId);
-        }
         if (this.isCheck) {
           // 取消选中
           this.$emit("nocheck", this.tagId);
