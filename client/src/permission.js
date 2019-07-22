@@ -93,13 +93,14 @@ router.beforeEach(async(to, from, next) => {
 
     // 检查token
     const hasToken = getToken('client')
-
     // token 存在
     if (hasToken) {
+      console.log(to.path)
+
       if (to.path === '/client/login') {
         // 已经登录直接跳转到主页
         next({
-          path: '/client'
+          path: '/client/dashboard'
         })
         NProgress.done()
       } else {

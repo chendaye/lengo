@@ -7,13 +7,14 @@ import actions from './actions'
 import mutations from './mutations'
 
 // 后台的 store 模块
-import app from './admin/base/app'
-import settings from './admin/base/settings'
-import admin from './admin/base/user'
-import routers from './admin/base/routers'
+import app from './admin/app'
+import settings from './admin/settings'
+import admin from './admin/user'
+import routers from './admin/routers'
 
 // 前台的
-import client from './client/base/user'
+import client from './client/user'
+import article from './client/article'
 
 Vue.use(Vuex)
 
@@ -26,7 +27,8 @@ const store = new Vuex.Store({
     admin,
     routers,
     // 客户端 store
-    client
+    client,
+    article
   },
   getters,
   actions,

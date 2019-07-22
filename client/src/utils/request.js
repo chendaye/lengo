@@ -63,7 +63,9 @@ service.interceptors.response.use(
     }
 
     // return response
-    const res = response.data.meta !== undefined ? response.data.meta : { code: 200000 }
+    const res = response.data.meta !== undefined ? response.data.meta : {
+      code: 200000
+    }
 
     // if the custom code is not 200000, it is judged as an error.
     if (res.code !== 200000) {
@@ -114,8 +116,9 @@ service.interceptors.response.use(
     switch (msg.status_code) {
       // 如果响应中的 http code 为 401，那么则此用户可能 token 失效了之类的，我会触发 logout 方法，清除本地的数据并将用户重定向至登录页面
       case 401:
+        console.log(msg)
         Message({
-          message: '令牌失效，请重新登录！',
+          message: msg.message,
           type: 'error',
           duration: 5 * 1000
         })
