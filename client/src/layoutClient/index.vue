@@ -197,9 +197,9 @@ export default {
 }
 </script>
 
-<style lang="stylus" src="@/stylus/main.styl"></style>
+<style lang="stylus" src="@/stylus/main.styl" scoped></style>
 
-<style lang="stylus" >
+<style lang="stylus" scoped>
 @import '../stylus/color.styl'
 #appindex
   width: 100%
