@@ -17,7 +17,10 @@ const getters = {
   admin_roles: state => state.admin.roles,
   permission_routes: state => state.routers.routes,
   // app
-  device: state => state.app.device
+  device: state => state.app.device,
+  // blog
+  screen: state => state.blog.screen,
+  blogInfo: state => state.blog.blogInfo
 
 }
 export default getters

@@ -152,6 +152,14 @@ export default {
       showMenu: false
     }
   },
+  computed: {
+    ...mapGetters('blog', [
+      'screen',
+      'showRightNav',
+      'blogInfo',
+      'articleMenu'
+    ])
+  },
   watch: {
     screen(value) {
       this.show = true
@@ -177,16 +185,8 @@ export default {
   },
   mounted() {
   },
-  computed: {
-    ...mapGetters([
-      'screen',
-      'showRightNav',
-      'blogInfo',
-      'articleMenu'
-    ])
-  },
   methods: {
-    ...mapActions([
+    ...mapActions('blog', [
       'setShowRightNav'
     ]),
     toggle() {

@@ -1,30 +1,33 @@
 <template>
   <div id="article-card">
     <div class="article-card-wrap">
-      <div class="article-cover"
+      <div
+        class="article-cover"
         :style="{
           backgroundImage: 'url(' + getCover + ')'
-        }">
+        }"
+      >
         <div class="article-title">
           <span @click="showArticle">{{ article.article.title }}</span>
         </div>
       </div>
       <div class="article-info">
-        <i class="iconfont icon-calendar"></i>
+        <i class="iconfont icon-calendar" />
         发表于 {{ article.article.publishTime | time('YYYY年MM月DD日') }} •
-        <i class="iconfont icon-folder"></i>
+        <i class="iconfont icon-folder" />
         <span class="classify" @click="toList('category', article.category.id)">{{ article.category.name }}</span> •
-        <i class="iconfont icon-eye"></i>
+        <i class="iconfont icon-eye" />
         {{ article.article.pageview }}次围观
       </div>
       <div class="article-sub-message">{{ article.article.subMessage }}</div>
-      <div class="tags" v-if="article.tags.length > 0">
+      <div v-if="article.tags.length > 0" class="tags">
         <div
           v-for="(tag, index) in article.tags"
           :key="index"
           class="tag"
-           @click="toList('tag', tag.id)">
-          <i class="iconfont icon-tag"></i>
+          @click="toList('tag', tag.id)"
+        >
+          <i class="iconfont icon-tag" />
           {{ tag.name }}
         </div>
       </div>
@@ -36,15 +39,15 @@
 <script>
 
 export default {
-  name: 'article-card',
+  name: 'ArticleCard',
   props: ['article'],
-  data () {
+  data() {
     return {
       defaultCover: 'http://blogimg.codebear.cn/FrTy2sZVtGZGYMFj6PAuNe7T6g3__water'
     }
   },
   computed: {
-    getCover () {
+    getCover() {
       if (this.article && this.article.article && this.article.article.cover) {
         return this.article.article.cover
       }
@@ -52,7 +55,7 @@ export default {
     }
   },
   methods: {
-    showArticle () {
+    showArticle() {
       this.$router.push({
         name: 'article',
         query: {
@@ -60,7 +63,7 @@ export default {
         }
       })
     },
-    toList (type, id) {
+    toList(type, id) {
       this.$router.push({
         name: 'articleList',
         query: {

@@ -5,11 +5,11 @@
         {{ article.article.title }}
       </div>
       <div class="article-info">
-        <i class="iconfont icon-calendar"></i>
+        <i class="iconfont icon-calendar" />
         发表于 {{ article.article.publishTime | time('YYYY年MM月DD日') }} •
-        <i class="iconfont icon-folder"></i>
+        <i class="iconfont icon-folder" />
         <span class="classify" @click="toList('category', article.category.id)">{{ article.category.name }}</span> •
-        <i class="iconfont icon-eye"></i>
+        <i class="iconfont icon-eye" />
         {{ article.article.pageview }}次围观
       </div>
       <div class="article-sub-message">{{ article.article.subMessage }}</div>
@@ -18,8 +18,9 @@
           v-for="(tag, index) in article.tags"
           :key="index"
           class="tag"
-           @click="toList('tag', tag.id)">
-          <i class="iconfont icon-tag"></i>
+          @click="toList('tag', tag.id)"
+        >
+          <i class="iconfont icon-tag" />
           {{ tag.name }}
         </div>
       </div>
@@ -30,16 +31,16 @@
 <script>
 
 export default {
-  name: 'article-card',
+  name: 'ArticleCard',
   props: ['article'],
-  data () {
+  data() {
     return {
     }
   },
   computed: {
   },
   methods: {
-    showArticle () {
+    showArticle() {
       this.$router.push({
         name: 'article',
         query: {
@@ -47,7 +48,7 @@ export default {
         }
       })
     },
-    toList (type, id) {
+    toList(type, id) {
       this.$router.push({
         name: 'articleList',
         query: {

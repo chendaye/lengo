@@ -12,8 +12,8 @@ stylus
 stylus-loader   
 autoprefixer --save-dev
 
-
-npm install flex.css normalize.css  --save
+npm install stylus stylus-loader autoprefixer --save-dev
+npm install flex.css photoPreview --save 
 
 npm install xxx --save
 npm install xxx --save-dev

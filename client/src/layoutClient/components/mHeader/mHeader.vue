@@ -2,23 +2,23 @@
   <div id="m-header">
     <div class="header-wrap" :style="{height: isPc ? '90px' : '60px'}">
       <div
-class="header-logo"
-:style="{
-        'justify-content': isPc ? 'space-between' : 'center',
-        'padding': isPc ? '25px' : '0px'
+        class="header-logo"
+        :style="{
+          'justify-content': isPc ? 'space-between' : 'center',
+          'padding': isPc ? '25px' : '0px'
         }"
         @click="toHomeFromLogo"
->
-        <p v-if="isPc" class="line"/>
+      >
+        <p v-if="isPc" class="line" />
         <p class="blog-name">{{ blogInfo.blogName || '博客' }}</p>
-        <p v-if="isPc" class="line"/>
+        <p v-if="isPc" class="line" />
       </div>
       <header-tab-view v-if="isPc" :tabs="tabs" @tab-click="selectTab" />
       <div v-if="!isPc" class="toggle" @click="toggle">
         <span
           v-for="(line, index) in toggleLineData"
-          class="toggle-line"
           :key="index"
+          class="toggle-line"
           :style="{
             width: line.width,
             top: line.top,
@@ -26,13 +26,13 @@ class="header-logo"
             opacity: line.opacity,
             transition: 'all .3s'
           }"
-/>
+        />
       </div>
     </div>
     <el-collapse-transition>
       <div v-show="!isPc&&showMobileTabs" class="mobile-tab-wrap">
-        <div v-for="(tab, index) in tabs" class="tab" :key="index" @click="selectTab(tab)">
-          <i class="iconfont" :class="tab.icon"/>
+        <div v-for="(tab, index) in tabs" :key="index" class="tab" @click="selectTab(tab)">
+          <i class="iconfont" :class="tab.icon" />
           <span>{{ tab.name }}</span>
         </div>
       </div>
@@ -139,6 +139,12 @@ export default {
       showMobileTabs: false
     }
   },
+  computed: {
+    ...mapGetters('blog/', [
+      'screen',
+      'blogInfo'
+    ])
+  },
   watch: {
     screen(value) {
       this.isPc = true
@@ -152,12 +158,6 @@ export default {
     this.toggleLineData = this.lineStyle.normalLineData
   },
   mounted() {
-  },
-  computed: {
-    ...mapGetters([
-      'screen',
-      'blogInfo'
-    ])
   },
   methods: {
     ...mapActions([

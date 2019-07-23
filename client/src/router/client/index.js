@@ -28,7 +28,7 @@ export default [
     component: Layout,
     redirect: 'dashboard',
     children: [{
-      path: 'dashboard',
+      path: 'home',
       name: 'Home',
       component: () => import('@/views/client/dashboard/index'),
       hidden: true,

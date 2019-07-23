@@ -1,7 +1,7 @@
 <template>
   <div id="header-tab-view">
-    <div class="tab" v-for="(tab, index) in tabs" :key="index" @click="selectTab(tab)">
-      <i class="iconfont" :class="tab.icon"></i>
+    <div v-for="(tab, index) in tabs" :key="index" class="tab" @click="selectTab(tab)">
+      <i class="iconfont" :class="tab.icon" />
       <span>{{ tab.name }}</span>
     </div>
   </div>
@@ -9,15 +9,15 @@
 
 <script>
 export default {
-  name: 'header-tab-view',
+  name: 'HeaderTabView',
   props: ['tabs'],
-  data () {
+  data() {
     return {
 
     }
   },
   methods: {
-    selectTab (tab) {
+    selectTab(tab) {
       this.$emit('tab-click', tab)
     }
   }
@@ -50,7 +50,6 @@ export default {
       font-size: 12px
     .name
       margin-left: 8px
-
 
 @keyframes show {
   from {

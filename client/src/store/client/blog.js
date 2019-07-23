@@ -4,7 +4,8 @@ import {
   SET_ARTICLE_MENU, // 保存文章目录信息
   SET_ARTICLE_MENU_SOURCE, // 保存文章目录信息(未生成树的)
   SET_ARTICLE_MENU_TAG, // 保存当前为文章第几个目录
-  SET_COMMENTS_INFO // 保存评论填写的昵称邮箱信息
+  SET_COMMENTS_INFO, // 保存评论填写的昵称邮箱信息
+  SET_BLOG_INFO
 } from './mutation-types'
 
 const state = {
@@ -15,7 +16,16 @@ const state = {
   showRightNav: false,
   articleMenu: false,
   articleMenuSource: [],
-  articleMenuTag: '1.'
+  articleMenuTag: '1.',
+  blogInfo: {
+    avatar: null,
+    blogName: 'Lengo',
+    sign: 'chendaye',
+    articleCount: 0,
+    categoryCount: 0,
+    tagCount: 0,
+    github: 'https://github.com/chendaye/lengo'
+  }
 }
 
 const getters = {
@@ -33,6 +43,9 @@ const getters = {
   },
   articleMenuTag(state) {
     return state.articleMenuTag
+  },
+  blogInfo(state) {
+    return state.blogInfo
   }
 }
 
@@ -54,6 +67,10 @@ const mutations = {
   },
   [SET_COMMENTS_INFO](state, data) {
     state.commentsInfo = data
+  },
+  // 设置blog信息
+  [SET_BLOG_INFO](state, data) {
+    state.blogInfo = data
   }
 }
 

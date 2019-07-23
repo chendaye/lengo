@@ -23,7 +23,7 @@ export default {
   mixins: [scroll],
   props: ['menu'],
   computed: {
-    ...mapGetters([
+    ...mapGetters('blog', [
       'articleMenuTag'
     ])
   },

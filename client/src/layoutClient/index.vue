@@ -84,7 +84,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapGetters('blog', [
       'articleMenu',
       'articleMenuSource',
       'blogInfo',

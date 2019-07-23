@@ -14,7 +14,7 @@ import routers from './admin/routers'
 
 // 前台的
 import client from './client/user'
-import article from './client/article'
+import blog from './client/blog'
 
 Vue.use(Vuex)
 
@@ -22,17 +22,16 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   modules: {
     // 后台 store
-    app,
+    app, // app:app 命名空间就是 app
     settings,
     admin,
     routers,
     // 客户端 store
     client,
-    article
+    blog
   },
   getters,
   actions,
   mutations
 })
-
 export default store

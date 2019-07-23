@@ -1,51 +1,53 @@
 <template>
   <div id="comments">
-    <div id="comments-input-top" class="input-wrap" v-loading="loading">
+    <div id="comments-input-top" v-loading="loading" class="input-wrap">
       <div class="input-top">
         <el-input
-          v-if="!isAdminWrap"
-          class="top-item"
-          size="mini"
+
           v-model="name"
-          placeholder="称呼（必填）">
-        </el-input>
-        <el-input
-          v-if="!isAdminWrap"
           class="top-item"
           size="mini"
+          placeholder="称呼（必填）"
+        />
+        <el-input
+
           v-model="email"
-          placeholder="邮箱（选填，方便联系您，不会公开）">
-        </el-input>
+          class="top-item"
+          size="mini"
+          placeholder="邮箱（选填，方便联系您，不会公开）"
+        />
       </div>
       <el-input
-        class="input-area"
         id="comments-content-area"
+        class="input-area"
         type="textarea"
         size="mini"
+        v-model="content"
         :rows="5"
         resize="none"
-        v-model="content"
-        :placeholder="placeholder">
-      </el-input>
+        :placeholder="placeholder"
+      />
       <div class="btn-wrap" :style="{paddingBottom: showEmoji ? '96px' : '0px'}">
         <span class="emoji-btn" :class="{active: showEmoji}" @click="showEmoji = !showEmoji">表情</span>
         <div class="action-btn">
-          <span class="cancel-btn" @click="content = ''" v-show="content !== ''">取消</span>
-          <span 
-            class="send-btn" 
-            @click="check">
+          <span v-show="content !== ''" class="cancel-btn" @click="content = ''">取消</span>
+          <span
+            class="send-btn"
+            @click="check"
+          >
             发送~
           </span>
         </div>
       </div>
       <transition name="slide-fade">
-        <ul class="emoji-wrap" v-if="showEmoji" :style="{top: isAdminWrap ? '143px' : '214px'}">
+        <ul v-if="showEmoji" class="emoji-wrap" :style="{top: isAdminWrap ? '143px' : '214px'}">
           <li
             v-for="(emoji, index) in emojiList"
             :key="index"
             class="emoji-item"
             :title="emoji.title"
-            @click="choseEmoji(emoji.title)">
+            @click="choseEmoji(emoji.title)"
+          >
             <img :src="'/static/emoji/'+emoji.name" alt="">
           </li>
         </ul>
@@ -54,18 +56,20 @@
     <p class="count">{{ count }}条{{ id === '-1' ? '留言' : '评论' }}</p>
     <no-data
       v-if="commentsList.length === 0"
-      :text="getNoDataText()"/>
+      :text="getNoDataText()"
+    />
     <ul class="comments-wrap">
       <li
-        class="comments-item"
         v-for="(comments, index) in commentsList"
-        :key="index">
+        :key="index"
+        class="comments-item"
+      >
         <div class="comments-info">
-          <img class="avatar" :src="getAvatar(comments)" />
+          <img class="avatar" :src="getAvatar(comments)">
           <div class="name-time">
             <p class="name">
               {{ getName(comments) }}
-              <span @click="reply(comments)" v-if="!isAdminWrap">回复</span>
+              <span  @click="reply(comments)">回复</span>
             </p>
             <p class="time">{{ comments.createTime | time }}</p>
           </div>
@@ -73,32 +77,35 @@
         <p class="content">
           <span
             v-for="(item, index) in JSON.parse(comments.content)"
-            :key="index">
+            :key="index"
+          >
             {{ item.type === 'text' ? item.content : '' }}
-            <img class="content-emoji" :src="item.content" alt="" v-if="item.type === 'emoji'" />
+            <img class="content-emoji" v-if="item.type === 'emoji'" :src="item.content" alt="">
           </span>
         </p>
-        <ul class="comments-children" v-if="comments.children.length > 0">
+        <ul v-if="comments.children.length > 0" class="comments-children">
           <li
-            class="comments-child"
             v-for="(child, index) in comments.children"
-            :key="index">
+            :key="index"
+            class="comments-child"
+          >
             <div class="comments-info">
-              <img class="avatar" :src="getAvatar(child)" />
+              <img class="avatar" :src="getAvatar(child)">
               <div class="name-time">
                 <p class="name">
                   {{ getName(child) }}
-                  <span @click="reply(child)" v-if="!isAdminWrap">回复</span>
+                  <span  @click="reply(child)">回复</span>
                 </p>
                 <p class="time">{{ child.createTime | time }}</p>
               </div>
             </div>
             <p class="content">
-              <span 
+              <span
                 v-for="(item, index) in JSON.parse(child.content)"
-                :key="index">
+                :key="index"
+              >
                 {{ item.type === 'text' ? item.content : '' }}
-                <img class="content-emoji" :src="item.content" alt="" v-if="item.type === 'emoji'" />
+                <img class="content-emoji" v-if="item.type === 'emoji'" :src="item.content" alt="">
               </span>
             </p>
           </li>
@@ -119,13 +126,13 @@ import { scroll } from 'MIXINS/scroll'
 import { emoji } from 'MIXINS/emoji'
 
 export default {
-  name: 'comments',
-  props: ['id'],
+  name: 'Comments',
   components: {
     noData
   },
   mixins: [scroll, emoji],
-  data () {
+  props: ['id'],
+  data() {
     return {
       placeholder: '写下您的评论~',
       content: '',
@@ -142,14 +149,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'isAdminWrap',
+    ...mapGetters('blog', [
       'commentsInfo',
       'blogInfo'
     ])
   },
   watch: {
-    content (value) {
+    content(value) {
       if (this.replyName !== '') {
         if (value.indexOf(this.replyName) !== 0) {
           this.replyId = 0
@@ -157,10 +163,10 @@ export default {
         }
       }
     },
-    replyName (value) {
+    replyName(value) {
       this.content = this.replyName
     },
-    id (value) {
+    id(value) {
       if (value !== '') {
         this.init()
       }
@@ -210,14 +216,14 @@ export default {
             this.count = data.count
             this.commentsList = data.list
           })
-          .catch(()=> {})
+          .catch(() => {})
       } else {
         this.getBlogComments(this.id)
           .then((data) => {
             this.count = data.count
             this.commentsList = data.list
           })
-          .catch(()=> {})
+          .catch(() => {})
       }
     },
     addComments(params) {
@@ -225,24 +231,24 @@ export default {
       if (this.isAdminWrap) {
         this.adminReplyComments(params)
           .then((data) => {
-            let msg = this.id == '-1' ? '留言' : '评论'
+            const msg = this.id == '-1' ? '留言' : '评论'
             this.$toast(`${msg}成功~`)
             this.init()
             this.loading = false
           })
-          .catch((err)=> {
+          .catch((err) => {
             this.$toast(err.msg, 'error')
             this.loading = false
           })
       } else {
         this.replyComments(params)
           .then((data) => {
-            let msg = this.id == '-1' ? '留言' : '评论'
+            const msg = this.id == '-1' ? '留言' : '评论'
             this.$toast(`${msg}成功~`)
             this.init()
             this.loading = false
           })
-          .catch((err)=> {
+          .catch((err) => {
             this.$toast(err.msg, 'error')
             this.loading = false
           })
@@ -264,7 +270,7 @@ export default {
         }
       }
       if (this.content === '' || this.content === `@${this.replyName} `) {
-        let msg = this.id == '-1' ? '留言' : '评论'
+        const msg = this.id == '-1' ? '留言' : '评论'
         this.$toast(`${msg}内容不能为空`, 'error')
         return
       }
@@ -273,8 +279,8 @@ export default {
         return
       }
       // 自己申请腾讯验证码，下面的那串数字要改为自己的
-      this.captcha = new TencentCaptcha('2075567253', (res)=> {
-        if(res.ret === 0){
+      this.captcha = new TencentCaptcha('2075567253', (res) => {
+        if (res.ret === 0) {
           window.baidu({
             type: 'btn',
             event: 'comments-captcha'
@@ -287,7 +293,7 @@ export default {
       this.captcha.show()
     },
     send(ticket, randstr) {
-      let params = {
+      const params = {
         articleId: this.id,
         name: this.name,
         replyId: this.replyId,
