@@ -42,6 +42,7 @@ export default {
   }
 }
 </script>
+<style lang="stylus" src="@/stylus/main.styl" scoped></style>
 <style lang="stylus" scoped>
 @import '../../stylus/color.styl'
 .article-menu
