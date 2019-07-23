@@ -149,7 +149,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('blog', [
+    ...mapGetters([
       'commentsInfo',
       'blogInfo'
     ])

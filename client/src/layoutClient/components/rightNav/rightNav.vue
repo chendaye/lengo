@@ -153,7 +153,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('blog', [
+    ...mapGetters([
       'screen',
       'showRightNav',
       'blogInfo',

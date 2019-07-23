@@ -23,7 +23,7 @@ const whiteList = ['/admin/login', '/admin/register', '/login', '/register']
 router.beforeEach(async(to, from, next) => {
   // 进度条
   NProgress.start()
-  if (to.path.startsWith('/admin')) {
+  if (to.path.indexOf('admin') !== -1) {
     // 设置页面标题
     document.title = getPageTitle(to.meta.title)
 

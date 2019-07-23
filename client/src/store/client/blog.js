@@ -1,5 +1,5 @@
 import {
-  SCREEN_CHANGE, // 排名大小
+  SCREEN_CHANGE, // 屏幕大小
   SHOW_RIGHT_NAV, // 右侧面板
   SET_ARTICLE_MENU, // 保存文章目录信息
   SET_ARTICLE_MENU_SOURCE, // 保存文章目录信息(未生成树的)
@@ -77,9 +77,6 @@ const mutations = {
 const actions = {
   setShowRightNav(store, show) {
     store.state.showRightNav = show
-  },
-  setIsAdminWrap(store, isAdminWrap) {
-    store.state.isAdminWrap = isAdminWrap
   },
   setArticleMenu(store, articleMenu) {
     store.state.articleMenu = articleMenu

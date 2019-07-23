@@ -79,7 +79,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("blog", [
+    ...mapGetters([
       "articleMenu",
       "articleMenuSource",
       "blogInfo",

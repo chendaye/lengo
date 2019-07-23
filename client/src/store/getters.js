@@ -20,7 +20,9 @@ const getters = {
   device: state => state.app.device,
   // blog
   screen: state => state.blog.screen,
-  blogInfo: state => state.blog.blogInfo
+  blogInfo: state => state.blog.blogInfo,
+  articleMenu: state => state.blog.articleMenu,
+  showRightNav: state => state.blog.showRightNav
 
 }
 export default getters

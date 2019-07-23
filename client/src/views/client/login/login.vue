@@ -127,7 +127,7 @@ export default {
           // 处理登录  store admin/base/user
           this.login(this.loginForm)
             .then(res => {
-              this.$router.push({ path: '/admin' });
+              this.$router.push({ path: '/home' });
               this.loading = false;
             })
             .catch(error => {
