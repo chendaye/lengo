@@ -17,7 +17,7 @@ NProgress.configure({
 })
 
 // 白名单
-const whiteList = ['/admin/login', '/admin/register', '/client/login', '/client/register']
+const whiteList = ['/admin/login', '/admin/register', '/login', '/register']
 
 // 路由前置守卫
 router.beforeEach(async(to, from, next) => {
@@ -86,7 +86,7 @@ router.beforeEach(async(to, from, next) => {
         NProgress.done()
       }
     }
-  } else if (to.path.startsWith('/client')) {
+  } else {
     // 前端路由
     // 设置页面标题
     document.title = getPageTitle(to.meta.title)
@@ -97,10 +97,10 @@ router.beforeEach(async(to, from, next) => {
     if (hasToken) {
       console.log(to.path)
 
-      if (to.path === '/client/login') {
+      if (to.path === '/login') {
         // 已经登录直接跳转到主页
         next({
-          path: '/client/dashboard'
+          path: '/home'
         })
         NProgress.done()
       } else {
@@ -113,15 +113,10 @@ router.beforeEach(async(to, from, next) => {
         next()
       } else {
         // 不在白名单被，定向到登录页面.
-        next(`/client/login?redirect=${to.path}`)
+        next(`/login?redirect=${to.path}`)
         NProgress.done()
       }
     }
-  } else {
-    // 既不是前端路由 也不是后端路由
-    next({
-      path: '/client/404'
-    })
   }
 })
 

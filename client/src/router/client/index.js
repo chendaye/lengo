@@ -2,7 +2,7 @@ import Layout from '@/layoutClient'
 export default [
   // 前端登录
   {
-    path: '/client/login',
+    path: '/login',
     name: 'clientLogin',
     component: () => import('@/views/client/login/login'),
     hidden: true,
@@ -13,7 +13,7 @@ export default [
   },
   // 前端注册
   {
-    path: '/client/register',
+    path: '/register',
     name: 'clientRegister',
     component: () => import('@/views/client/login/register'),
     hidden: true,
@@ -24,7 +24,7 @@ export default [
   },
   // 路由
   {
-    path: '/client',
+    path: '/',
     component: Layout,
     redirect: 'dashboard',
     children: [{
@@ -42,7 +42,7 @@ export default [
   },
   // 404
   {
-    path: '/client/404',
+    path: '/404',
     component: () => import('@/views/client/404'),
     hidden: true
   }
