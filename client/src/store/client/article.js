@@ -43,9 +43,6 @@ const mutations = {
   [SHOW_RIGHT_NAV](state, data) {
     state.showRightNav = data
   },
-  [IS_ADMIN_WRAP](state, data) {
-    state.isAdminWrap = data
-  },
   [SET_ARTICLE_MENU](state, data) {
     state.articleMenu = data
   },
@@ -75,23 +72,11 @@ const actions = {
   },
   setArticleMenuTag(store, articleMenuTag) {
     store.state.articleMenuTag = articleMenuTag
-  },
-  setCommentsInfo(store, commentsInfo) {
-    cachedCommentsInfo.save(commentsInfo)
-    store.state.commentsInfo = commentsInfo
-  },
-  uploadToQiniu(store, params) {
-    return api.uploadToQiniu(params)
-      .then((data) => {
-        return Promise.resolve(data)
-      })
-      .catch((error) => {
-        return Promise.reject(error)
-      })
   }
 }
 
 export default {
+  namespaced: true,
   state,
   mutations,
   actions,

@@ -199,7 +199,7 @@ export default {
 
 <style lang="stylus" src="@/stylus/main.styl"></style>
 
-<style lang="stylus">
+<style lang="stylus" >
 @import '../stylus/color.styl'
 #appindex
   width: 100%
