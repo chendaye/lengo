@@ -1,6 +1,7 @@
 <template>
   <div id="m-header">
     <div class="header-wrap" :style="{height: isPc ? '90px' : '60px'}">
+      <!-- 博客名pc -->
       <div
         class="header-logo"
         :style="{
@@ -13,7 +14,9 @@
         <p class="blog-name">{{ blogInfo.blogName || '博客' }}</p>
         <p v-if="isPc" class="line" />
       </div>
+      <!-- pc -->
       <header-tab-view v-if="isPc" :tabs="tabs" @tab-click="selectTab" />
+    <!-- 手机 -->
       <div v-if="!isPc" class="toggle" @click="toggle">
         <span
           v-for="(line, index) in toggleLineData"
@@ -60,7 +63,7 @@ export default {
         {
           name: '首页',
           icon: 'icon-home',
-          to: 'home'
+          to: '/home'
         },
         {
           name: '分类/标签',
@@ -175,7 +178,7 @@ export default {
         return
       }
       this.toggle()
-      this.$router.push({ name: tab.to })
+      this.$router.push({ path: tab.to })
     }
   }
 }

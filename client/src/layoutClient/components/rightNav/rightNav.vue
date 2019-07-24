@@ -14,15 +14,18 @@
         'transition': 'all .3s'
       }"
     >
+    <!-- 文章目录 站点信息 -->
       <div v-if="articleMenu" class="menu-info-head">
         <span :class="{'active': showMenu}" @click="showMenu = true">文章目录</span>
         |
         <span :class="{'active': !showMenu}" @click="showMenu = false">站点信息</span>
       </div>
       <div class="content-wrap">
+        <!-- 文章目录 -->
         <transition name="slide-fade">
           <article-menu v-show="showMenu" class="article-menu" :menu="articleMenu" :start="0" />
         </transition>
+        <!-- 站点信息 -->
         <transition name="slide-fade">
           <div v-show="!showMenu" class="info-wrap">
             <img class="avatar" :src="blogInfo.avatar || defaultAvatar">
@@ -75,7 +78,7 @@ import {
   mapGetters
 } from 'vuex'
 
-import articleMenu from '@/components/articleMenu/articleMenu.vue'
+import articleMenu from '@/components/articleMenu/articleMenu.vue' // 文章目录组件
 
 export default {
   name: 'RightNav',

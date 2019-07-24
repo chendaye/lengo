@@ -18,7 +18,7 @@ const state = {
   articleMenuSource: [],
   articleMenuTag: '1.',
   blogInfo: {
-    avatar: null,
+    avatar: '@/assets/logo.jpg',
     blogName: 'Lengo',
     sign: 'chendaye',
     articleCount: 0,

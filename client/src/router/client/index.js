@@ -33,7 +33,7 @@ export default [
       component: () => import('@/views/client/dashboard/index'),
       hidden: true,
       meta: {
-        title: 'Dashboard',
+        title: 'Home',
         icon: 'home',
         noCache: true,
         affix: true
