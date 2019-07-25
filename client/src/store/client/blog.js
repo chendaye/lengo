@@ -18,9 +18,9 @@ const state = {
   articleMenuSource: [],
   articleMenuTag: '1.',
   blogInfo: {
-    avatar: '@/assets/logo.jpg',
+    avatar: require("@/assets/logo.jpg"),
     blogName: 'Lengo',
-    sign: 'chendaye',
+    sign: 'Life is only inevitable, there is no chance.',
     articleCount: 0,
     categoryCount: 0,
     tagCount: 0,
