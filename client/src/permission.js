@@ -20,7 +20,7 @@ NProgress.configure({
 const whiteList = ['/admin/login', '/admin/register', '/login', '/register']
 
 // 路由前置守卫
-router.beforeEach(async(to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   // 进度条
   NProgress.start()
   if (to.path.indexOf('admin') !== -1) {
@@ -95,8 +95,7 @@ router.beforeEach(async(to, from, next) => {
     const hasToken = getToken('client')
     // token 存在
     if (hasToken) {
-      console.log(to.path)
-
+      // console.log(to.path)
       if (to.path === '/login') {
         // 已经登录直接跳转到主页
         next({

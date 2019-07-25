@@ -77,7 +77,7 @@ export default {
 </script>
 <style lang="stylus" src="@/stylus/main.styl" scoped></style>
 <style lang="stylus" scoped>
-@import '~STYLUS/color.styl'
+@import '../../stylus/color.styl'
 #article-card
   position: relative
   background-color: $color-white

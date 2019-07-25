@@ -5,13 +5,15 @@
         本博客已萌萌哒运行<span>{{ runningTime }}</span><span class="time-jump">(●'◡'●)ﾉ♥</span>
       </p>
       <p>
-        @{{ blogInfo.blogName || '博客' }} ———— {{ blogInfo.sign }}
+        @{{ blogInfo.blogName || '博客' }}:{{ blogInfo.sign }}
       </p>
       <p>
-        本站点采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">知识共享 署名-非商业性使用-禁止演绎 4.0 国际 许可协议</a>
+        本站点采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">
+        国立武汉大学研究生 署名-非商业性使用-禁止演绎 4.0 国际 许可协议
+        </a>
       </p>
       <p>
-        本站由 @{{ blogInfo.blogName || '博客' }} 创建 - © 2018. 粤ICP备17139665号-1
+        本站由 @{{ blogInfo.blogName || '博客' }} 创建 - © 2019. 粤ICP备17139665号-1
       </p>
     </div>
   </div>
@@ -41,7 +43,7 @@ export default {
   },
   methods: {
     running() {
-      const startTime = new Date('2018/08/01 00:00:00')
+      const startTime = new Date('2019/07/01 00:00:00')
       const timer = setInterval(() => {
         const time = new Date() - startTime
         const day = parseInt(time / 1000 / 60 / 60 / 24, 10)
