@@ -60,7 +60,7 @@ export default {
         {
           name: '首页',
           icon: 'icon-home',
-          to: 'home'
+          to: '/home'
         },
         {
           name: '分类/标签',
@@ -175,7 +175,7 @@ export default {
         return
       }
       this.toggle()
-      this.$router.push({ name: tab.to })
+      this.$router.push({ path: tab.to })
     }
   }
 }

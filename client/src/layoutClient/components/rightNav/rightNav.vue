@@ -7,6 +7,7 @@
       'transition': 'all .3s'
     }"
   >
+    <!-- 内容 -->
     <div
       class="right-nav-wrap"
       :style="{
@@ -14,18 +15,21 @@
         'transition': 'all .3s'
       }"
     >
+      <!-- 内容头部 -->
       <div v-if="articleMenu" class="menu-info-head">
-        <span :class="{'active': showMenu}" @click="showMenu = true">文章目录</span>
+        <span :class="{'active': showCatalog}" @click="showCatalog = true">文章目录</span>
         |
-        <span :class="{'active': !showMenu}" @click="showMenu = false">站点信息</span>
+        <span :class="{'active': !showCatalog}" @click="showCatalog = false">站点信息</span>
       </div>
       <div class="content-wrap">
+        <!-- 文章菜单 -->
         <transition name="slide-fade">
-          <article-menu v-show="showMenu" class="article-menu" :menu="articleMenu" :start="0" />
+          <articleCatalog v-show="showCatalog" class="article-menu" :menu="articleMenu" :start="0" />
         </transition>
+        <!-- 博客信息 -->
         <transition name="slide-fade">
-          <div v-show="!showMenu" class="info-wrap">
-            <img class="avatar" :src="blogInfo.avatar || defaultAvatar">
+          <div v-show="!showCatalog" class="info-wrap">
+            <img class="avatar" :src="blogInfo.avatar">
             <p class="name">{{ blogInfo.blogName || '博客' }}</p>
             <p class="motto">{{ blogInfo.sign || '-' }}</p>
             <div class="menu-wrap">
@@ -52,6 +56,7 @@
         </transition>
       </div>
     </div>
+    <!-- 抽屉开关 -->
     <div class="toggle" @click="toggle" @mouseover="setLineData" @mouseout="setLineData">
       <span
         v-for="(line, index) in toggleLineData"
@@ -70,279 +75,317 @@
 </template>
 
 <script>
-import {
-  mapActions,
-  mapGetters
-} from 'vuex'
+import { mapActions, mapGetters } from "vuex";
 
-import articleMenu from '@/components/articleMenu/articleMenu.vue'
+import articleCatalog from "@/components/articleMenu/articleMenu.vue";
 
 export default {
-  name: 'RightNav',
+  name: "RightNav",
   components: {
-    articleMenu
+    articleCatalog
   },
   data() {
     return {
       show: true,
-      defaultAvatar: require('@/assets/logo.jpg'),
       lineStyle: {
         normalLineData: [
           {
-            width: '100%',
-            top: '0px',
-            transform: 'rotateZ(0deg)',
-            opacity: '1'
+            width: "100%",
+            top: "0px",
+            transform: "rotateZ(0deg)",
+            opacity: "1"
           },
           {
-            width: '100%',
-            top: '0px',
-            transform: 'rotateZ(0deg)',
-            opacity: '1'
+            width: "100%",
+            top: "0px",
+            transform: "rotateZ(0deg)",
+            opacity: "1"
           },
           {
-            width: '100%',
-            top: '0px',
-            transform: 'rotateZ(0deg)',
-            opacity: '1'
+            width: "100%",
+            top: "0px",
+            transform: "rotateZ(0deg)",
+            opacity: "1"
           }
         ],
         closeLineData: [
           {
-            width: '100%',
-            top: '6px',
-            transform: 'rotateZ(-45deg)',
-            opacity: '1'
+            width: "100%",
+            top: "6px",
+            transform: "rotateZ(-45deg)",
+            opacity: "1"
           },
           {
-            width: '100%',
-            top: '0px',
-            transform: 'rotateZ(0deg)',
-            opacity: '0'
+            width: "100%",
+            top: "0px",
+            transform: "rotateZ(0deg)",
+            opacity: "0"
           },
           {
-            width: '100%',
-            top: '-6px',
-            transform: 'rotateZ(45deg)',
-            opacity: '1'
+            width: "100%",
+            top: "-6px",
+            transform: "rotateZ(45deg)",
+            opacity: "1"
           }
         ],
         arrowLineData: [
           {
-            width: '50%',
-            top: '3px',
-            transform: 'rotateZ(-45deg)',
-            opacity: '1'
+            width: "50%",
+            top: "3px",
+            transform: "rotateZ(-45deg)",
+            opacity: "1"
           },
           {
-            width: '100%',
-            top: '0px',
-            transform: 'rotateZ(0deg)',
-            opacity: '1'
+            width: "100%",
+            top: "0px",
+            transform: "rotateZ(0deg)",
+            opacity: "1"
           },
           {
-            width: '50%',
-            top: '-3px',
-            transform: 'rotateZ(45deg)',
-            opacity: '1'
+            width: "50%",
+            top: "-3px",
+            transform: "rotateZ(45deg)",
+            opacity: "1"
           }
         ]
       },
       toggleLineData: [],
-      showMenu: false
-    }
+      showCatalog: false
+    };
   },
   computed: {
-    ...mapGetters([
-      'screen',
-      'showRightNav',
-      'blogInfo',
-      'articleMenu'
-    ])
+    ...mapGetters(["screen", "showRightNav", "blogInfo", "articleMenu"])
   },
   watch: {
     screen(value) {
-      this.show = true
-
+      this.show = true;
       if (value.width <= 990) {
-        this.show = false
+        this.show = false;
       }
     },
     articleMenu(value) {
       if (value) {
-        this.showMenu = true
-        this.setShowRightNav(true)
-        this.toggleLineData = this.lineStyle.closeLineData
+        this.showCatalog = true;
+        this.setShowRightNav(true);
+        this.toggleLineData = this.lineStyle.closeLineData;
       } else {
-        this.showMenu = false
-        this.setShowRightNav(false)
-        this.toggleLineData = this.lineStyle.normalLineData
+        this.showCatalog = false;
+        this.setShowRightNav(false);
+        this.toggleLineData = this.lineStyle.normalLineData;
       }
     }
   },
   created() {
-    this.toggleLineData = this.lineStyle.normalLineData
+    this.toggleLineData = this.lineStyle.normalLineData;
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
-    ...mapActions('blog', [
-      'setShowRightNav'
-    ]),
+    ...mapActions("blog", ["setShowRightNav", "setArticleMenu"]),
+    // 抽屉开关
     toggle() {
-      this.setShowRightNav(!this.showRightNav)
-      this.toggleLineData = this.showRightNav ? this.lineStyle.closeLineData : this.lineStyle.normalLineData
+      // 是否打开抽屉头部
+      // this.setArticleMenu(!this.articleMenu);
+      // 是否显示左边栏
+      this.setShowRightNav(!this.showRightNav);
+      // 开关样式
+      this.toggleLineData = this.showRightNav
+        ? this.lineStyle.closeLineData
+        : this.lineStyle.normalLineData;
     },
     setLineData(e) {
       if (this.showRightNav) {
-        return
+        return;
       }
-      if (e.type === 'mouseover') {
-        this.toggleLineData = this.lineStyle.arrowLineData
+      if (e.type === "mouseover") {
+        this.toggleLineData = this.lineStyle.arrowLineData;
       } else {
-        this.toggleLineData = this.lineStyle.normalLineData
+        this.toggleLineData = this.lineStyle.normalLineData;
       }
     },
     toView(to) {
       this.$router.push({
         name: to
-      })
+      });
     }
   }
-}
+};
 </script>
 <style lang="stylus" src="@/stylus/main.styl" scoped></style>
 <style lang="stylus" scoped>
-@import '../../../stylus/color.styl'
-#right-nav
-  position: relative
-  width: 320px
-  .right-nav-wrap
-    position: fixed
-    right: 0
-    top: 0
-    bottom: 0
-    width: 320px
-    background-color: $color-main
-    color: $color-white
-    z-index: 1000
-    display: flex
-    flex-direction: column
-    align-items: center
-    padding-top: 30px
-    overflow: hidden
-    .menu-info-head
-      margin-bottom: 10px
-      > span
-        color: #999999
-        padding: 5px
-        font-weight: bold
-        cursor: pointer
-        &:hover
-        &.active
-          color: $color-white
-    .content-wrap
-      position: relative
-      width: 100%
-      max-height: calc(100vh - 150px)
-      overflow-y: auto
-      .article-menu
-        position: absolute
-        left: 0
-        top: 0
-        width: 100%
-        padding: 5px
-      .info-wrap
-        position: absolute
-        left: 0
-        top: 0
-        width: 100%
-        display: flex
-        flex-direction: column
-        align-items: center
-        .avatar
-          border: 4px solid $color-white
-          border-radius: 50%
-          width: 100px
-          height: 100px
-        .name
-          color: $color-white
-          padding: 15px
-          font-size: 18px
-          font-weight: bold
-        .motto
-          color: #999999
-          padding: 5px 15px
-          font-size: 14px
-          font-weight: bold
-          text-align: center
-        .menu-wrap
-          display: flex
-          flex-direction: row
-          align-items: center
-          margin-top: 15px
-          .menu-item
-            display: flex
-            flex-direction: column
-            align-items: center
-            border-right: 1px solid #555555
-            font-size: 14px
-            padding: 0 15px
-            color: #999999
-            transition: all .3s
-            cursor: pointer
-            font-weight: bold
-            &:last-child
-              border-right: 0px
-            &:hover
-              color: $color-white
-            .count
-              margin-bottom: 5px
-              font-size: 20px
-        .social-wrap
-          padding: 20px
-          display: flex
-          flex-direction: row
-          align-items: center
-          flex-wrap: wrap
-          .social-item
-            padding: 8px
-            border: 1px solid #fc6423
-            border-radius: 5px
-            font-size: 14px
-            line-height: 1
-            color: #fc6423
-            transition: all .3s
-            cursor: pointer
-            &:hover
-              background-color: #fc6423
-              color: $color-white
-            .iconfont
-              font-size: 14px
+@import '../../../stylus/color.styl';
 
-  .toggle
-    position: fixed
-    width: 24px
-    height: 24px
-    background-color: $color-main
-    right: 10px
-    bottom: 45px
-    padding: 5px
-    z-index: 1050
-    cursor: pointer
-    line-height: 0
-    .toggle-line
-      position: relative
-      display: inline-block
-      vertical-align: top
-      width: 100%
-      height: 2px
-      margin-top: 4px
-      background-color: $color-white
-      &:first-child
-        margin-top: 0px
+#right-nav {
+  position: relative;
+  width: 320px;
 
-.slide-fade-enter
-.slide-fade-leave-to
-  opacity: 0
+  .right-nav-wrap {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 320px;
+    background-color: $color-main;
+    color: $color-white;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 30px;
+    overflow: hidden;
+
+    .menu-info-head {
+      margin-bottom: 10px;
+
+      > span {
+        color: #999999;
+        padding: 5px;
+        font-weight: bold;
+        cursor: pointer;
+
+        &:hover, &.active {
+          color: $color-white;
+        }
+      }
+    }
+
+    .content-wrap {
+      position: relative;
+      width: 100%;
+      max-height: calc(100vh - 150px);
+      overflow-y: auto;
+
+      .article-menu {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 5px;
+      }
+
+      .info-wrap {
+        // position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .avatar {
+          border: 4px solid $color-white;
+          border-radius: 50%;
+          width: 100px;
+          height: 100px;
+        }
+
+        .name {
+          color: $color-white;
+          padding: 15px;
+          font-size: 18px;
+          font-weight: bold;
+        }
+
+        .motto {
+          color: #999999;
+          padding: 5px 15px;
+          font-size: 14px;
+          font-weight: bold;
+          text-align: center;
+        }
+
+        .menu-wrap {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          margin-top: 15px;
+
+          .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-right: 1px solid #555555;
+            font-size: 14px;
+            padding: 0 15px;
+            color: #999999;
+            transition: all 0.3s;
+            cursor: pointer;
+            font-weight: bold;
+
+            &:last-child {
+              border-right: 0px;
+            }
+
+            &:hover {
+              color: $color-white;
+            }
+
+            .count {
+              margin-bottom: 5px;
+              font-size: 20px;
+            }
+          }
+        }
+
+        .social-wrap {
+          padding: 20px;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          flex-wrap: wrap;
+
+          .social-item {
+            padding: 8px;
+            border: 1px solid #fc6423;
+            border-radius: 5px;
+            font-size: 14px;
+            line-height: 1;
+            color: #fc6423;
+            transition: all 0.3s;
+            cursor: pointer;
+
+            &:hover {
+              background-color: #fc6423;
+              color: $color-white;
+            }
+
+            .iconfont {
+              font-size: 14px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .toggle {
+    position: fixed;
+    width: 24px;
+    height: 24px;
+    background-color: $color-main;
+    right: 10px;
+    bottom: 45px;
+    padding: 5px;
+    z-index: 1050;
+    cursor: pointer;
+    line-height: 0;
+
+    .toggle-line {
+      position: relative;
+      display: inline-block;
+      vertical-align: top;
+      width: 100%;
+      height: 2px;
+      margin-top: 4px;
+      background-color: $color-white;
+
+      &:first-child {
+        margin-top: 0px;
+      }
+    }
+  }
+}
+
+.slide-fade-enter, .slide-fade-leave-to {
+  opacity: 0;
+}
 </style>

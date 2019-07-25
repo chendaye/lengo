@@ -97,6 +97,7 @@ export default {
     }
   },
   created() {
+    // console.log(this.blogInfo)
     // 获取博客信息
   },
   mounted() {
@@ -122,8 +123,9 @@ export default {
       }
       this.viewWrapWidth = this.screen.width - temp + "px";
     },
+    // 更新屏幕宽高
     updateScreen() {
-      this.$store.commit(SCREEN_CHANGE, {
+      this.$store.commit('blog/' + SCREEN_CHANGE, {
         width: window.innerWidth,
         height: window.innerHeight
       });
