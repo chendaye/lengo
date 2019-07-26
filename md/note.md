@@ -3,7 +3,7 @@
 - 创建测试用户
 ```php
 namespace App\Models
-User::create(['name' => 'chendaye666','email'=>'chendaye666@gmail.com','mobile' => 15271834241,'password' => bcrypt('long')]);
+User::create(['name' => 'chendaye666','email'=>'chendaye666@gmail.com','mobile' => 15271834241,'password' => bcrypt('chendaye')]);
 
 namespace App\Models
 Client::create(['name' => 'chendaye666','email'=>'chendaye666@gmail.com','mobile' => 15271834241,'password' => bcrypt('chendaye')]);

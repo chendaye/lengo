@@ -23,7 +23,7 @@ import { scroll } from '@/layoutClient/mixin/scroll';
 import articleCard from '@/components/articleCard/articleCard';
 import noData from '@/components/noData/noData';
 import crud from "@/api/crud";
-const wtuCrud = crud.factory("wtu");
+const wtuCrud = crud.factory("blog", 'client');
 
 export default {
   name: 'Home',
@@ -34,14 +34,13 @@ export default {
   mixins: [scroll],
   data() {
     return {
-      baseApi: process.env.VUE_APP_PIC,
       // table
       articleList: [],
       total: 0,
-      loading: true,
+      loading: false,
       listQuery: {
         page: 1,
-        limit: 10,
+        limit: 1000,
         order: {},
         where: {}
       }
@@ -64,11 +63,12 @@ export default {
     },
     load() {
       this.loading = true
-      console.log(this.loading)
       wtuCrud.get("indexArticle", this.listQuery).then((data) => {
-        this.total = data.count
-        this.articleList = data.list
-        this.loading = false
+        if (data.data.data.length > 0) {
+          this.total = data.count
+          this.articleList = data.data.data
+          this.loading = false
+        }
       })
         .catch(() => {
           this.articleList = []

@@ -4,23 +4,23 @@
       <div
         class="article-cover"
         :style="{
-          backgroundImage: 'url(' + getCover + ')'
+          backgroundImage: 'url(' + baseApi + getCover + ')'
         }"
       >
         <div class="article-title">
-          <span @click="showArticle">{{ article.article.title }}</span>
+          <span @click="showArticle">{{ article.title }}</span>
         </div>
       </div>
       <div class="article-info">
         <i class="iconfont icon-calendar" />
-        发表于 {{ article.article.publishTime | time('YYYY年MM月DD日') }} •
+        发表于 {{ article.created_at }} •
         <i class="iconfont icon-folder" />
-        <span class="classify" @click="toList('category', article.category.id)">{{ article.category.name }}</span> •
+        <span class="classify" @click="toList('category', article.id)">{{ article.title }}</span> •
         <i class="iconfont icon-eye" />
-        {{ article.article.pageview }}次围观
+        {{ article.view }}次浏览
       </div>
-      <div class="article-sub-message">{{ article.article.subMessage }}</div>
-      <div v-if="article.tags.length > 0" class="tags">
+      <div class="article-sub-message">{{ article.abstract }}</div>
+      <div v-if="false" class="tags">
         <div
           v-for="(tag, index) in article.tags"
           :key="index"
@@ -43,23 +43,24 @@ export default {
   props: ['article'],
   data() {
     return {
-      defaultCover: 'http://blogimg.codebear.cn/FrTy2sZVtGZGYMFj6PAuNe7T6g3__water'
+      baseApi: process.env.VUE_APP_PIC,
+      defaultCover: require("@/assets/logo.jpg")
     }
   },
   computed: {
     getCover() {
-      if (this.article && this.article.article && this.article.article.cover) {
-        return this.article.article.cover
-      }
-      return this.defaultCover
+      return this.article.cover ? this.article.cover : this.defaultCover;
     }
+  },
+  created() {
+    // console.log('articleCard', this.article);
   },
   methods: {
     showArticle() {
       this.$router.push({
         name: 'article',
         query: {
-          id: this.article.article.id
+          id: this.article.id
         }
       })
     },
