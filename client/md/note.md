@@ -18,4 +18,8 @@ npm install flex.css photoPreview --save
 npm install xxx --save
 npm install xxx --save-dev
 
+// 更新element-ui
+npm uninstall element-ui --save
+npm install element-ui@2.11.0 --save
+npm list  --depth 0
 ```

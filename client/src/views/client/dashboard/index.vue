@@ -1,42 +1,29 @@
 <template>
-  <div id="home" v-loading="loading">
-    <article-card
-      v-for="(article, index) in articleList"
-      :key="index"
-      :article="article"
-/>
-    <!-- 分页 -->
-    <div
-      v-show="total > 0"
-      class="pagination"
->
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :page-size="pageSize"
-        :current-page="currentPage"
-        @current-change="pageChange"
-        :total="total"
-/>
-    </div>
-    <!-- 分页 结束 -->
-    <no-data
-      v-if="total === 0"
-      text="没有找到文章~" 
-/>
+  <div id="home" v-loading="loading" class="infinite-list-wrapper" style="overflow:auto">
+    <ul
+      v-infinite-scroll="load"
+      class="list"
+      infinite-scroll-disabled="disabled"
+    >
+      <li
+        v-for="(article, index) in articleList"
+        :key="index"
+        class="list-item"
+      >
+        <article-card :article="article" />
+      </li>
+    </ul>
+    <p v-if="noMore">没有更多了</p>
+    <no-data v-if="total === 0" text="没有找到文章~" />
   </div>
 </template>
 
 <script>
-import {
-  mapActions,
-  mapGetters
-} from 'vuex'
-
-import { scroll } from '@/layoutClient/mixin/scroll'
-
-import articleCard from '@/components/articleCard/articleCard'
-import noData from '@/components/noData/noData'
+import { scroll } from '@/layoutClient/mixin/scroll';
+import articleCard from '@/components/articleCard/articleCard';
+import noData from '@/components/noData/noData';
+import crud from "@/api/crud";
+const wtuCrud = crud.factory("wtu");
 
 export default {
   name: 'Home',
@@ -47,39 +34,42 @@ export default {
   mixins: [scroll],
   data() {
     return {
+      baseApi: process.env.VUE_APP_PIC,
+      // table
       articleList: [],
-      page: 0,
-      pageSize: 10,
-      currentPage: 0,
       total: 0,
-      loading: false
+      loading: true,
+      listQuery: {
+        page: 1,
+        limit: 10,
+        order: {},
+        where: {}
+      }
     }
   },
-  created() {
-    this.page = 0
-    this.getList()
+  computed: {
+    noMore() {
+      return this.count >= 20
+    },
+    disabled() {
+      return this.loading || this.noMore
+    }
   },
   methods: {
-    ...mapActions([
-      'getBlogArticleList'
-    ]),
     pageChange(currentPage) {
       this.scrollToTarget(0, false)
       this.page = currentPage - 1
       this.currentPage = currentPage
       this.getList()
     },
-    getList() {
+    load() {
       this.loading = true
-      this.getBlogArticleList({
-        page: this.page,
-        pageSize: this.pageSize
+      console.log(this.loading)
+      wtuCrud.get("indexArticle", this.listQuery).then((data) => {
+        this.total = data.count
+        this.articleList = data.list
+        this.loading = false
       })
-        .then((data) => {
-          this.total = data.count
-          this.articleList = data.list
-          this.loading = false
-        })
         .catch(() => {
           this.articleList = []
           this.loading = false

@@ -23,7 +23,7 @@
         </el-col>
         <el-col :span="2"><div class="grid-content bg-purple" />
           <el-button type="info" size="mini" plain @click="resetFilter">重置</el-button>
-      </el-col></el-row>
+        </el-col></el-row>
     </div>
 
     <el-table
@@ -145,9 +145,6 @@ export default {
   data() {
     return {
       baseApi: process.env.VUE_APP_PIC,
-      dataForm: {
-        tag: ""
-      },
       // table
       list: null,
       total: 0,
@@ -188,17 +185,6 @@ export default {
     this.getList();
   },
   methods: {
-    submitForm(formName) {
-      if (this.dialogStatus === "create") {
-        this.createData();
-      } else {
-        this.updateData();
-      }
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    },
-
     // table
     getList() {
       this.listLoading = true;
@@ -211,12 +197,6 @@ export default {
     handleFilter() {
       this.listQuery.page = 1;
       this.getList();
-    },
-    resetDataForm() {
-      this.dataForm = {
-        id: null,
-        tag: null
-      };
     },
     // 删除文章
     handleDelete(row) {
