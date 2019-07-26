@@ -36,7 +36,7 @@ return [
     | 如果你在 .env 文件中定义了 JWT_SECRET 的随机字符串
     | 那么 jwt 将会使用 对称算法 来生成 token
     | 如果你没有定有，那么jwt 将会使用如下配置的公钥和私钥来生成 token
-    | 
+    |
     | The algorithm you are using, will determine whether your tokens are
     | signed with a random string (defined in `JWT_SECRET`) or using the
     | following public & private keys.
@@ -83,9 +83,9 @@ return [
         |--------------------------------------------------------------------------
         | Passphrase
         |--------------------------------------------------------------------------
-        | 
+        |
         |  私钥的密码。 如果没有设置，可以为 null。
-        | 
+        |
         | The passphrase for your private key. Can be null if none set.
         |
         */
@@ -112,7 +112,7 @@ return [
     |
     */
 
-    'ttl' => env('JWT_TTL', 60),
+    'ttl' => env('JWT_TTL', 120),
 
     /*
     |--------------------------------------------------------------------------
@@ -237,7 +237,7 @@ return [
     |
     | 为了使令牌无效，您必须启用黑名单。
     | 如果您不想或不需要此功能，请将其设置为 false。
-    | 
+    |
     | In order to invalidate tokens, you must have the blacklist enabled.
     | If you do not want or need this functionality, then set this to false.
     |

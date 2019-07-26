@@ -1,5 +1,5 @@
 <template>
-  <div id="home" v-loading="loading" class="infinite-list-wrapper" style="overflow:auto">
+  <div v-loading="loading" class="infinite-list-wrapper" style="overflow:auto;">
     <ul
       v-infinite-scroll="load"
       class="list"
@@ -36,11 +36,12 @@ export default {
     return {
       // table
       articleList: [],
+      count: 10,
       total: 0,
       loading: false,
       listQuery: {
         page: 1,
-        limit: 1000,
+        limit: 10,
         order: {},
         where: {}
       }

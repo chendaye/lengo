@@ -22,4 +22,9 @@ npm install xxx --save-dev
 npm uninstall element-ui --save
 npm install element-ui@2.11.0 --save
 npm list  --depth 0
+
+composer update
+composer dump-autoload
+php artisan db:seed
+php artisan db:seed --class=UsersTableSeeder
 ```
