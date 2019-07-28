@@ -9,7 +9,7 @@ $factory->define(Article::class, function (Faker $faker) {
     return [
         'title' => $faker->name,
         'abstract' => $faker->realText(36, 2),
-        'cover' => 'group1/M00/00/00/rBIACV0xZr6ATjgXAACoCc-1410106.png', // secret
+        'cover' => 'group1/M00/00/00/rBIACF0pTMiACd9lAAFIAjY8p3s588.png', // secret
         'content' => '**武大![颜色.png](http://www.lengo.top:8888/group1/M00/00/00/rBIACV0xZteATjtkAAACBaa2SaI1179835)**
 # 一级标题
 ++下划线++++下划线++',

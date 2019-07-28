@@ -23,7 +23,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        //        $this->middleware('jwt.refresh', ['except' => ['login', 'register']]); // jwt 自带中间件
+        // $this->middleware('jwt.refresh', ['except' => ['login', 'register']]); // jwt 自带中间件
         $this->middleware('refresh', ['except' => ['login', 'register']]); // 自定义中间件
         // 初始化主表模型
         if ($this->namespace) {

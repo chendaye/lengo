@@ -28,7 +28,7 @@ $api->version('v1', function ($api) {
         });
 
         // 文章
-        $api->group(['namespace' =>  'App\Http\Controllers\Graduate\V1'], function ($api) {
+        $api->group(['namespace' =>  'App\Http\Controllers\Graduate\V1\Blog'], function ($api) {
             $api->group(['prefix' => 'blog'], function ($api) {
                 // 文章列表
                 $api->get('indexArticle', 'ArticleController@index');
