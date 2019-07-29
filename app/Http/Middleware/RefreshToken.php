@@ -20,10 +20,10 @@ class RefreshToken extends BaseMiddleware
      */
     public function handle($request, Closure $next)
     {
-        //test
-        $token = $this->auth->parseToken()->refresh();
-        // 在响应头中返回新的 token
-        return $this->setAuthenticationHeader($next($request), $token);
+//        //test
+//        $token = $this->auth->parseToken()->refresh();
+//        // 在响应头中返回新的 token
+//        return $this->setAuthenticationHeader($next($request), $token);
 
         // 检查此次请求中是否带有 token，如果没有则抛出异常UnauthorizedHttpException。
         $this->checkForToken($request);
