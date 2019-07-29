@@ -1,42 +1,41 @@
 <template>
-  <div v-loading="loading" class="infinite-list-wrapper" style="overflow:auto;">
-    <ul
-      v-infinite-scroll="load"
-      class="list"
-      infinite-scroll-disabled="disabled"
-    >
-      <li
-        v-for="(article, index) in articleList"
-        :key="index"
-        class="list-item"
-      >
-        <article-card :article="article" />
-      </li>
-    </ul>
-    <p v-if="noMore">没有更多了</p>
+  <div id="home" v-loading="loading">
+    <article-card v-for="(article, index) in articleList" :key="index" :article="article" />
+    <!-- 分页 -->
+    <div v-show="total > 0" class="pagination">
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="listQuery.page"
+        :limit.sync="listQuery.limit"
+        @pagination="getList"
+      />
+    </div>
+    <!-- 分页 结束 -->
     <no-data v-if="total === 0" text="没有找到文章~" />
   </div>
 </template>
 
 <script>
-import { scroll } from '@/layoutClient/mixin/scroll';
-import articleCard from '@/components/articleCard/articleCard';
-import noData from '@/components/noData/noData';
+import { scroll } from "@/layoutClient/mixin/scroll";
+import Pagination from "@/components/Pagination";
+import articleCard from "@/components/articleCard/articleCard";
+import noData from "@/components/noData/noData";
 import crud from "@/api/crud";
-const wtuCrud = crud.factory("blog", 'client');
+const wtuCrud = crud.factory("blog", "client");
 
 export default {
-  name: 'Home',
+  name: "Home",
   components: {
     articleCard,
-    noData
+    noData,
+    Pagination
   },
-  mixins: [scroll],
+  // mixins: [scroll],
   data() {
     return {
       // table
       articleList: [],
-      count: 10,
       total: 0,
       loading: false,
       listQuery: {
@@ -45,58 +44,54 @@ export default {
         order: {},
         where: {}
       }
-    }
+    };
   },
-  computed: {
-    noMore() {
-      return this.count >= 20
-    },
-    disabled() {
-      return this.loading || this.noMore
-    }
+  created() {
+    this.getList();
   },
   methods: {
-    pageChange(currentPage) {
-      this.scrollToTarget(0, false)
-      this.page = currentPage - 1
-      this.currentPage = currentPage
-      this.getList()
-    },
-    load() {
-      this.loading = true
-      wtuCrud.get("indexArticle", this.listQuery).then((data) => {
-        if (data.data.data.length > 0) {
-          this.total = data.count
-          this.articleList = data.data.data
-          this.loading = false
-        }
-      })
-        .catch(() => {
-          this.articleList = []
-          this.loading = false
+    getList() {
+      this.loading = true;
+      wtuCrud
+        .get("indexArticle", this.listQuery)
+        .then(data => {
+          if (data.data.data.length > 0) {
+            this.total = data.data.total;
+            console.log("total", this.total);
+            this.articleList = data.data.data;
+            this.loading = false;
+          }
         })
+        .catch(() => {
+          this.articleList = [];
+          this.loading = false;
+        });
     }
   }
-}
+};
 </script>
 
 <style lang="stylus" src="@/stylus/main.styl" scoped></style>
 <style lang="stylus" scoped>
-@import '../../../stylus/color.styl'
-#home
-  position: relative
-  padding: 30px 10px
-  min-height: 100px
-  .pagination
-    width: 100%
-    padding: 10px 0
-    display: flex
-    display: -webkit-flex
-    flex-direction: row
-    justify-content: center
-    background-color: $color-white
+@import '../../../stylus/color.styl';
 
-.slide-fade-enter
-.slide-fade-leave-to
-  opacity: 0
+#home {
+  position: relative;
+  padding: 30px 10px;
+  min-height: 100px;
+
+  .pagination {
+    width: 100%;
+    padding: 10px 0;
+    display: flex;
+    display: -webkit-flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: $color-white;
+  }
+}
+
+.slide-fade-enter, .slide-fade-leave-to {
+  opacity: 0;
+}
 </style>
