@@ -13,6 +13,11 @@ class ClientAuthController extends Controller
 
     //设置使用 guard 为client选项验证
     protected $guard = 'client';
+    // protected $guard = 'api';
+    // 控制器对应的的模型
+    protected $model;
+    // 控制器对应的模型类名称
+    protected $namespace = null;
 
     /**
      * 权限验证
@@ -23,6 +28,12 @@ class ClientAuthController extends Controller
     {
         // $this->middleware('jwt.refresh', ['except' => ['login', 'register']]); // jwt 自带中间件
         $this->middleware('refresh', ['except' => ['login', 'register']]); // 自定义中间件
+        // 初始化主表模型
+        if ($this->namespace) {
+            $class = $this->namespace;
+            // 初始化模型
+            $this->model = new $class();
+        }
     }
 
 
@@ -139,5 +150,99 @@ class ClientAuthController extends Controller
     {
         // client
         return Auth::guard($this->guard);
+    }
+
+
+    /**
+     * 新增一条记录
+     *
+     * @param Request $request
+     */
+    public function add(Request $request)
+    {
+        $payload = $request->input();
+        // 当前登录用户
+        $payload['user_id'] = Auth::guard('api')->id();
+        // 插入数据
+        $res = $this->model->add($payload);
+        return $this->success($res);
+    }
+
+    /**
+     * 删除记录
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function del(Request $request)
+    {
+        $query = $request->input('where');
+        return $this->model->del($query);
+    }
+
+    /**
+     * 更新记录
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function update(Request $request)
+    {
+        $query = $request->input('where');
+        $data = $request->input('data');
+        return $this->model->alert($data, $query);
+    }
+
+
+    /**
+     * 获取列表数据
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function index(Request $request)
+    {
+        $page = $request->input('page'); // 第几页
+        $limit = $request->input('limit'); // 每页条数
+        $order = $request->input('order');
+        $where = $request->input('where');
+        // 获取的请求数据 只是把第一层转化维数组了， 第二层需要手动转换
+        $order = $this->json($order);
+        $where = $this->json($where);
+
+        return $this->model->list($page, $limit, $where, $order);
+    }
+
+    /**
+     * 获取某一条记录
+     *
+     * @param Request $request
+     * @return array
+     * @author chendaye
+     */
+    public function detail(Request $request)
+    {
+        $where = $request->input('where');
+        // 获取的请求数据 只是把第一层转化维数组了， 第二层需要手动转换
+        $where = $this->json($where);
+
+        return $this->model->detail($where);
+    }
+
+    /**
+     * 获取全部记录
+     *
+     * @param Request $request
+     * @return array
+     * @author chendaye
+     */
+    public function list(Request $request)
+    {
+        $where = $request->input('where');
+        $order = $request->input('order');
+        $order = $this->json($order);
+        $where = $this->json($where);
+
+        return $this->model->lists($where);
     }
 }
