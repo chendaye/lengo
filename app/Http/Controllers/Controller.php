@@ -8,7 +8,8 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Traits\Response;
-
+use Illuminate\Support\Facades\Auth;
+use Validator;
 
 class Controller extends BaseController
 {
@@ -88,7 +89,7 @@ class Controller extends BaseController
      */
     public function login(Request $request)
     {
-        if($request->name){
+        if($request->input('name')){
             // 后台姓名登录
             $credentials = $request->only('name', 'password');
         }else{
