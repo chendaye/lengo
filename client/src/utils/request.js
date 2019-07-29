@@ -25,7 +25,7 @@ const service = axios.create({
  */
 service.interceptors.request.use(
   config => {
-    console.log('请求拦截', config)
+    console.log('请求拦截' + config.url, config)
     // const url = config.url.replace(config.baseURL, '')
     // todo: api 地址
     const isAdmin = config.url.indexOf('admin') // 是否是客户端请求
@@ -49,7 +49,7 @@ service.interceptors.request.use(
  */
 service.interceptors.response.use(
   response => {
-    console.log('响应拦截', response)
+    console.log('响应拦截' + response.config.url, response)
     // 判断一下响应中是否有 token，如果有就直接使用此 token 替换掉本地的 token。你可以根据你的业务需求自己编写更新 token 的逻辑
     const token = response.headers.authorization
     // todo: api 地址
@@ -57,10 +57,10 @@ service.interceptors.response.use(
     if (token) {
       if (isAdmin > -1) {
         // 如果 header 中存在 token，那么触发 refreshToken 方法，替换本地的 token
-        this.$store.dispatch('admin/refreshToken', token)
+        store.dispatch('admin/refreshToken', token)
       } else {
         // 如果 header 中存在 token，那么触发 refreshToken 方法，替换本地的 token
-        this.$store.dispatch('client/refreshToken', token)
+        store.dispatch('client/refreshToken', token)
       }
     }
 
@@ -106,7 +106,7 @@ service.interceptors.response.use(
    * 错误拦截
    */
   error => {
-    console.log('错误拦截', error)
+    console.log('错误拦截' + error.response.config.url, error)
     // 错误信息
     const msg = error.response.data;
     const isAdmin = error.response.config.url.indexOf('admin')
@@ -120,7 +120,11 @@ service.interceptors.response.use(
         })
         // location.reload()
         if (isAdmin > -1) {
-          store.dispatch('admin/resetToken')
+          store.dispatch('admin/resetToken').then(_ => {
+            router.push({
+              path: '/admin/login'
+            })
+          })
         } else {
           store.dispatch('client/resetToken').then(_ => {
             router.push({
