@@ -201,3 +201,9 @@ export function findIndex(list, data) {
   }
   return index;
 }
+
+// 去掉回车 空格 换行
+export function rmSpace(str) {
+  str = str.replace(/\ +/g, "");
+  return str.replace(/[\r\n]/g, "");
+}

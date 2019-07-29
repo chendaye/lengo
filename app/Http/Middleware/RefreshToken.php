@@ -20,11 +20,6 @@ class RefreshToken extends BaseMiddleware
      */
     public function handle($request, Closure $next)
     {
-//        //test
-//        $token = $this->auth->parseToken()->refresh();
-//        // 在响应头中返回新的 token
-//        return $this->setAuthenticationHeader($next($request), $token);
-
         // 检查此次请求中是否带有 token，如果没有则抛出异常UnauthorizedHttpException。
         $this->checkForToken($request);
 
@@ -34,7 +29,7 @@ class RefreshToken extends BaseMiddleware
                 return $next($request);
             }else{
                 // token 是否过期
-                throw new TokenExpiredException('jwt-auth', 'token过期');
+                throw new UnauthorizedHttpException('jwt-auth', '未登录');
             }
         } catch (TokenExpiredException $exception) {
             try {
