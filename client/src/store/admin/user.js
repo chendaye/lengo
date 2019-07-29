@@ -128,7 +128,7 @@ const actions = {
       // /client/logout
       logout(state.token).then(() => {
         // state 中 token 置为空
-        commit('SET_TOKEN', '')
+        commit('SET_TOKEN', null)
         commit('SET_AUTH', false)
         // cookie 中 token 删除
         removeToken('admin')
@@ -146,7 +146,7 @@ const actions = {
     commit
   }) {
     return new Promise(resolve => {
-      commit('SET_TOKEN', '')
+      commit('SET_TOKEN', null)
       removeToken('admin')
       resolve()
     })

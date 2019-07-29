@@ -29,8 +29,9 @@ class Controller extends BaseController
      */
     public function __construct()
     {
-        // $this->middleware('jwt.refresh', ['except' => ['login', 'register']]); // jwt 自带中间件
-        $this->middleware('refresh', ['except' => ['login', 'register']]); // 自定义中间件
+        // jwt 自带中间件; token在刷新时间内，返回刷新的token
+        $this->middleware('jwt.refresh', ['except' => ['login', 'register']]);
+//        $this->middleware('refresh', ['except' => ['login', 'register']]); // 自定义中间件
         // 初始化主表模型
         if ($this->namespace) {
             $class = $this->namespace;

@@ -30,9 +30,12 @@ export function me(token) {
 }
 
 // 用户登出
-export function logout() {
+export function logout(token) {
   return request({
     url: '/client/logout',
-    method: 'post'
+    method: 'post',
+    data: {
+      token: token
+    }
   })
 }

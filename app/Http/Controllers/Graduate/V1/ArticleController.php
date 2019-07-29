@@ -296,8 +296,8 @@ class ArticleController extends AuthController
         $article->categorys;
         // 文章评论
         // 下一篇文章 前一篇文章
-        $pn['next'] = $this->model->where('id', '>', $article->id)->first();
-        $pn['pre'] = $this->model->where('id', '<', $article->id)->first();
+        $pn['next'] = $this->model->where('id', '>', $article->id)->orderBy('id', 'desc')->first();
+        $pn['pre'] = $this->model->where('id', '<', $article->id)->orderBy('id', 'desc')->first();
 
         $article['pn'] = $pn ?? null;
 

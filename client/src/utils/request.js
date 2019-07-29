@@ -4,9 +4,11 @@ import {
   Message
 } from 'element-ui'
 import store from '@/store'
+import router from '../router'
 import {
-  getToken
-  // setToken
+  getToken,
+  setToken,
+  removeToken
 } from '@/utils/auth'
 
 // 封装axios
@@ -105,25 +107,28 @@ service.interceptors.response.use(
    */
   error => {
     console.log('错误拦截', error)
-
     // 错误信息
     const msg = error.response.data;
     const isAdmin = error.response.config.url.indexOf('admin')
     switch (msg.status_code) {
-      // 如果响应中的 http code 为 401，那么则此用户可能 token 失效了之类的，我会触发 logout 方法，清除本地的数据并将用户重定向至登录页面
+      // 如果响应中的 http code 为 401，那么则此用户可能 token 刷新时间过期 msg.message
       case 401:
-        console.log(msg)
         Message({
-          message: msg.message,
+          message: 'token 刷新时间过期，请重新登录',
           type: 'error',
           duration: 5 * 1000
         })
+        // location.reload()
         if (isAdmin > -1) {
-          return this.$store.dispatch('/admin/logout')
+          store.dispatch('admin/resetToken')
         } else {
-          return this.$store.dispatch('/client/logout')
+          store.dispatch('client/resetToken').then(_ => {
+            router.push({
+              path: '/login'
+            })
+          })
         }
-        // 如果响应中的 http code 为 400，那么就弹出一条错误提示给用户
+        break;
       case 400:
         console.log('err' + error) // for debug
         Message({
