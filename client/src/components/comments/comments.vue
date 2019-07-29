@@ -3,14 +3,12 @@
     <div id="comments-input-top" v-loading="loading" class="input-wrap">
       <div class="input-top">
         <el-input
-
           v-model="name"
           class="top-item"
           size="mini"
           placeholder="称呼（必填）"
         />
         <el-input
-
           v-model="email"
           class="top-item"
           size="mini"
@@ -19,10 +17,10 @@
       </div>
       <el-input
         id="comments-content-area"
+        v-model="content"
         class="input-area"
         type="textarea"
         size="mini"
-        v-model="content"
         :rows="5"
         resize="none"
         :placeholder="placeholder"
@@ -69,7 +67,7 @@
           <div class="name-time">
             <p class="name">
               {{ getName(comments) }}
-              <span  @click="reply(comments)">回复</span>
+              <span @click="reply(comments)">回复</span>
             </p>
             <p class="time">{{ comments.createTime | time }}</p>
           </div>
@@ -80,7 +78,7 @@
             :key="index"
           >
             {{ item.type === 'text' ? item.content : '' }}
-            <img class="content-emoji" v-if="item.type === 'emoji'" :src="item.content" alt="">
+            <img v-if="item.type === 'emoji'" class="content-emoji" :src="item.content" alt="">
           </span>
         </p>
         <ul v-if="comments.children.length > 0" class="comments-children">
@@ -94,7 +92,7 @@
               <div class="name-time">
                 <p class="name">
                   {{ getName(child) }}
-                  <span  @click="reply(child)">回复</span>
+                  <span @click="reply(child)">回复</span>
                 </p>
                 <p class="time">{{ child.createTime | time }}</p>
               </div>
@@ -105,7 +103,7 @@
                 :key="index"
               >
                 {{ item.type === 'text' ? item.content : '' }}
-                <img class="content-emoji" v-if="item.type === 'emoji'" :src="item.content" alt="">
+                <img v-if="item.type === 'emoji'" class="content-emoji" :src="item.content" alt="">
               </span>
             </p>
           </li>
@@ -121,9 +119,9 @@ import {
   mapActions
 } from 'vuex'
 
-import noData from 'COMMON/noData/noData'
-import { scroll } from 'MIXINS/scroll'
-import { emoji } from 'MIXINS/emoji'
+import noData from '@/components/noData/noData'
+import { scroll } from '@/layoutClient/mixin/scroll'
+import { emoji } from '@/layoutClient/mixin/emoji'
 
 export default {
   name: 'Comments',
@@ -143,7 +141,7 @@ export default {
       commentsList: [],
       replyId: 0,
       replyName: '',
-      avatar: require('IMAGES/cat.jpg'),
+      avatar: require('@/assets/logo.jpg'),
       captcha: false,
       loading: false
     }
@@ -324,7 +322,7 @@ export default {
 </script>
 <style lang="stylus" src="@/stylus/main.styl" scoped></style>
 <style lang="stylus" scoped>
-@import '~STYLUS/color.styl'
+@import '../../stylus/color.styl'
 #comments
   margin-top: 20px
   position: relative

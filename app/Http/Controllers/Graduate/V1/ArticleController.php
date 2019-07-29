@@ -185,7 +185,7 @@ class ArticleController extends AuthController
     }
 
     /**
-     * 获取文章的标签
+     * 获取文章的分类
      *
      * @param Request $request
      * @return array
@@ -276,5 +276,31 @@ class ArticleController extends AuthController
         } else {
             return $this->error($res);
         }
+    }
+
+    /**
+     * 获取文章内容
+     * @param Request $request
+     * @return  array
+     */
+    public  function blogDetail(Request $request)
+    {
+        // 文章id
+        $id = $request->input('id');
+        if(!$id) return $this->error('参数错误！');
+        // 文章内容
+        $article = $this->model->find($id);
+        // 文章标签
+        $article->tags;
+        // 文章分类
+        $article->categorys;
+        // 文章评论
+        // 下一篇文章 前一篇文章
+        $pn['next'] = $this->model->where('id', '>', $article->id)->first();
+        $pn['pre'] = $this->model->where('id', '<', $article->id)->first();
+
+        $article['pn'] = $pn ?? null;
+
+        return $this->success($article);
     }
 }

@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { scroll } from "@/layoutClient/mixin/scroll";
+// import { scroll } from "@/layoutClient/mixin/scroll";
 import Pagination from "@/components/Pagination";
 import articleCard from "@/components/articleCard/articleCard";
 import noData from "@/components/noData/noData";

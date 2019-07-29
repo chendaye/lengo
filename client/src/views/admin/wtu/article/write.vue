@@ -103,6 +103,7 @@ import category from "@/components/Tree/index";
 import tag from "@/components/Tag/tagFilter";
 import crud from "@/api/crud";
 import { findIndex } from "@/utils/index";
+import { markdown } from '@/utils/markdown'
 const wtuCrud = crud.factory("wtu");
 
 export default {
@@ -196,7 +197,10 @@ export default {
       // render 为 markdown 解析后的结果
       this.html = render;
     },
-
+    // 把markdown转化为 html
+    markdownHtml(str) {
+      return markdown(str)
+    },
     // update 更新文章
     update() {
       if (this.articleId !== null) {
@@ -204,7 +208,7 @@ export default {
         const article = {
           id: this.articleId,
           markdown: this.content,
-          html: this.html,
+          html: this.markdownHtml(this.content),
           cover: this.coverImg,
           tags: this.checks,
           tagsNew: this.checksNew, // 要更新的tag
@@ -273,7 +277,7 @@ export default {
       } else {
         const article = {
           markdown: this.content,
-          html: this.html,
+          html: this.markdownHtml(this.content),
           cover: this.coverImg,
           tags: this.checks,
           category: this.categorys,

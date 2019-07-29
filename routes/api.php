@@ -32,6 +32,8 @@ $api->version('v1', function ($api) {
             $api->group(['prefix' => 'blog'], function ($api) {
                 // 文章列表
                 $api->get('indexArticle', 'ArticleController@index');
+                // 文章内容
+                $api->get('blogDetail', 'ArticleController@blogDetail');
             });
         });
     });

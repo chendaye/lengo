@@ -58,7 +58,7 @@ export default {
   methods: {
     showArticle() {
       this.$router.push({
-        name: 'article',
+        name: 'Article',
         query: {
           id: this.article.id
         }

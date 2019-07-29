@@ -1,9 +1,9 @@
 import marked from 'marked'
 
-let renderer = new marked.Renderer()
+const renderer = new marked.Renderer()
 
 let index = 0
-renderer.heading = function (text, level) {
+renderer.heading = function(text, level) {
   return `<h${level} class="my-blog-head" id="my-blog-head${index++}">${text}</h${level}>`
 }
 
@@ -17,6 +17,6 @@ marked.setOptions({
   smartypants: true
 })
 
-export function markdown (str) {
+export function markdown(str) {
   return marked(str, { renderer: renderer })
 }

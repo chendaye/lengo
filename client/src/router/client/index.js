@@ -27,18 +27,32 @@ export default [
     path: '/',
     component: Layout,
     redirect: 'home',
-    children: [{
-      path: 'home',
-      name: 'Home',
-      component: () => import('@/views/client/dashboard/index'),
-      hidden: true,
-      meta: {
-        title: 'Home',
-        icon: 'home',
-        noCache: true,
-        affix: true
+    children: [
+      {
+        path: 'home',
+        name: 'Home',
+        component: () => import('@/views/client/dashboard/index'),
+        hidden: true,
+        meta: {
+          title: 'Home',
+          icon: 'home',
+          noCache: true,
+          affix: true
+        }
+      },
+      {
+        path: 'article',
+        name: 'Article',
+        component: () => import('@/views/client/article/index'),
+        hidden: true,
+        meta: {
+          title: 'Article',
+          icon: 'note',
+          noCache: true,
+          affix: true
+        }
       }
-    }]
+    ]
   },
   // 404
   {
