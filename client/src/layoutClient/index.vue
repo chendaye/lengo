@@ -115,7 +115,7 @@ export default {
     document.removeEventListener(this.evtname, this.visibilityChange, false);
   },
   methods: {
-    ...mapActions(["setShowRightNav", "getBlogInfo", "setArticleMenuTag"]),
+    ...mapActions('blog', ["setShowRightNav", "getBlogInfo", "setArticleMenuTag"]),
     setViewWrapWidth() {
       let temp = 20;
       if (this.screen.width > 990 && this.showRightNav) {

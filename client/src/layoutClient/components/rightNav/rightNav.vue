@@ -24,7 +24,7 @@
       <div class="content-wrap">
         <!-- 文章菜单 -->
         <transition name="slide-fade">
-          <articleCatalog v-show="showCatalog" class="article-menu" :menu="articleMenu" :start="0" />
+          <article-menu v-show="showCatalog" class="article-menu" :menu="articleMenu" :start="0" />
         </transition>
         <!-- 博客信息 -->
         <transition name="slide-fade">
@@ -77,12 +77,12 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 
-import articleCatalog from "@/components/articleMenu/articleMenu.vue";
+import ArticleMenu from "@/components/articleMenu/articleMenu.vue";
 
 export default {
   name: "RightNav",
   components: {
-    articleCatalog
+    ArticleMenu
   },
   data() {
     return {

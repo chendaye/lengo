@@ -12,13 +12,13 @@ import {
   mapActions,
   mapGetters
 } from 'vuex'
-import articleMenu from '@/components/articleMenu/articleMenu.vue'
+import ArticleMenu from '@/components/articleMenu/articleMenu.vue'
 import { scroll } from '@/layoutClient/mixin/scroll'
 
 export default {
   name: 'ArticleMenu',
   components: {
-    articleMenu
+    ArticleMenu
   },
   mixins: [scroll],
   props: ['menu'],

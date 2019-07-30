@@ -1,7 +1,7 @@
 <template>
   <div id="md-preview">
     <link href="//cdn.bootcss.com/github-markdown-css/2.4.1/github-markdown.css" rel="stylesheet">
-    <section id="markdown-preview-body" class="preview markdown-body" v-highlight v-html="contents"/>
+    <section id="markdown-preview-body" v-highlight class="preview markdown-body" v-html="contents" />
   </div>
 </template>
 
@@ -17,12 +17,12 @@ export default {
   },
   props: ['contents'],
   data() {
-    return  {
+    return {
       imgList: []
     }
   },
   watch: {
-    contents (content) {
+    contents(content) {
       this.setArticleMenu(false)
       setTimeout(this.init, 1000)
     }
@@ -38,7 +38,7 @@ export default {
     this.setArticleMenu(false)
   },
   methods: {
-    ...mapActions([
+    ...mapActions('blog', [
       'setArticleMenu',
       'setArticleMenuSource',
       'setArticleMenuTag'
@@ -65,6 +65,7 @@ export default {
     showBigImg(e) {
       this.$photoPreview.open(e.target.indexTag, this.imgList)
     },
+    // 获取文章目录
     getMenu() {
       const headNodes = document.getElementById('markdown-preview-body').getElementsByClassName('my-blog-head')
       const headList = []
