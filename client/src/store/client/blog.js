@@ -14,6 +14,7 @@ const state = {
     height: 0
   },
   showRightNav: false,
+  // 文章目录
   articleMenu: false,
   articleMenuSource: [],
   articleMenuTag: '1.',

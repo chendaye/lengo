@@ -24,8 +24,12 @@ export default {
   props: ['menu'],
   computed: {
     ...mapGetters([
-      'articleMenuTag'
+      'articleMenuTag',
+      'articleMenu'
     ])
+  },
+  created() {
+    console.log('我是菜单', this.articleMenu)
   },
   methods: {
     toMenu(item) {

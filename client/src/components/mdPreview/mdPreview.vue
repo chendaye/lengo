@@ -23,11 +23,12 @@ export default {
   },
   watch: {
     contents(content) {
-      this.setArticleMenu(false)
+      // this.setArticleMenu(false)
       setTimeout(this.init, 1000)
     }
   },
   created() {
+    setTimeout(this.init, 1000)
   },
   mounted() {
     setTimeout(this.init, 1000)
@@ -48,6 +49,7 @@ export default {
       this.getImg()
       this.getMenu()
     },
+    // todo: 查看文章大图
     getImg() {
       const imgDomList = document.getElementById('markdown-preview-body').getElementsByTagName('img')
       this.imgList = []
@@ -65,11 +67,13 @@ export default {
     showBigImg(e) {
       this.$photoPreview.open(e.target.indexTag, this.imgList)
     },
-    // 获取文章目录
+    // todo: 获取文章目录
     getMenu() {
+      // 获取所有 h 标签
       const headNodes = document.getElementById('markdown-preview-body').getElementsByClassName('my-blog-head')
       const headList = []
       const pos = 0
+      // 获取标题
       Array.prototype.forEach.call(headNodes, item => {
         headList.push({
           id: item.id,
@@ -77,18 +81,22 @@ export default {
           title: item.innerText
         })
       })
+      // 生成目录树
       let tree = this.treeify(headList, 0)
       if (tree.length === 0) {
         tree = false
       }
+      console.log('tree', tree)
+      // 把当前文章目录存进store
       const source = JSON.parse(JSON.stringify(headList))
       source.forEach(item => {
         item.children = []
       })
-      this.setArticleMenuTag('1.')
-      this.setArticleMenuSource(source)
-      this.setArticleMenu(tree)
+      this.setArticleMenuTag('1.') // tag
+      this.setArticleMenuSource(source) // 原始标题
+      this.setArticleMenu(tree) // 目录树
     },
+    // 生成目录树
     treeify(data, tag) {
       const tree = []
       let index = 0

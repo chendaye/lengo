@@ -27,4 +27,8 @@ composer update
 composer dump-autoload
 php artisan db:seed
 php artisan db:seed --class=UsersTableSeeder
+
+
+git config core.autocrlf false
+git config --global core.fileMode false
 ```

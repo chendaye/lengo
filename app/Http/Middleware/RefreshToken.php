@@ -38,7 +38,7 @@ class RefreshToken extends BaseMiddleware
             if ($this->auth->parseToken()->authenticate()) {
                 return $next($request);
             }else{
-                throw new TokenExpiredException('jwt-auth', 'token验证失败！');
+                throw new TokenExpiredException('jwt-auth:token验证失败！');
             }
         } catch (TokenExpiredException $exception) {
             try {
