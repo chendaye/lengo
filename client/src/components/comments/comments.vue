@@ -193,9 +193,11 @@ export default {
     },
     // todo: 创建评论
     addComments(params) {
+      console.log('评论', params);
+
       this.loading = true;
       wtuCrud
-        .post("addComments", { data: params })
+        .post("addComments", { params })
         .then(res => {
           console.log(res);
           this.$notify.success({
@@ -260,7 +262,6 @@ export default {
         ticket: ticket,
         randstr: randstr
       };
-      console.log('创建评论', params);
       this.addComments(params)
     },
     // todo: 回复评论

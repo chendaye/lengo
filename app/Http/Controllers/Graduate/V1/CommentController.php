@@ -43,16 +43,15 @@ class CommentController extends AuthController
 
     public function add(Request $request)
     {
-        $data = $request->input('data');
-        return $this->success($data);
+        $data = $request->input();
         // 腾讯验证码
-        $tx['aid'] = ‘2034464857’;
-        $tx['AppSecretKey'] = ‘0wt-IbkrRHHb5eEmViY9Rvg**’;
+        $tx['aid'] = '2034464857';
+        $tx['AppSecretKey'] = '0wt-IbkrRHHb5eEmViY9Rvg**';
         $tx['Ticket'] = $data['ticket'];
         $tx['Randstr'] = $data['randstr'];
         $tx['UserIP'] = $request->getClientIp(); // 客户端ip
         // 保存评论
 
-        return $this->success($tx);
+        return $this->success([$tx, $data]);
     }
 }
