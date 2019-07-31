@@ -207,3 +207,12 @@ export function rmSpace(str) {
   str = str.replace(/\ +/g, "");
   return str.replace(/[\r\n]/g, "");
 }
+
+// 引用远程js
+export function importJs(url) {
+  // 远程js
+  const s = document.createElement('script');
+  s.type = 'text/javascript';
+  s.src = url;
+  document.body.appendChild(s);
+}

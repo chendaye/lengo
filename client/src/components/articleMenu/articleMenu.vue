@@ -3,7 +3,6 @@
     <li v-for="item in menu" :key="item.tag">
       <span :class="{'active': is(item) || isParent(item)}" @click="toMenu(item)">{{ item.tag }} {{ item.title }}</span>
       <article-menu v-show="isParent(item)" :menu="item.children" />
-      <!-- <article-menu :menu="item.children" /> -->
     </li>
   </ul>
 </template>
@@ -28,8 +27,11 @@ export default {
       'articleMenu'
     ])
   },
-  created() {
-    console.log('我是菜单', this.articleMenu)
+  watch: {
+    menu: function() {
+      // console.log('我是menu', this.menu)
+      // console.log('我是articleMenu', this.articleMenu)
+    }
   },
   methods: {
     toMenu(item) {

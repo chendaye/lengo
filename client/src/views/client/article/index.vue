@@ -67,7 +67,7 @@
         </span>
       </div>
       <!-- 评论 -->
-      <!-- <comments :id="article.id" /> -->
+      <comments :id="article.id" />
     </div>
     <no-data v-if="!article.id" text="没有找到该文章~" />
   </div>

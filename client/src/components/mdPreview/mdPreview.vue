@@ -24,14 +24,15 @@ export default {
   watch: {
     contents(content) {
       // this.setArticleMenu(false)
-      setTimeout(this.init, 1000)
+      this.$nextTick(function() {
+        this.init()
+      })
     }
   },
   created() {
-    setTimeout(this.init, 1000)
-  },
-  mounted() {
-    setTimeout(this.init, 1000)
+    this.$nextTick(function() {
+      this.init()
+    })
   },
   beforeDestroy() {
     this.setArticleMenuTag('1.')
@@ -86,7 +87,6 @@ export default {
       if (tree.length === 0) {
         tree = false
       }
-      console.log('tree', tree)
       // 把当前文章目录存进store
       const source = JSON.parse(JSON.stringify(headList))
       source.forEach(item => {

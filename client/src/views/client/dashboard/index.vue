@@ -57,7 +57,6 @@ export default {
         .then(data => {
           if (data.data.data.length > 0) {
             this.total = data.data.total;
-            console.log("total", this.total);
             this.articleList = data.data.data;
             this.loading = false;
           }

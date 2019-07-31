@@ -34,6 +34,10 @@ $api->version('v1', function ($api) {
                 $api->get('indexArticle', 'ArticleController@index');
                 // 文章内容
                 $api->get('blogDetail', 'ArticleController@blogDetail');
+                // 文章评论
+                $api->get('comments', 'CommentController@comments');
+                // 创建评论
+                $api->post('addComments', 'CommentController@add');
             });
         });
     });

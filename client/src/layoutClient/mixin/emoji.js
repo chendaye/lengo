@@ -104,7 +104,7 @@ var emoji = {
             }
             result.push({
               'type': 'emoji',
-              'content': '/static/emoji/' + emoji.name
+              'content': emoji.name
             })
             source = source.replace(emoji.title, '')
           }

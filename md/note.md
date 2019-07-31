@@ -25,4 +25,17 @@ VOLUME /home/dfs
 docker-compose build fastdfs
 
 解决：备份data改名 ， 重新build， 删掉新的data 恢复原data
+
+
+composer update
+composer dump-autoload
+php artisan db:seed
+php artisan db:seed --class=CommentsTableSeeder
+
+
+git config core.autocrlf false
+git config --global core.fileMode false
+
+
+UPDATE `comments` SET content='[{"type":"text","content":"发送到发斯蒂芬"},{"type":"emoji","content":"haha.gif"},{"type":"text","content":"是的发生的"},{"type":"emoji","content":"kelian.gif"}]' WHERE 1
 ```

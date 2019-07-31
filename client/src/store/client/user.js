@@ -137,14 +137,14 @@ const actions = {
           email,
           remark,
           avatar
-        } = data
+        } = data.client
         // 调用mutations 设置 state
         commit('SET_ID', id)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_EMAIL', email)
         commit('SET_REMARK', remark)
-        resolve(data)
+        resolve(data.client)
       }).catch(error => {
         reject(error)
       })

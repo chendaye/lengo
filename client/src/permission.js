@@ -20,7 +20,7 @@ NProgress.configure({
 const whiteList = ['/admin/login', '/admin/register', '/login', '/register']
 
 // 路由前置守卫
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   // 进度条
   NProgress.start()
   if (to.path.indexOf('admin') !== -1) {
@@ -64,7 +64,6 @@ router.beforeEach(async (to, from, next) => {
             //   ...to,
             //   replace: true
             // })
-
             next()
           } catch (error) {
             // 删掉token 回到登录页面
@@ -103,7 +102,23 @@ router.beforeEach(async (to, from, next) => {
         })
         NProgress.done()
       } else {
-        next()
+        if (store.getters.client_email !== '') {
+          next();
+        } else {
+          try {
+            // 获取用户信息
+            await store.dispatch('client/me').then(res => {
+              // console.log('fuck', res)
+            })
+            next()
+          } catch (error) {
+            // 删掉token 回到登录页面
+            await store.dispatch('client/resetToken')
+            Message.error(error || 'Has Error')
+            next(`/login?redirect=${to.path}`)
+            NProgress.done()
+          }
+        }
       }
     } else {
       // 没有token

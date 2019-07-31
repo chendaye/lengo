@@ -23,12 +23,5 @@ npm uninstall element-ui --save
 npm install element-ui@2.11.0 --save
 npm list  --depth 0
 
-composer update
-composer dump-autoload
-php artisan db:seed
-php artisan db:seed --class=UsersTableSeeder
 
-
-git config core.autocrlf false
-git config --global core.fileMode false
 ```

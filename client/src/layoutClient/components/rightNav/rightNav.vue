@@ -165,8 +165,6 @@ export default {
     },
     articleMenu(value) {
       if (value) {
-    console.log('目录', value)
-
         this.showCatalog = true;
         this.setShowRightNav(true);
         this.toggleLineData = this.lineStyle.closeLineData;
@@ -257,7 +255,7 @@ export default {
       overflow-y: auto;
 
       .article-menu {
-        position: absolute;
+        // position: absolute;
         left: 0;
         top: 0;
         width: 100%;

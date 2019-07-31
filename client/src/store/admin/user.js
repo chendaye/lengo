@@ -112,7 +112,7 @@ const actions = {
         commit('SET_AVATAR', avatar)
         commit('SET_EMAIL', email)
         commit('SET_REMARK', remark)
-        resolve(data)
+        resolve(data.user)
       }).catch(error => {
         reject(error)
       })
