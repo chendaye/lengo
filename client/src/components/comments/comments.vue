@@ -50,7 +50,7 @@
             <p class="time">{{ comments.created_at }}</p>
           </div>
         </div>
-        <p class="content">
+        <p v-if="comments.content" class="content">
           <span v-for="(item, index) in JSON.parse(comments.content)" :key="index">
             {{ item.type === 'text' ? item.content : '' }}
             <img
@@ -73,7 +73,7 @@
                 <p class="time">{{ child.created_at }}</p>
               </div>
             </div>
-            <p class="content">
+            <p v-if="child.content" class="content">
               <span v-for="(item, index) in JSON.parse(child.content)" :key="index">
                 {{ item.type === 'text' ? item.content : '' }}
                 <img
@@ -110,6 +110,7 @@ export default {
   props: ["id"],
   data() {
     return {
+      comment_tx_id: process.env.VUE_APP_ID, // 要重新 npm run dev
       placeholder: "写下您的评论~",
       content: "",
       showEmoji: false,
@@ -235,7 +236,7 @@ export default {
         return;
       } else {
         // 自己申请腾讯验证码，2034464857 0wt-IbkrRHHb5eEmViY9Rvg**
-        this.captcha = new TencentCaptcha("2034464857", res => {
+        this.captcha = new TencentCaptcha(this.comment_tx_id, res => {
           if (res.ret === 0) {
             // todo： 前端验证通过， 把ticket传到后端 https://ssl.captcha.qq.com/ticket/verify 验证
             this.send(res.ticket, res.randstr);

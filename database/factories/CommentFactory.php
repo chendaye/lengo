@@ -6,10 +6,10 @@ use Faker\Generator as Faker;
 
 $factory->define(\App\Models\Comment::class, function (Faker $faker) {
     return [
-        'article_id' => $faker->numberBetween(1,100),
+        'article_id' => $faker->numberBetween(100,300),
         'user_id' => $faker->numberBetween(1,100),
         'pid' => $faker->numberBetween(1,100),
-        'content' => '[{"type":"text","content":"·¢ËÍµ½·¢Ë¹µÙ·Ò"},{"type":"emoji","content":"haha.gif"},{"type":"text","content":"ÊÇµÄ·¢ÉúµÄ"},{"type":"emoji","content":"kelian.gif"}]',
+        'content' => '{"type":"text","content":"å‘é€åˆ°å‘æ–¯è’‚èŠ¬"},{"type":"emoji","content":"haha.gif"},{"type":"text","content":"æ˜¯çš„å‘ç”Ÿçš„"},{"type":"emoji","content":"kelian.gif"}]',
         'raw_content' => $faker->realText(36, 2),
         'name' => $faker->name,
         'email' => $faker->email,
