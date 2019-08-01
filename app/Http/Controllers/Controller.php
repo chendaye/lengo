@@ -254,6 +254,6 @@ class Controller extends BaseController
         $order = $this->json($order);
         $where = $this->json($where);
 
-        return $this->model->lists($where);
+        return $this->model->lists($where, $order);
     }
 }

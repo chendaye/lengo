@@ -44,6 +44,8 @@ $api->version('v1', function ($api) {
                 $api->get('listTag', 'TagController@list');
                 // 文章搜索
                 $api->get('articleList', 'ArticleController@index');
+                // 获取友链
+                $api->get('linkList', 'LinkController@show');
             });
         });
     });
@@ -95,6 +97,17 @@ $api->version('v1', function ($api) {
                 $api->post('updateCategory', 'CategoryController@update');
                 // 删除分类
                 $api->post('delCategory', 'CategoryController@delete');
+
+                // 获取链接
+                $api->get('pLink', 'LinkController@list');
+                // 创建链接
+                $api->post('addLink', 'LinkController@add');
+                // 更新链接
+                $api->post('updateLink', 'LinkController@update');
+                // 删除链接
+                $api->post('delLink', 'LinkController@del');
+                // 链接列表
+                $api->get('indexLink', 'LinkController@index');
 
                 // 上传文章封面
                 $api->post('cover', 'ArticleController@cover');

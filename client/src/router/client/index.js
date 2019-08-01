@@ -35,9 +35,6 @@ export default [
         hidden: true,
         meta: {
           title: 'Home',
-          icon: 'home',
-          noCache: true,
-          affix: true
         }
       },
       {
@@ -46,10 +43,7 @@ export default [
         component: () => import('@/views/client/article/index'),
         hidden: true,
         meta: {
-          title: 'Article',
-          icon: 'note',
-          noCache: true,
-          affix: true
+          title: 'Article'
         }
       },
       {
@@ -58,10 +52,7 @@ export default [
         component: () => import('@/views/client/categories/index'),
         hidden: true,
         meta: {
-          title: 'Categories',
-          icon: 'note',
-          noCache: true,
-          affix: true
+          title: 'Categories'
         }
       },
       {
@@ -70,10 +61,25 @@ export default [
         component: () => import('@/views/client/categories/index'),
         hidden: true,
         meta: {
-          title: 'Categories',
-          icon: 'note',
-          noCache: true,
-          affix: true
+          title: 'Categories'
+        }
+      },
+      {
+        path: 'friends',
+        name: 'Friends',
+        component: () => import('@/views/client/friends/index'),
+        hidden: true,
+        meta: {
+          title: 'Friends'
+        }
+      },
+      {
+        path: 'about',
+        name: 'About',
+        component: () => import('@/views/client/about/index'),
+        hidden: true,
+        meta: {
+          title: 'About'
         }
       }
     ]

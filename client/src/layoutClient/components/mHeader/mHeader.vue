@@ -76,20 +76,21 @@ export default {
           to: 'archives'
         },
         {
-          name: '关于',
-          icon: 'icon-about',
-          to: 'about'
-        },
-        {
           name: '友链',
           icon: 'icon-friends-link',
           to: 'friends'
         },
         {
-          name: '更多',
-          icon: 'icon-more',
-          to: 'morefunc'
+          name: '关于',
+          icon: 'icon-about',
+          to: 'about'
         },
+
+        // {
+        //   name: '更多',
+        //   icon: 'icon-more',
+        //   to: 'morefunc'
+        // },
         {
           name: '搜索',
           icon: 'icon-search',

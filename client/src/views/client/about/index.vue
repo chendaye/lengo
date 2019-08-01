@@ -7,42 +7,37 @@
         </p>
       </div>
       <md-preview :contents="htmlContent" />
-      <div class="money-wrap" v-if="qrcode">
-        <p>如果我的文章对您有帮助！有钱的捧个钱场，没钱的捧个人场，谢谢您！</p>
+      <div class="money-wrap">
+        <p>交钱,交钱！</p>
         <div class="money-btn" @click="showQrcode = !showQrcode">赞赏支持</div>
         <transition name="slide-fade">
-          <div class="qrcode-wrap" v-show="showQrcode">
+          <div v-show="showQrcode" class="qrcode-wrap">
             <span class="qrcode">
-              <img :src='qrcode.wxpayQrcode'/>
+              <img src="../../../assets/weixin.png">
               <p>微信支付</p>
             </span>
             <span class="qrcode">
-              <img :src='qrcode.alipayQrcode'/>
+              <img src="../../../assets/alipay.png">
               <p>支付宝支付</p>
             </span>
           </div>
         </transition>
       </div>
-      <comments id="-1" />
     </div>
   </div>
 </template>
 
 <script>
-import {
-  mapActions
-} from 'vuex'
+import mdPreview from '@/components/mdPreview/mdPreview'
 
-import mdPreview from 'COMMON/mdPreview/mdPreview'
-import comments from 'COMMON/comments/comments'
-
+import { mark } from './markdown'
 export default {
-  name: 'about-content',
+  name: 'AboutContent',
   components: {
-    mdPreview,
-    comments
+    mdPreview
   },
-  data () {
+  mixins: [mark],
+  data() {
     return {
       showQrcode: false,
       htmlContent: '',
@@ -52,26 +47,14 @@ export default {
   },
   created() {
     this.loading = true
-    this.getBlogAboutMe()
-      .then((data) => {
-        this.htmlContent = data.html
-        this.qrcode = data.qrcode
-        this.loading = false
-      })
-      .catch(()=> {
-        this.loading = false
-      })
-  },
-  methods: {
-    ...mapActions([
-      'getBlogAboutMe'
-    ])
+    this.htmlContent = this.markdownHtml(this.markdownContent);
+    this.loading = false
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-@import '~STYLUS/color.styl'
+@import '../../../stylus/color.styl';
 #about
   position: relative
   padding: 30px 10px
@@ -144,7 +127,6 @@ export default {
             line-height: 1.5
             color: #555555
             font-size: 14px
-
 
 .slide-fade-enter-active
   transition: all .3s ease

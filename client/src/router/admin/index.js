@@ -110,6 +110,26 @@ export default [{
         }
       }]
     },
+    // 链接
+    {
+      path: 'link',
+      component: () => import('@/views/admin/wtu/link/index'),
+      name: 'Link',
+      meta: {
+        title: '链接',
+        icon: 'linkm'
+      },
+      redirect: '/admin/wtu/link',
+      children: [{
+        path: 'linkManage',
+        component: () => import('@/views/admin/wtu/link/linkManage'),
+        name: 'LinkManage',
+        meta: {
+          title: '链接',
+          icon: 'link'
+        }
+      }]
+    },
     // 文章
     {
       path: 'note',

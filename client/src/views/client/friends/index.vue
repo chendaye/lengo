@@ -1,9 +1,9 @@
 <template>
   <div id="friends" v-loading="loading">
-    <div class="type-wrap" v-for="(item, index) in friends" :key="index">
+    <div v-for="(item, index) in friends" :key="index" class="type-wrap">
       <p>{{ item.name }}</p>
       <div class="friends-wrap">
-        <a v-for="(friend, index) in item.list" :key="index" :href="friend.url" target="_blank">
+        <a v-for="(friend, index) in item.list" :key="index" :href="friend.link" target="_blank">
           {{ friend.name }}
         </a>
       </div>
@@ -12,15 +12,17 @@
 </template>
 
 <script>
+import crud from "@/api/crud";
+const wtuCrud = crud.factory("blog", "client");
 import {
   mapActions
 } from 'vuex'
 
 export default {
-  name: 'friends',
+  name: 'Friends',
   components: {
   },
-  data () {
+  data() {
     return {
       friends: [],
       loading: false
@@ -28,12 +30,14 @@ export default {
   },
   created() {
     this.loading = true
-    this.getBlogFriendsList()
+    wtuCrud.get('linkList', {})
       .then((data) => {
-        this.friends = data
-        this.loading = false
+        if (data.status === 200) {
+          this.friends = data.data;
+          this.loading = false;
+        }
       })
-      .catch(()=> {
+      .catch(() => {
         this.friends = []
         this.loading = false
       })
@@ -47,7 +51,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~STYLUS/color.styl'
+@import '../../../stylus/color.styl';
 #friends
   position: relative
   padding: 30px 10px
