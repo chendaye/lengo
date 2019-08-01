@@ -51,6 +51,30 @@ export default [
           noCache: true,
           affix: true
         }
+      },
+      {
+        path: 'categories',
+        name: 'Categories',
+        component: () => import('@/views/client/categories/index'),
+        hidden: true,
+        meta: {
+          title: 'Categories',
+          icon: 'note',
+          noCache: true,
+          affix: true
+        }
+      },
+      {
+        path: 'list',
+        name: 'List',
+        component: () => import('@/views/client/categories/index'),
+        hidden: true,
+        meta: {
+          title: 'Categories',
+          icon: 'note',
+          noCache: true,
+          affix: true
+        }
       }
     ]
   },

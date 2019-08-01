@@ -38,4 +38,7 @@ git config --global core.fileMode false
 
 
 UPDATE `comments` SET content='[{"type":"text","content":"发送到发斯蒂芬"},{"type":"emoji","content":"haha.gif"},{"type":"text","content":"是的发生的"},{"type":"emoji","content":"kelian.gif"}]' WHERE 1
+
+comments 删除name email 索引
+ALTER TABLE `categorys` ADD `count` INT(11) NULL DEFAULT '0' AFTER `desc`;
 ```

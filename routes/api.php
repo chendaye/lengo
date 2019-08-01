@@ -38,6 +38,12 @@ $api->version('v1', function ($api) {
                 $api->get('comments', 'CommentController@comments');
                 // 创建评论
                 $api->post('addComments', 'CommentController@add');
+                // 获取所有分类
+                $api->get('listCategory', 'CategoryController@list');
+                // 获取所有tag
+                $api->get('listTag', 'TagController@list');
+                // 文章搜索
+                $api->get('articleList', 'ArticleController@index');
             });
         });
     });

@@ -96,7 +96,7 @@ class CategoryController extends AuthController
     }
 
     /**
-     * 删除标签
+     * 删除分类
      *
      * @param Request $request
      * @return void
@@ -104,7 +104,7 @@ class CategoryController extends AuthController
      */
     public function delete(Request $request)
     {
-        // 删除标签
+        // 删除分类
         $where = $request->input('where');
         $where = $this->json($where);
         // parentId

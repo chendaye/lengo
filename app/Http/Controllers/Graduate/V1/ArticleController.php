@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Graduate\V1;
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Validator;
 use Lib\Fdfs\Lm;
@@ -129,6 +130,7 @@ class ArticleController extends AuthController
         // 保存文章标签
         $articleModel = Article::find($articleId); // 获取要关联的文章
         $tag = new Tag();
+        $category = new Category();
         if ($data['tags']) {
             // 文章标签关联
             $articleModel->tags()->attach($data['tags']);
@@ -136,7 +138,12 @@ class ArticleController extends AuthController
             $tag->countPlus($data['tags']);
         }
         // 保存文章分类
-        if ($data['category']) $articleModel->categorys()->attach($data['category']);
+        if ($data['category']) {
+            // 文章分类关联
+            $articleModel->categorys()->attach($data['category']);
+            // 分类使用次数
+            $category->countPlus($data['category']);
+        }
         // 返回文章信息
         return $this->success(['article' => $articleInfo, 'tag' => $data['tags'], 'category' => $data['category']]);
     }
@@ -166,6 +173,7 @@ class ArticleController extends AuthController
         if (!$status) return $this->error('文章更新失败！');
 
         $tagModel = new Tag();
+        $catogoryModel = new Category();
         $articleModel = Article::find($data['id']);
         // 更新标签
         $tag = $this->differ($data['tagsNew'], $data['tags']);
@@ -179,8 +187,15 @@ class ArticleController extends AuthController
         }
         // 更新分类
         $category = $this->differ($data['categorysNew'], $data['categorys']);
-        if ($category['add']) $articleModel->categorys()->attach($category['add']);    // 增加分类关联
-        if ($category['del']) $articleModel->categorys()->detach($category['del']);  // 删除标分类关联
+
+        if ($category['add']) {
+            $articleModel->categorys()->attach($category['add']);    // 增加分类关联
+            $catogoryModel->countPlus($category['add']);
+        }
+        if ($category['del']) {
+            $articleModel->categorys()->detach($category['del']);  // 删除标分类关联
+            $catogoryModel->countPlus($category['del'], false);
+        }
         return $this->success([$data, $tag, $category]);
     }
 
