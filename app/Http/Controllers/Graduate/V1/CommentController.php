@@ -14,11 +14,11 @@ use Illuminate\Http\Request;
 
 class CommentController extends AuthController
 {
-    // ��������
+    // 主表
     public $namespace = Comment::class;
 
     /**
-     * ������������
+     * 获取文章评论
      *
      * @param Request $request
      */
@@ -26,37 +26,69 @@ class CommentController extends AuthController
     {
         $article_id = $request->input('id');
         if($article_id){
-            $comment = $model->where('article_id', $article_id)->where('pid', 0)->get();
+            $comment = $model->where('article_id', $article_id)->where('pid', 0)->orderBy('id', 'desc')->get();
             if($comment = $comment->toArray()){
                 foreach ($comment as $key => $item){
-                    $tmp = $model->where('pid', $item['id'])->get();
-                    $comment[$key]['children'] = $tmp->toArray() ?? [];
+                    $comment[$key]['children'] =$this->nextComment($item['id'], []);
                 }
                 return $this->success($comment);
             }
 
             return $this->success([]);
         }else{
-            return $this->error('û������id');
+            return $this->error('article_id is none');
         }
     }
 
+    /**
+     * 获取所有子评论
+     *
+     * @param $id
+     * @param array $next
+     * @return array
+     */
+    public function nextComment($id, $next = [])
+    {
+        $tmp = $this->model->where('pid', $id)->orderBy('id', 'desc')->get();
+        foreach ($tmp as $item){
+            $next[] = $item;
+            return $this->nextComment($item['id'], $next);
+        }
+        return $next;
+    }
+
+
+    /**
+     * 新建评论
+     *
+     * @param Request $request
+     */
     public function add(Request $request)
     {
         $data = $request->input('params');
+        // todo: 腾讯验证码验证
         $tx['aid'] = getenv('APP_ID');
-        $tx['AppSecretKey'] = getenv('APP_KEY');
+        $tx['AppSecretKey'] = <<<EOT
+0wt-IbkrRHHb5eEmViY9Rvg**
+EOT;
         $tx['Ticket'] = $data['ticket'];
         $tx['Randstr'] = $data['randstr'];
         $tx['UserIP'] = $request->getClientIp();
         $verify = $this->curl_get_https('https://ssl.captcha.qq.com/ticket/verify', $tx);
-        $verify = json_decode($verify, true); // json字符串转为数组
+        $verify = $this->json($verify); // json字符串转为数组
+
         if($verify['err_msg'] === 'OK'){
             // 验证通过
-            return $this->success($verify);
+            unset($data['ticket']);
+            unset($data['randstr']);
+            $data['created_at'] = date('Y-m-d H:i:s', time());
+            $data['updated_at'] = date('Y-m-d H:i:s', time());
+            $comment_id = $this->model->insertGetId($data);
+            if($comment_id) return $this->success($comment_id);
+            return $this->error('评论插入失败！');
 
         }else{
-            return $this->error($verify['err_msg']);
+            return $this->error('验证码验证未通过：'.$verify['err_msg']);
         }
     }
 

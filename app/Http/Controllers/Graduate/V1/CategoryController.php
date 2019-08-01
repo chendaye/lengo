@@ -137,6 +137,5 @@ class CategoryController extends AuthController
         } else {
             return $this->error('分类删除失败！');
         }
-        //TODO：删除关联
     }
 }

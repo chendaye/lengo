@@ -107,7 +107,7 @@ export default {
     noData
   },
   mixins: [scroll, emoji],
-  props: ["id"],
+  props: ["id", "author"],
   data() {
     return {
       comment_tx_id: process.env.VUE_APP_ID, // 要重新 npm run dev
@@ -120,7 +120,7 @@ export default {
       commentsList: [],
       replyId: 0,
       replyName: "",
-      avatar: require("@/assets/logo.jpg"),
+      avatar: '',
       captcha: false,
       loading: false
     };
@@ -167,10 +167,10 @@ export default {
       return this.id === "-1" ? "还没有留言~" : "还没有评论~";
     },
     getName(comments) {
-      return comments.name + (comments.user_id !== 1 ? "" : "（作者）");
+      return comments.name + (comments.user_id !== this.author ? "" : "（作者）");
     },
     getAvatar(comments) {
-      return comments.pid === 0 ? this.avatar : this.blogInfo.avatar;
+      return comments.pid === 0 ? require("@/assets/12.jpg") : require("@/assets/11.jpg");
     },
     init() {
       this.count = 0;
@@ -194,8 +194,6 @@ export default {
     },
     // todo: 创建评论
     addComments(params) {
-      console.log('评论', params);
-
       this.loading = true;
       wtuCrud
         .post("addComments", { params })
@@ -263,6 +261,9 @@ export default {
         ticket: ticket,
         randstr: randstr
       };
+      if (this.replyId > 0) {
+        params.pid = this.replyId;
+      }
       this.addComments(params)
     },
     // todo: 回复评论
