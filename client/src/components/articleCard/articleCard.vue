@@ -20,15 +20,15 @@
         {{ article.view }}次浏览
       </div>
       <div class="article-sub-message">{{ article.abstract }}</div>
-      <div v-if="false" class="tags">
+      <div v-if="tags.length > 0" class="tags">
         <div
-          v-for="(tag, index) in article.tags"
+          v-for="(tag, index) in tags"
           :key="index"
           class="tag"
           @click="toList('tag', tag.id)"
         >
           <i class="iconfont icon-tag" />
-          {{ tag.name }}
+          {{ tag.tag }}
         </div>
       </div>
       <div class="read-more" @click="showArticle">阅读全文 >></div>
@@ -37,14 +37,18 @@
 </template>
 
 <script>
-
+import { toPath } from '@/views/client/mixins/blog'
+import crud from "@/api/crud";
+const wtuCrud = crud.factory("blog", "client");
 export default {
   name: 'ArticleCard',
+  mixins: [toPath],
   props: ['article'],
   data() {
     return {
       baseApi: process.env.VUE_APP_PIC,
-      defaultCover: require("@/assets/logo.jpg")
+      defaultCover: require("@/assets/logo.jpg"),
+      tags: []
     }
   },
   computed: {
@@ -53,26 +57,13 @@ export default {
     }
   },
   created() {
-    // console.log('articleCard', this.article);
+    wtuCrud.get('tags', { article_id: this.article.id }).then(res => {
+      if (res.status === 200) {
+        this.tags = res.data.data.list;
+      }
+    });
   },
   methods: {
-    showArticle() {
-      this.$router.push({
-        name: 'Article',
-        query: {
-          id: this.article.id
-        }
-      })
-    },
-    toList(type, id) {
-      this.$router.push({
-        name: 'articleList',
-        query: {
-          type: type,
-          id: id
-        }
-      })
-    }
   }
 }
 </script>

@@ -2,26 +2,24 @@
   <div id="article-card">
     <div class="article-card-wrap">
       <div class="article-title" @click="showArticle">
-        {{ article.article.title }}
+        {{ article.title }}
       </div>
       <div class="article-info">
-        <i class="iconfont icon-calendar"/>
-        发表于 {{ article.article.publishTime | time('YYYY年MM月DD日') }} •
-        <i class="iconfont icon-folder"/>
-        <span class="classify" @click="toList('category', article.category.id)">{{ article.category.name }}</span> •
-        <i class="iconfont icon-eye"/>
-        {{ article.article.pageview }}次围观
+        <i class="iconfont icon-calendar" />
+        发表于 {{ article.updated_at }} •
+        <i class="iconfont icon-eye" />
+        {{ article.view }}次围观
       </div>
-      <div class="article-sub-message">{{ article.article.subMessage }}</div>
+      <div class="article-sub-message">{{ article.abstract }}</div>
       <div class="tags">
         <div
-          v-for="(tag, index) in article.tags"
+          v-for="(tag, index) in tags"
           :key="index"
           class="tag"
           @click="toList('tag', tag.id)"
->
-          <i class="iconfont icon-tag"/>
-          {{ tag.name }}
+        >
+          <i class="iconfont icon-tag" />
+          {{ tag.tag }}
         </div>
       </div>
     </div>
@@ -29,34 +27,31 @@
 </template>
 
 <script>
-
+import { toPath } from '@/views/client/mixins/blog'
+import crud from "@/api/crud";
+const wtuCrud = crud.factory("blog", "client");
 export default {
   name: 'ArticleCard',
+  mixins: [toPath],
   props: ['article'],
   data() {
     return {
+      tags: []
     }
   },
   computed: {
   },
+  watch: {
+  },
+  created() {
+    wtuCrud.get('tags', { article_id: this.article.id }).then(res => {
+      if (res.status === 200) {
+        this.tags = res.data.data.list;
+      }
+    });
+  },
   methods: {
-    showArticle() {
-      this.$router.push({
-        name: 'article',
-        query: {
-          id: this.article.article.id
-        }
-      })
-    },
-    toList(type, id) {
-      this.$router.push({
-        name: 'articleList',
-        query: {
-          type: type,
-          id: id
-        }
-      })
-    }
+
   }
 }
 </script>

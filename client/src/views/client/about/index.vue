@@ -30,7 +30,7 @@
 <script>
 import mdPreview from '@/components/mdPreview/mdPreview'
 
-import { mark } from './markdown'
+import { mark } from '../mixins/markdown'
 export default {
   name: 'AboutContent',
   components: {

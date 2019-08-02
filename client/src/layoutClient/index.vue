@@ -43,7 +43,7 @@ import { scroll } from "@/layoutClient/mixin/scroll";
 import mHeader from "@/layoutClient/components/mHeader/mHeader";
 import mFooter from "@/layoutClient/components/mFooter/mFooter";
 import rightNav from "@/layoutClient/components/rightNav/rightNav";
-
+import { importJs } from "@/utils/index";
 export default {
   name: "App",
   components: {
@@ -97,8 +97,8 @@ export default {
     }
   },
   created() {
-    // console.log(this.blogInfo)
-    // 获取博客信息
+    // 引入腾讯验证码
+    importJs("https://ssl.captcha.qq.com/TCaptcha.js");
   },
   mounted() {
     document.title = `${this.title}-by chendaye`;

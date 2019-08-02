@@ -46,6 +46,8 @@ $api->version('v1', function ($api) {
                 $api->get('articleList', 'ArticleController@index');
                 // 获取友链
                 $api->get('linkList', 'LinkController@show');
+                // 获取文章绑定的标签
+                $api->get('tags', 'ArticleController@tags');
             });
         });
     });

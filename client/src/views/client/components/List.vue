@@ -5,13 +5,12 @@
     </div>
     <!-- 分页 -->
     <div v-show="total > 0" class="pagination">
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :page-size="pageSize"
-        :current-page="currentPage"
+      <pagination
+        v-show="total>0"
         :total="total"
-        @current-change="pageChange"
+        :page.sync="listQuery.page"
+        :limit.sync="listQuery.limit"
+        @pagination="getList"
       />
     </div>
     <!-- 分页 结束 -->
@@ -24,6 +23,7 @@ import { son } from "@/utils/index";
 import { scroll } from "@/layoutClient/mixin/scroll";
 import articleCard2 from "@/components/articleCard/articleCard2";
 import noData from "@/components/noData/noData";
+import Pagination from "@/components/Pagination";
 import crud from "@/api/crud";
 const wtuCrud = crud.factory("blog", "client");
 
@@ -31,7 +31,8 @@ export default {
   name: "Archives",
   components: {
     articleCard2,
-    noData
+    noData,
+    Pagination
   },
   mixins: [scroll],
   props: {
@@ -49,7 +50,9 @@ export default {
     },
     title: {
       type: String,
-      default: ''
+      default: function() {
+        return "";
+      }
     }
   },
   data() {
@@ -67,31 +70,36 @@ export default {
   },
   watch: {
     $route(route) {
-      this.getList();
-    },
-    title: function() {
-      this.listQuery.where.title = this.title;
-      this.handleFilter();
-    },
-    category: function() {
-      if (this.category !== []) {
-        let cate = [];
-        // 分类
-        cate = son(this.category);
-        this.listQuery.where.category = cate;
-        this.handleFilter();
-      }
-    },
-    tag: function() {
-      console.log('tag', this.tag);
-      this.listQuery.where.tag = this.tag;
-      this.handleFilter();
+      this.initParam();
     }
   },
   created() {
-    this.getList();
+    this.initParam();
   },
   methods: {
+    // 初始化查询参数
+    initParam() {
+      if (this.tag.length > 0) {
+        this.listQuery.where.tag = this.tag;
+      }
+      if (this.category.length > 0) {
+        if (
+          typeof this.category[0] === "number" ||
+          typeof this.category[0] === "string"
+        ) {
+          this.listQuery.where.category = this.category;
+          this.listQuery.where.categorySon = true;
+          console.log("wula", this.listQuery.where.category);
+        } else {
+          console.log("wulala", this.listQuery.where.category);
+          this.listQuery.where.category = son(this.category);
+        }
+      }
+      if (this.title !== "") {
+        this.listQuery.where.title = this.title;
+      }
+      this.getList();
+    },
     // table
     getList() {
       this.listLoading = true;
@@ -115,6 +123,7 @@ export default {
 #archives {
   position: relative;
   padding: 30px 10px;
+
   .pagination {
     width: 100%;
     padding: 10px 0;

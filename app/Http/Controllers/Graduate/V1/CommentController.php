@@ -52,6 +52,7 @@ class CommentController extends AuthController
         $tmp = $this->model->where('pid', $id)->orderBy('id', 'desc')->get();
         foreach ($tmp as $item){
             $next[] = $item;
+            //todo： 单根分类树 因为评论是一条线递归到底
             return $this->nextComment($item['id'], $next);
         }
         return $next;

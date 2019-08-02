@@ -58,7 +58,7 @@ export default [
       {
         path: 'list',
         name: 'List',
-        component: () => import('@/views/client/categories/index'),
+        component: () => import('@/views/client/categories/list'),
         hidden: true,
         meta: {
           title: 'Categories'

@@ -24,15 +24,25 @@ export default {
       return this.$route.name !== undefined ? this.$route.name + +new Date() : this.$route + +new Date()
     }
   },
+  watch: {
+    $route(route) {
+      this.initParams()
+    }
+  },
   created() {
-    if (this.$route.query.tag > 0) {
-      this.tag.push(this.$route.query.tag);
-    }
-    if (this.$route.query.category > 0) {
-      this.category.push(this.$route.query.category);
-    }
-    if (this.$route.query.title) {
-      this.title = this.$route.query.title
+    this.initParams();
+  },
+  methods: {
+    initParams() {
+      // 标签
+      if (this.$route.query.type === 'tag') {
+        this.tag = [this.$route.query.id];
+      }
+      // 分类
+      if (this.$route.query.type === 'category') {
+      // 获取所有子分类
+        this.category = [this.$route.query.id];
+      }
     }
   }
 }

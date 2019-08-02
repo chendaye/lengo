@@ -48,6 +48,12 @@ class Article extends Model
         //根据分类搜索
         if (isset($where['category']) && !empty($where['category'])) {
             $categoryHasArticle = new ArticleHasCategory();
+            if(isset($where['categorySon']) && $where['categorySon'] == true){
+                // 质包含父分类
+                $cm = new Category();
+                $cId = $cm->nextCategory($where['category'][0], []); // 所有次级分类
+                $where['category'] = array_merge($where['category'],  $cId ?? []);
+            }
             $articles = $categoryHasArticle->whereIn('category_id', $where['category'])
                 ->whereNull('deleted_at')->get();
             if ($articles) {

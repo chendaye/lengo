@@ -96,7 +96,6 @@ import { mapGetters, mapActions } from "vuex";
 import noData from "@/components/noData/noData";
 import { scroll } from "@/layoutClient/mixin/scroll";
 import { emoji } from "@/layoutClient/mixin/emoji";
-import { importJs } from "@/utils/index";
 import crud from "@/api/crud";
 
 const wtuCrud = crud.factory("blog", "client");
@@ -151,7 +150,6 @@ export default {
     }
   },
   created() {
-    importJs("https://ssl.captcha.qq.com/TCaptcha.js");
     if (this.id !== "") {
       this.init();
     }

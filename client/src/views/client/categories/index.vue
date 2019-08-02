@@ -100,7 +100,7 @@ export default {
     },
     toList(type, id) {
       this.$router.push({
-        name: "articleList",
+        name: "List",
         query: {
           type: type,
           id: id

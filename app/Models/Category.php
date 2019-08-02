@@ -43,4 +43,22 @@ class Category extends Model
             }
         }
     }
+
+    /**
+     * 获取所有子评论
+     *
+     * @param $id
+     * @param array $next
+     * @return array
+     */
+    public function nextCategory($id, $next = [])
+    {
+        $tmp = $this->where('pid', $id)->orderBy('id', 'desc')->get();
+        foreach ($tmp as $item){
+            $next[] = $item['id'];
+            //todo： 获取每一个节点的分类树
+            $this->nextCategory($item['id'], $next);
+        }
+        return $next;
+    }
 }

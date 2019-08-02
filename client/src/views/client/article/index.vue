@@ -68,7 +68,7 @@
       </div>
       <!-- 评论 -->
       <comments :id="article.id" :author="article.user_id"/>
-    </div>
+    </div> 
     <no-data v-if="!article.id" text="没有找到该文章~" />
   </div>
 </template>
@@ -77,11 +77,13 @@
 import mdPreview from "@/components/mdPreview/mdPreview";
 import noData from "@/components/noData/noData";
 import comments from "@/components/comments/comments";
+import { toPath } from '../mixins/blog'
 import crud from "@/api/crud";
 const wtuCrud = crud.factory("blog", "client");
 
 export default {
   name: "ArticleContent",
+  mixins: [toPath],
   components: {
     mdPreview,
     noData,
@@ -130,16 +132,6 @@ export default {
             this.loading = false;
           });
       }
-    },
-    // 跳转到指定分类
-    toList(type, id) {
-      this.$router.push({
-        name: "articleList",
-        params: {
-          type: type,
-          id: id
-        }
-      });
     }
   }
 };
