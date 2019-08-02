@@ -1,5 +1,5 @@
 <template>
-<!-- 顶部栏目 -->
+  <!-- 顶部栝目 -->
   <div class="navbar">
     <hamburger
       :is-active="admin_sidebar.opened"
@@ -12,18 +12,15 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="admin_avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+          <img :src="baseApi+admin_avatar" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <router-link to="/">
+          <router-link to="/admin/dashboard">
             <el-dropdown-item>Home</el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
+          <a target="_blank" href="https://github.com/chendaye/lengo">
             <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
           </a>
           <el-dropdown-item divided>
             <span style="display:block;" @click="logout">Log Out</span>
@@ -43,6 +40,11 @@ export default {
   components: {
     Breadcrumb,
     Hamburger
+  },
+  data() {
+    return {
+      baseApi: process.env.VUE_APP_PIC
+    }
   },
   computed: {
     ...mapGetters(['admin_sidebar', 'admin_avatar'])

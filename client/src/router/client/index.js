@@ -81,6 +81,15 @@ export default [
         meta: {
           title: 'About'
         }
+      },
+      {
+        path: 'search',
+        name: 'Search',
+        component: () => import('@/views/client/search/index'),
+        hidden: true,
+        meta: {
+          title: 'Search'
+        }
       }
     ]
   },

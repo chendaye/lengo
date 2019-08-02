@@ -1,37 +1,41 @@
 <template>
   <div id="search" v-loading="loading">
     <div class="search-input-wrap">
-      <input 
+      <input
+        id="search-input"
         v-model="searchValue"
-        @keyup.enter="toSearch()"
         type="search"
         placeholder="输入关键字搜索..."
-        id="search-input"
-        class="search-real-input">
+        class="search-real-input"
+        @keyup.enter="toSearch()"
+      >
     </div>
     <div class="search-article-wrap">
       <article-card2
         v-for="(article, index) in articleList"
         :key="index"
-        :article="article" />
+        :article="article"
+      />
     </div>
     <!-- 分页 -->
     <div
+      v-show="total > 0"
       class="pagination"
-      v-show="total > 0">
+    >
       <el-pagination
         background
         layout="prev, pager, next"
         :page-size="pageSize"
-        @current-change="pageChange"
         :current-page="currentPage"
-        :total="total">
-      </el-pagination>
+        :total="total"
+        @current-change="pageChange"
+      />
     </div>
     <!-- 分页 结束 -->
     <no-data
       v-if="total === 0"
-      text="没有找到文章~"/>
+      text="没有找到文章~"
+    />
   </div>
 </template>
 
@@ -40,18 +44,18 @@ import {
   mapActions
 } from 'vuex'
 
-import { scroll } from 'MIXINS/scroll'
-import articleCard2 from 'COMMON/articleCard/articleCard2'
-import noData from 'COMMON/noData/noData'
+import { scroll } from '@/layoutClient/mixin/scroll'
+import articleCard2 from '@/components/articleCard/articleCard2'
+import noData from '@/components/noData/noData'
 
 export default {
-  name: 'search',
+  name: 'Search',
   components: {
     articleCard2,
     noData
   },
   mixins: [scroll],
-  data () {
+  data() {
     return {
       page: 0,
       pageSize: 15,
@@ -64,15 +68,15 @@ export default {
       searchValue: ''
     }
   },
-  created() {
-  },
-  mounted() {
-    this.initData()
-  },
   watch: {
     $route(route) {
       this.initData()
     }
+  },
+  created() {
+  },
+  mounted() {
+    this.initData()
   },
   methods: {
     ...mapActions([
@@ -98,16 +102,16 @@ export default {
     getList() {
       this.loading = true
       this.searchArticle({
-          searchValue: this.searchValue,
-          page: this.page,
-          pageSize: this.pageSize
-        })
+        searchValue: this.searchValue,
+        page: this.page,
+        pageSize: this.pageSize
+      })
         .then((data) => {
           this.total = data.count
           this.articleList = data.list
           this.loading = false
         })
-        .catch(()=> {
+        .catch(() => {
           this.articleList = []
           this.loading = false
         })
@@ -129,7 +133,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~STYLUS/color.styl'
+@import '../../../stylus/color.styl'
 #search
   position: relative
   padding: 30px 10px

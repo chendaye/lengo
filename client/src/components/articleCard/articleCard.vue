@@ -14,8 +14,8 @@
       <div class="article-info">
         <i class="iconfont icon-calendar" />
         发表于 {{ article.created_at }} •
-        <i class="iconfont icon-folder" />
-        <span class="classify" @click="toList('category', article.id)">{{ article.title }}</span> •
+        <!-- <i class="iconfont icon-folder" />
+        <span class="classify" @click="toList('category', article.id)">{{ article.title }}</span> • -->
         <i class="iconfont icon-eye" />
         {{ article.view }}次浏览
       </div>

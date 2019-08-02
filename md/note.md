@@ -41,4 +41,7 @@ UPDATE `comments` SET content='[{"type":"text","content":"发送到发斯蒂芬"
 
 comments 删除name email 索引
 ALTER TABLE `categorys` ADD `count` INT(11) NULL DEFAULT '0' AFTER `desc`;
+
+resources/app/out/vs/workbench/workbench.main.css
+.monaco-workbench>.part>.content 16px
 ```
