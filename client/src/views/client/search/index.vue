@@ -1,71 +1,76 @@
 <template>
   <div id="search" v-loading="loading">
     <div class="search-input-wrap">
-      <input
+      <!-- <input
         id="search-input"
         v-model="searchValue"
         type="search"
         placeholder="输入关键字搜索..."
         class="search-real-input"
         @keyup.enter="toSearch()"
-      >
+      > -->
+      <el-row :gutter="10">
+        <el-col :span="8"><div class="grid-content bg-purple" />
+          <category
+            :is-filter="true"
+            :is-check="true"
+            :is-search="true"
+            @handchecked="handchecked"
+          />
+        </el-col>
+        <el-col :span="8"><div class="grid-content bg-purple" />
+          <tag
+            :is-search="true"
+            @check="check"
+            @nocheck="nocheck"
+          />
+        </el-col>
+        <el-col :span="4"><div class="grid-content bg-purple" />
+          <el-input
+            v-model="title"
+            placeholder="Title"
+            size="mini"
+            prefix-icon="el-icon-search"
+          />
+        </el-col>
+        <el-col :span="2"><div class="grid-content bg-purple" />
+          <el-button type="info" size="mini" plain @click="resetFilter">搜索</el-button>
+        </el-col>
+        <el-col :span="2"><div class="grid-content bg-purple" />
+          <el-button type="info" size="mini" plain @click="resetFilter">重置</el-button>
+        </el-col></el-row>
     </div>
     <div class="search-article-wrap">
-      <article-card2
-        v-for="(article, index) in articleList"
-        :key="index"
-        :article="article"
-      />
+      <List v-if="show" :tag="tag" :category="category" :title="title" />
     </div>
-    <!-- 分页 -->
-    <div
-      v-show="total > 0"
-      class="pagination"
-    >
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :page-size="pageSize"
-        :current-page="currentPage"
-        :total="total"
-        @current-change="pageChange"
-      />
-    </div>
-    <!-- 分页 结束 -->
-    <no-data
-      v-if="total === 0"
-      text="没有找到文章~"
-    />
   </div>
 </template>
 
 <script>
+import List from '../components/List'
 import {
   mapActions
 } from 'vuex'
-
 import { scroll } from '@/layoutClient/mixin/scroll'
-import articleCard2 from '@/components/articleCard/articleCard2'
-import noData from '@/components/noData/noData'
+import { son, findIndex } from "@/utils/index";
+import category from "@/components/Tree/index";
+import tag from "@/components/Tag/tagFilter";
 
 export default {
   name: 'Search',
   components: {
-    articleCard2,
-    noData
+    List,
+    category,
+    tag
   },
   mixins: [scroll],
   data() {
     return {
-      page: 0,
-      pageSize: 15,
-      currentPage: 0,
-      total: 0,
-      type: 'category',
-      id: '',
-      articleList: [],
-      loading: false,
-      searchValue: ''
+      show: true,
+      tag: [],
+      category: [],
+      title: '',
+      loading: false
     }
   },
   watch: {
@@ -83,38 +88,7 @@ export default {
       'searchArticle'
     ]),
     initData() {
-      this.searchValue = this.$route.query.value
-      this.total = 0
-      this.articleList = []
-      this.page = 0
-      if (this.searchValue || this.searchValue == '0') {
-        this.getList()
-      } else {
-        document.getElementById('search-input').focus()
-      }
-    },
-    pageChange(currentPage) {
-      this.scrollToTarget(0, false)
-      this.page = currentPage - 1
-      this.currentPage = currentPage
-      this.getList()
-    },
-    getList() {
-      this.loading = true
-      this.searchArticle({
-        searchValue: this.searchValue,
-        page: this.page,
-        pageSize: this.pageSize
-      })
-        .then((data) => {
-          this.total = data.count
-          this.articleList = data.list
-          this.loading = false
-        })
-        .catch(() => {
-          this.articleList = []
-          this.loading = false
-        })
+
     },
     toSearch() {
       if (this.searchValue === '') {
@@ -127,6 +101,27 @@ export default {
           value: this.searchValue
         }
       })
+    },
+    // 搜索分类
+    handchecked(data) {
+      // 半选和全选都存入数据库
+      if (data.check.checkedKeys.length > 0) {
+        this.category = data.check.checkedKeys.concat(
+          data.check.halfCheckedKeys
+        );
+      }
+    },
+    // 标签搜搜
+    check(data) {
+      this.tag.push(data);
+    },
+    nocheck(data) {
+      this.tag.splice(findIndex(this.tag, data), 1);
+    },
+    // 重置搜索
+    resetFilter() {
+      this.listQuery.where = {};
+      this.handleFilter();
     }
   }
 }
@@ -140,18 +135,12 @@ export default {
   display: flex
   flex-direction: column
   align-items: center
-  .pagination
-    width: 100%
-    padding: 10px 0
-    display: flex
-    display: -webkit-flex
-    flex-direction: row
-    justify-content: center
-    background-color: $color-white
   .search-input-wrap
     width: 100%
+    // padding: 0px 0px 60px
     max-width: 900px
-    height: 30px
+    // min-height: 30px
+    // height: 30px
     border-radius: 5px
     border: 1px solid #eeeeee
     .search-real-input

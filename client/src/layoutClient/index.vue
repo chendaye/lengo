@@ -180,11 +180,11 @@ export default {
     visibilityChange() {
       switch (document[this.getVisibilityState()]) {
         case "visible":
-          document.title = `被发现啦(*´∇｀*)---${this.blogInfo.blogName}的博客`;
+          document.title = `${this.blogInfo.blogName}的博客`;
           break;
         case "hidden":
         default:
-          document.title = `藏好啦(つд⊂)---${this.blogInfo.blogName}的博客`;
+          document.title = `${this.blogInfo.blogName}的博客`;
           break;
       }
     }
