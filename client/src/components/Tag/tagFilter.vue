@@ -31,6 +31,7 @@ import tag from "@/components/Tag/index";
 import crud from "@/api/crud";
 import { bubbleItem } from "@/utils/index";
 const wtuCrud = crud.factory("wtu");
+const blogCrud = crud.factory("blog", "client");
 
 export default {
   name: "TagFilter",
@@ -55,7 +56,9 @@ export default {
       // 选中的tag
       checkedtag: [],
       // 是否重置
-      isReset: 0
+      isReset: 0,
+      // 页面api
+      api: {}
     };
   },
   watch: {
@@ -66,8 +69,10 @@ export default {
     }
   },
   created() {
+    // todo: 查询接口
+    this.$route.path.indexOf('admin') > -1 ? this.api = wtuCrud : this.api = blogCrud;
     // 获取标签
-    wtuCrud
+    this.api
       .get("listTag", {
         order: { id: "desc", created_at: "asc" },
         where: { created_at: { op: "!=", va: "", ex: "cp" }}
@@ -80,7 +85,7 @@ export default {
           this.list = Object.assign([], res.data);
           // 获取文章标签
           if (this.articleId !== null) {
-            wtuCrud
+            this.api
               .get("tags", {
                 article_id: this.articleId
               })

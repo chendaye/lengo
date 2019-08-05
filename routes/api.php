@@ -48,6 +48,8 @@ $api->version('v1', function ($api) {
                 $api->get('linkList', 'LinkController@show');
                 // 获取文章绑定的标签
                 $api->get('tags', 'ArticleController@tags');
+                // 获取分类树
+                $api->get('tree', 'CategoryController@tree');
             });
         });
     });

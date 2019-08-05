@@ -90,6 +90,7 @@
 <script>
 import crud from "@/api/crud";
 const wtuCrud = crud.factory("wtu");
+const blogCrud = crud.factory("blog", "client");
 import { mapGetters } from "vuex";
 
 export default {
@@ -178,7 +179,9 @@ export default {
   },
 
   created() {
-    wtuCrud.get("tree", {}).then(res => {
+    // todo: 查询接口
+    this.$route.path.indexOf('admin') > -1 ? this.api = wtuCrud : this.api = blogCrud;
+    this.api.get("tree", {}).then(res => {
       if (res.status === 200) {
         this.treeData = res.data.data;
         // todo: 文章分类详情
