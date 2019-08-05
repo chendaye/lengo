@@ -26,7 +26,7 @@ export default [
   {
     path: '/',
     component: Layout,
-    redirect: 'home',
+    redirect: 'Home',
     children: [
       {
         path: 'home',

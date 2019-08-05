@@ -29,6 +29,10 @@ export default {
     isCheck: {
       type: Boolean,
       default: true
+    },
+    isReset: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -79,10 +83,20 @@ export default {
       return this.color[index];
     }
   },
+  watch: {
+    isReset: function(val) {
+      if (val > 0) {
+        this.resetCheck();
+      }
+    }
+  },
   created() {
     if (this.content.checked === true) {
       this.icon = "el-icon-star-on";
       this.tagId = this.content.id;
+    }
+    if (this.isReset > 0) {
+      this.resetCheck();
     }
   },
   methods: {
@@ -105,6 +119,10 @@ export default {
         this.tagId = null;
         this.content.count--;
       }
+    },
+    // 重置选中状态
+    resetCheck() {
+      this.icon = null;
     }
   }
 };

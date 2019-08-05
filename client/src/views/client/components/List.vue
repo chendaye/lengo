@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import { son } from "@/utils/index";
 import { scroll } from "@/layoutClient/mixin/scroll";
 import articleCard2 from "@/components/articleCard/articleCard2";
 import noData from "@/components/noData/noData";
@@ -71,6 +70,26 @@ export default {
   watch: {
     $route(route) {
       this.initParam();
+    },
+    category: function() {
+      if (
+        typeof this.category[0] === "number" ||
+        typeof this.category[0] === "string"
+      ) {
+        this.listQuery.where.category = this.category;
+        this.listQuery.where.categorySon = true;
+      } else {
+        this.listQuery.where.category = this.category;
+      }
+      this.getList();
+    },
+    tag: function() {
+      this.listQuery.where.tag = this.tag;
+      this.getList();
+    },
+    title: function() {
+      this.listQuery.where.title = this.title;
+      this.getList();
     }
   },
   created() {
@@ -79,33 +98,31 @@ export default {
   methods: {
     // 初始化查询参数
     initParam() {
-      if (this.tag.length > 0) {
-        this.listQuery.where.tag = this.tag;
+      this.listQuery.where.tag = this.tag;
+      if (
+        typeof this.category[0] === "number" ||
+        typeof this.category[0] === "string"
+      ) {
+        this.listQuery.where.category = this.category;
+        this.listQuery.where.categorySon = true;
+      } else {
+        this.listQuery.where.category = this.category;
       }
-      if (this.category.length > 0) {
-        if (
-          typeof this.category[0] === "number" ||
-          typeof this.category[0] === "string"
-        ) {
-          this.listQuery.where.category = this.category;
-          this.listQuery.where.categorySon = true;
-          console.log("wula", this.listQuery.where.category);
-        } else {
-          console.log("wulala", this.listQuery.where.category);
-          this.listQuery.where.category = son(this.category);
-        }
-      }
-      if (this.title !== "") {
-        this.listQuery.where.title = this.title;
-      }
+      this.listQuery.where.title = this.title;
       this.getList();
     },
     // table
     getList() {
       this.listLoading = true;
       wtuCrud.get("articleList", this.listQuery).then(res => {
+        // console.log('lengo', this.listQuery.where)
         this.articleList = res.data.data;
         this.total = res.data.total;
+        if (this.total > 0 && (this.category.length > 0 || this.tag.length > 0 || this.title !== '')) {
+          this.$emit('setShow', true);
+        } else {
+          this.$emit('setShow', false);
+        }
         this.listLoading = false;
       });
     },

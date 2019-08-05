@@ -15,6 +15,7 @@
               :size-val="size"
               :content="item"
               :is-check="true"
+              :is-reset="isReset"
               @check="check"
               @nocheck="nocheck"
             />
@@ -52,7 +53,9 @@ export default {
       tags: [],
       list: [],
       // 选中的tag
-      checkedtag: []
+      checkedtag: [],
+      // 是否重置
+      isReset: 0
     };
   },
   watch: {
@@ -113,6 +116,10 @@ export default {
       bubbleItem(this.tags, data, false);
       // 触发父组件
       this.$emit("nocheck", data);
+    },
+    // 取消选中状态
+    resetCheck() {
+      this.isReset++;
     }
   }
 };

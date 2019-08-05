@@ -34,6 +34,7 @@
       :show-checkbox="isCheck"
       :allow-drop="allowDrop"
       :allow-drag="allowDrag"
+      :check-on-click-node="true"
       @node-click="nodeClick"
       @node-drop="handleDrop"
       @check="handChecked"
@@ -180,7 +181,6 @@ export default {
     wtuCrud.get("tree", {}).then(res => {
       if (res.status === 200) {
         this.treeData = res.data.data;
-        console.log(this.treeData)
         // todo: 文章分类详情
         if (this.articleId !== null) {
           wtuCrud
@@ -195,7 +195,6 @@ export default {
                   this.$refs.tree.setChecked(elem, true, false);
                 }
                 this.$emit("handDetailChecked", res.data.data);
-                console.log("tree", res.data.data);
               }
             });
         }
@@ -345,7 +344,6 @@ export default {
         })
         .then(res => {
           if (res.status === 200) {
-            console.log(this.categoryForm);
             // 用nodeData 保存整个树的属性  this.categoryForm 保存了树数据
             this.nodeData.data = this.categoryForm;
             this.rootVisible = false;
@@ -377,11 +375,6 @@ export default {
           : dropNode.parent.data.length > 1
             ? 0
             : dropNode.parent.data.id;
-
-      // console.log('dropType', dropType);
-      // console.log('draggingNode', draggingNode);
-      // console.log('dropNode', dropNode);
-      // console.log(id, pid);
       if (id !== undefined && pid !== undefined) {
         wtuCrud
           .post("updateCategory", {
@@ -402,7 +395,6 @@ export default {
                 message: "分类更新失败！"
               });
             }
-            console.log(res);
           });
       } else {
         this.$notify.error({
@@ -432,6 +424,10 @@ export default {
      */
     handChecked(data, check) {
       this.$emit("handchecked", { current: data, check: check });
+    },
+    // 清空选中状态
+    resetChecked() {
+      this.$refs.tree.setCheckedKeys([]);
     }
   }
 };
