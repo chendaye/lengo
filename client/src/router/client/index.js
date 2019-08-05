@@ -90,6 +90,15 @@ export default [
         meta: {
           title: 'Search'
         }
+      },
+      {
+        path: 'archives',
+        name: 'Archives',
+        component: () => import('@/views/client/archives/index'),
+        hidden: true,
+        meta: {
+          title: 'Archives'
+        }
       }
     ]
   },

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Graduate\V1;
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Models\Category;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Validator;
 use Lib\Fdfs\Lm;
@@ -317,5 +318,22 @@ class ArticleController extends AuthController
         $article['pn'] = $pn ?? null;
 
         return $this->success($article);
+    }
+
+    /**
+     * 文章归档
+     */
+    public function archives(Request $request){
+        $content = [];
+        $data = $this->index($request);
+        $year = ['2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032',];
+        $month = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+
+        foreach ($year as $y){
+            foreach ($month as $m){
+                $tmp = $y.'-'.$m;
+                return  Carbon::parse('2016-10-15')->toDateTimeString();
+            }
+        }
     }
 }

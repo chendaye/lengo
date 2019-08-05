@@ -50,6 +50,8 @@ $api->version('v1', function ($api) {
                 $api->get('tags', 'ArticleController@tags');
                 // 获取分类树
                 $api->get('tree', 'CategoryController@tree');
+                // 文章归档
+                $api->get('archives', 'ArticleController@archives');
             });
         });
     });

@@ -4,7 +4,7 @@
       <div class="time-line" />
       <div class="list-content">
         <p class="normal-node">目前共计 {{ total }} 篇文章~</p>
-        <div v-for="(year, key, index) in archives" :key="index" class="bold-node">
+        <div v-for="(year, key, index) in articleList" :key="index" class="bold-node">
           <p>{{ key }}</p>
           <div v-for="(month, key, index) in year" :key="index" class="bold-node month">
             <p>{{ key }}</p>
@@ -15,13 +15,12 @@
     </div>
     <!-- 分页 -->
     <div v-show="total > 0" class="pagination">
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :page-size="pageSize"
-        :current-page="currentPage"
+      <pagination
+        v-show="total>0"
         :total="total"
-        @current-change="pageChange"
+        :page.sync="listQuery.page"
+        :limit.sync="listQuery.limit"
+        @pagination="getList"
       />
     </div>
     <!-- 分页 结束 -->
@@ -35,26 +34,32 @@ import { mapActions } from "vuex";
 import { scroll } from "@/layoutClient/mixin/scroll";
 import articleCard2 from "@/components/articleCard/articleCard2";
 import noData from "@/components/noData/noData";
+import Pagination from "@/components/Pagination";
+import crud from "@/api/crud";
+const wtuCrud = crud.factory("blog", "client");
 
 export default {
   name: "Archives",
   components: {
     articleCard2,
-    noData
+    noData,
+    Pagination
   },
   mixins: [scroll],
   data() {
     return {
-      page: 0,
-      pageSize: 15,
-      currentPage: 0,
+      articleList: [],
       total: 0,
-      archives: [],
-      loading: false
+      loading: false,
+      listQuery: {
+        page: 1,
+        limit: 10,
+        order: {},
+        where: {}
+      }
     };
   },
   created() {
-    this.page = 0;
     this.getList();
   },
   methods: {
@@ -65,21 +70,16 @@ export default {
       this.currentPage = currentPage;
       this.getList();
     },
+    // table
     getList() {
-      this.loading = true;
-      this.getBlogArticleArchives({
-        page: this.page,
-        pageSize: this.pageSize
-      })
-        .then(data => {
-          this.total = data.count;
-          this.archives = data.list;
-          this.loading = false;
-        })
-        .catch(() => {
-          this.archives = [];
-          this.loading = false;
-        });
+      this.listLoading = true;
+      wtuCrud.get("archives", this.listQuery).then(res => {
+        console.log(res)
+        // console.log('lengo', this.listQuery.where)
+        // this.articleList = res.data.data;
+        // this.total = res.data.total;
+        // this.listLoading = false;
+      });
     }
   }
 };
