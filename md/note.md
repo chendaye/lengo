@@ -7,6 +7,7 @@ User::create(['name' => 'chendaye666','email'=>'chendaye666@gmail.com','mobile' 
 
 namespace App\Models
 Client::create(['name' => 'chendaye666','email'=>'chendaye666@gmail.com','mobile' => 15271834241,'password' => bcrypt('chendaye')]);
+
 ```
 - fastdfs 错误
 
