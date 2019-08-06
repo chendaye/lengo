@@ -322,18 +322,47 @@ class ArticleController extends AuthController
 
     /**
      * 文章归档
+     * @param Request $request
      */
     public function archives(Request $request){
+        $where = $request->input('time');
+        $from = $where[0] ?? '2019-01-01';
+        $to = $where[1] ?? '2032-12-31';
         $content = [];
-        $data = $this->index($request);
+        $count = 0;
         $year = ['2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032',];
         $month = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 
         foreach ($year as $y){
             foreach ($month as $m){
                 $tmp = $y.'-'.$m;
-                return  Carbon::parse('2016-10-15')->toDateTimeString();
+                $current = Carbon::parse($tmp);
+                if($current->gte($from) && $current->lte($to)){
+                    $data = $this->model->where([
+                        ['created_at', '>=', $from],
+                        ['created_at', '<=', $to],
+                        ['created_at', '>=', $tmp.'-01'],
+                        ['created_at', '<=', $tmp.'-31'],
+                    ])->orderBy('created_at', 'desc')->get();
+                    if($data->count() > 0){
+                        $content[$y][$m] = $data;
+                        $count+=$data->count();
+                    }
+                }
             }
         }
+        return $this->success(['blog' => $content, 'total' => $count]);
+    }
+
+    /**
+     * 更新文章浏览次数
+     * @param Request $request
+     */
+    public function viewBlog(Request $request){
+        $id = $request->input('id');
+        $blog = $this->model->find($id);
+        $blog->view++;
+        $res = $blog->save();
+        return $this->success($res);
     }
 }

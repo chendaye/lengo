@@ -1,4 +1,5 @@
-
+import crud from "@/api/crud";
+const wtuCrud = crud.factory("blog", "client");
 var toPath = {
   data() {
     return {
@@ -6,10 +7,16 @@ var toPath = {
   },
   methods: {
     showArticle() {
-      this.$router.push({
-        name: 'Article',
-        query: {
-          id: this.article.id
+      wtuCrud.post('view', {
+        id: this.article.id
+      }).then(res => {
+        if (res.data.data === true) {
+          this.$router.push({
+            name: 'Article',
+            query: {
+              id: this.article.id
+            }
+          })
         }
       })
     },

@@ -52,6 +52,8 @@ $api->version('v1', function ($api) {
                 $api->get('tree', 'CategoryController@tree');
                 // 文章归档
                 $api->get('archives', 'ArticleController@archives');
+                // 文章阅读次数
+                $api->post('view', 'ArticleController@viewBlog');
             });
         });
     });
