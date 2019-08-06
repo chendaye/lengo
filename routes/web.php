@@ -12,6 +12,7 @@
 */
 
 Route::get('/', function () {
+     return 'success';
     $a = new \Lib\Fdfs\Lm();
     dd($a->storage_file_exist('group1', 'aa'));
 });
