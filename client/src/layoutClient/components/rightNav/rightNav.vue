@@ -33,15 +33,15 @@
             <p class="name">{{ blogInfo.blogName || '博客' }}</p>
             <p class="motto">{{ blogInfo.sign || '-' }}</p>
             <div class="menu-wrap">
-              <span class="menu-item" @click="toView('archives')">
+              <span class="menu-item" @click="toView('Archives')">
                 <p class="count">{{ articleCount || 0 }}</p>
                 <p>文章</p>
               </span>
-              <span class="menu-item" @click="toView('categories')">
+              <span class="menu-item" @click="toView('Categories')">
                 <p class="count">{{ categoryCount || 0 }}</p>
                 <p>分类</p>
               </span>
-              <span class="menu-item" @click="toView('categories')">
+              <span class="menu-item" @click="toView('Categories')">
                 <p class="count">{{ tagCount || 0 }}</p>
                 <p>标签</p>
               </span>
