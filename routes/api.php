@@ -54,6 +54,8 @@ $api->version('v1', function ($api) {
                 $api->get('archives', 'ArticleController@archives');
                 // 文章阅读次数
                 $api->post('view', 'ArticleController@viewBlog');
+                // 文章数量信息
+                $api->get('number', 'ArticleController@number');
             });
         });
     });

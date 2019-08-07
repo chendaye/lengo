@@ -34,15 +34,15 @@
             <p class="motto">{{ blogInfo.sign || '-' }}</p>
             <div class="menu-wrap">
               <span class="menu-item" @click="toView('archives')">
-                <p class="count">{{ blogInfo.articleCount || 0 }}</p>
+                <p class="count">{{ articleCount || 0 }}</p>
                 <p>文章</p>
               </span>
               <span class="menu-item" @click="toView('categories')">
-                <p class="count">{{ blogInfo.categoryCount || 0 }}</p>
+                <p class="count">{{ categoryCount || 0 }}</p>
                 <p>分类</p>
               </span>
               <span class="menu-item" @click="toView('categories')">
-                <p class="count">{{ blogInfo.tagCount || 0 }}</p>
+                <p class="count">{{ tagCount || 0 }}</p>
                 <p>标签</p>
               </span>
             </div>
@@ -76,7 +76,8 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-
+import crud from "@/api/crud";
+const wtuCrud = crud.factory("blog", "client");
 import ArticleMenu from "@/components/articleMenu/articleMenu.vue";
 
 export default {
@@ -87,6 +88,9 @@ export default {
   data() {
     return {
       show: true,
+      articleCount: 0, // 文章数量
+      categoryCount: 0, // 分类数量
+      tagCount: 0, // 标签数量
       lineStyle: {
         normalLineData: [
           {
@@ -177,6 +181,14 @@ export default {
   },
   created() {
     this.toggleLineData = this.lineStyle.normalLineData;
+    // 获取文章数量信息
+    wtuCrud.get('number', {}).then(res => {
+      if (res.status === 200) {
+        this.articleCount = res.data.data.articleCount;
+        this.categoryCount = res.data.data.categoryCount;
+        this.tagCount = res.data.data.tagCount;
+      }
+    });
   },
   mounted() {},
   methods: {

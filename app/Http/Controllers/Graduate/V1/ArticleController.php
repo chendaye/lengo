@@ -365,4 +365,24 @@ class ArticleController extends AuthController
         $res = $blog->save();
         return $this->success($res);
     }
+
+    /**
+     * 文章数量信息
+     *
+     * @return void
+     * @author chendaye
+     */
+    public function number(){
+        $category = new Category();
+        $tag = new Tag();
+        $article = new Article();
+        $articleCount = $article->count();
+        $categoryCount = $category->count();
+        $tagCount = $tag->count();
+        return $this->success([
+            'articleCount'=> $articleCount,
+            'categoryCount'=> $categoryCount,
+            'tagCount'=> $tagCount,
+        ]);
+    }
 }
