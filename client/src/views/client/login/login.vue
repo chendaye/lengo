@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <coordinateBg />
+    <!-- <coordinateBg /> -->
     <el-form
       ref="loginForm"
       :model="loginForm"
@@ -56,14 +56,14 @@
 
 <script>
 import { validEmail } from '@/utils/validate';
-import coordinateBg from '@/components/Bg/coordinate';
+// import coordinateBg from '@/components/Bg/coordinate';
 import { mapActions } from 'vuex';
 
 export default {
   name: 'Login',
-  components: {
-    coordinateBg
-  },
+  // components: {
+  //   coordinateBg
+  // },
   data() {
     // 自定义账号姓名验证
     const validateEmail = (rule, value, callback) => {

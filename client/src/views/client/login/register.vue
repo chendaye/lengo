@@ -1,6 +1,6 @@
 <template>
   <div class="register-container">
-    <meteorBg />
+    <!-- <meteorBg /> -->
     <el-form
       ref="registerForm"
       :model="registerForm"
@@ -89,14 +89,14 @@
 
 <script>
 import { validUsername, validEmail } from '@/utils/validate';
-import meteorBg from '@/components/Bg/meteor';
+// import meteorBg from '@/components/Bg/meteor';
 import { mapActions } from 'vuex';
 
 export default {
   name: 'Register',
-  components: {
-    meteorBg
-  },
+  // components: {
+  //   meteorBg
+  // },
   data() {
     // 自定义账号姓名验证
     const validateUsername = (rule, value, callback) => {
