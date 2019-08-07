@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <!-- <coordinateBg /> -->
+    <coordinateBg />
     <el-form
       ref="loginForm"
       :model="loginForm"
