@@ -55,7 +55,7 @@ export default {
       wtuCrud
         .get("indexArticle", this.listQuery)
         .then(data => {
-          if (data.data.data.length > 0) {
+          if (data.status === 200) {
             this.total = data.data.total;
             this.articleList = data.data.data;
             this.loading = false;
