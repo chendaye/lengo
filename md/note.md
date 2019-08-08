@@ -11,6 +11,8 @@ Client::create(['name' => 'chendaye666','email'=>'chendaye666@gmail.com','mobile
 ```
 - fastdfs 错误
 
+启动 build 签把 宿主机ip改好
+
 [tracker_query_storage fail, error no: 2, error info: No such file or directory](https://blog.csdn.net/xyw591238/article/details/51487736)
 
 ```bash
@@ -58,4 +60,6 @@ apt-get install iputils-ping    安装ping命令
 
 docker rm `docker ps -aq`
 docker rmi `docker images -q`
+
+修改防火墙设置 记得重启 docker 在情动容器
 ```
