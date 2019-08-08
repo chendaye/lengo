@@ -11,7 +11,7 @@ class TestController extends BaseController
 
         // 测试跟踪服务器
         $tracker = $f->tracker_get_connection();
-        dump($tracker);
+        dd($tracker);
 
 
         $server = $f->connect_server($tracker['ip_addr'], $tracker['port']);
