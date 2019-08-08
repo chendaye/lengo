@@ -8,7 +8,6 @@ class TestController extends BaseController
     public function test()
     {
         $f = new \FastDFS();
-        dd($f);
         // 测试跟踪服务器
         $tracker = $f->tracker_get_connection();
         dd($tracker);
