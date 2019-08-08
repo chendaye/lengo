@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+use Illuminate\Routing\Controller as BaseController;
 
-class TestController extends Controller
+class TestController extends BaseController
 {
     public function test()
     {
