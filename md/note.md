@@ -48,4 +48,14 @@ resources/app/out/vs/workbench/workbench.main.css
 
 
 34.74.76.114 10.142.0.3
+
+容器安装 ping
+apt-get update
+
+apt-get install net-tools    安装ifconfig命令
+
+apt-get install iputils-ping    安装ping命令
+
+docker rm `docker ps -aq`
+docker rmi `docker images -q`
 ```
