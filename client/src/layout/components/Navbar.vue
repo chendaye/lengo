@@ -12,7 +12,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="baseApi+admin_avatar" class="user-avatar">
+          <img :src="pic" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -43,7 +43,8 @@ export default {
   },
   data() {
     return {
-      baseApi: process.env.VUE_APP_PIC
+      baseApi: process.env.VUE_APP_PIC,
+      pic: require('../../assets/logo.jpg')
     }
   },
   computed: {
