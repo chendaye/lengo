@@ -74,7 +74,7 @@ class Article extends Model
         if(!empty($where)){
             $query = $this->conditions($where);
         }
-        $data = $query->orderBy('articles.updated_at', 'desc')->paginate($limit, ['*'], 'page',  $page);
+        $data = $query->orderBy('articles.updated_at', 'desc')->orderBy('articles.view', 'desc')->paginate($limit, ['*'], 'page',  $page);
         return $data;
     }
 }
