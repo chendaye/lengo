@@ -52,6 +52,11 @@ export default {
   methods: {
     getList() {
       this.loading = true;
+      this.listQuery.where.draft = {
+        op: '=',
+        va: 0,
+        ex: 'cp'
+      }
       wtuCrud
         .get("indexArticle", this.listQuery)
         .then(data => {

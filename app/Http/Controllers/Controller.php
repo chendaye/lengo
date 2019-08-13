@@ -220,7 +220,6 @@ class Controller extends BaseController
         // 获取的请求数据 只是把第一层转化维数组了， 第二层需要手动转换
         $order = $this->json($order);
         $where = $this->json($where);
-
         return $this->model->list($page, $limit, $where, $order);
     }
 

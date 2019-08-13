@@ -225,9 +225,9 @@ export default {
             this.checks = info[0].tagsNew;
             this.categorys = info[0].categorysNew;
             this.$message({
-              message: '"笔记更新成功，开始新的知识之旅吧！"',
+              message: '笔记更新成功!',
               type: "success",
-              duration: 1500,
+              duration: 1000,
               onClose: () => {
                 this.$router.push({ path: "/admin/wtu/note/noteManage" });
               }
@@ -288,14 +288,22 @@ export default {
         wtuCrud.post("article", article).then(res => {
           // 文章已经保存，生成文章id
           this.articleId = res.data.data.article.id;
-          this.$message({
-            message: '"笔记更新成功，开始新的知识之旅吧！"',
-            type: "success",
-            duration: 1500,
-            onClose: () => {
-              this.$router.push({ path: "/admin/wtu/note/noteManage" });
-            }
-          });
+          if (draft === 1) {
+            this.$message({
+              message: '已存草稿！',
+              type: "success",
+              duration: 1000
+            });
+          } else {
+            this.$message({
+              message: '笔记更新成功，开始新的知识之旅吧！',
+              type: "success",
+              duration: 1000,
+              onClose: () => {
+                this.$router.push({ path: "/admin/wtu/note/noteManage" });
+              }
+            });
+          }
         });
       }
     },
