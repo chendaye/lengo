@@ -71,7 +71,7 @@ class Article extends Model
             }
         }
 
-        if(!empty($where)){
+        if(!empty($where) && !isset($where['tag']) && !isset($where['category'])){
             $query = $this->conditions($where);
         }
         $data = $query->orderBy('articles.updated_at', 'desc')->orderBy('articles.view', 'desc')->paginate($limit, ['*'], 'page',  $page);
