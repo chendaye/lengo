@@ -87,7 +87,7 @@
         上传文章
         <i class="el-icon-upload el-icon--right" />
       </el-button>
-      <el-button v-else type="success" round plain @click="update()">
+      <el-button v-else type="success" round plain @click="update(0)">
         更新文章
         <i class="el-icon-upload el-icon--right" />
       </el-button>
@@ -190,7 +190,7 @@ export default {
         this.submit(1);
       } else {
         // 更新操作
-        this.update();
+        this.update(1);
       }
     },
     change(value, render) {
@@ -202,7 +202,7 @@ export default {
       return markdown(str)
     },
     // update 更新文章
-    update() {
+    update(draft = 0) {
       if (this.articleId !== null) {
         // 更新文章
         const article = {
@@ -224,14 +224,22 @@ export default {
             // 保存最新的的数据库里的值
             this.checks = info[0].tagsNew;
             this.categorys = info[0].categorysNew;
-            this.$message({
-              message: '笔记更新成功!',
-              type: "success",
-              duration: 1000,
-              onClose: () => {
-                this.$router.push({ path: "/admin/wtu/note/noteManage" });
-              }
-            });
+            if (draft === 1) {
+              this.$message({
+                message: '已保存!',
+                type: "success",
+                duration: 1000
+              });
+            } else {
+              this.$message({
+                message: '笔记更新成功!',
+                type: "success",
+                duration: 1000,
+                onClose: () => {
+                  this.$router.push({ path: "/admin/wtu/note/noteManage" });
+                }
+              });
+            }
           }
         });
       } else {
@@ -243,7 +251,7 @@ export default {
     },
 
     // 提交文章
-    submit(draft) {
+    submit(draft = 0) {
       if (!this.article.title || !this.article.abstract) {
         this.$notify.info({
           title: "消息",
@@ -290,7 +298,7 @@ export default {
           this.articleId = res.data.data.article.id;
           if (draft === 1) {
             this.$message({
-              message: '已存草稿！',
+              message: '已保存！',
               type: "success",
               duration: 1000
             });
