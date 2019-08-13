@@ -146,4 +146,8 @@ export default {
   position: relative
   width: 100%
   margin-top: 10px
+
+#markdown-preview-body
+  pre
+    background-color :#2f2f2f
 </style>

@@ -1,10 +1,10 @@
 import hljs from 'highlight.js'
-import 'highlight.js/styles/googlecode.css'
+import 'highlight.js/styles/dracula.css'
 
-let Highlight = {}
-Highlight.install = function (Vue, options) {
-  Vue.directive('highlight', function (el) {
-    let blocks = el.querySelectorAll('pre code')
+const Highlight = {}
+Highlight.install = function(Vue, options) {
+  Vue.directive('highlight', function(el) {
+    const blocks = el.querySelectorAll('pre code')
     blocks.forEach((block) => {
       hljs.highlightBlock(block)
     })
