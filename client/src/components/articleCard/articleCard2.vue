@@ -6,7 +6,13 @@
       </div>
       <div class="article-info">
         <i class="iconfont icon-calendar" />
-        发表于 {{ article.updated_at }} •
+        发表于 {{ article.updated_at }} • <i class="iconfont icon-folder" />
+        <span
+          v-for="(category, index) in categorys"
+          :key="index"
+          class="classify"
+          @click="toList('category', category.id)"
+        >{{ category.desc }}</span> •
         <i class="iconfont icon-eye" />
         {{ article.view }}次围观
       </div>
@@ -36,7 +42,8 @@ export default {
   props: ['article'],
   data() {
     return {
-      tags: []
+      tags: [],
+      categorys: []
     }
   },
   computed: {
@@ -47,6 +54,12 @@ export default {
     wtuCrud.get('tags', { article_id: this.article.id }).then(res => {
       if (res.status === 200) {
         this.tags = res.data.data.list;
+      }
+    });
+
+    wtuCrud.get('categoryLine', { article_id: this.article.id }).then(res => {
+      if (res.status === 200) {
+        this.categorys = res.data.data;
       }
     });
   },

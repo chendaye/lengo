@@ -211,9 +211,26 @@ class ArticleController extends AuthController
     {
         $article_id = $request->input('article_id');
         $articleModel = Article::find($article_id);
+        if(!$articleModel) require $this->error('没找到文章！');
         $category = $articleModel->categorys->map(function ($item) {
             return $item->id;
         });
+        return $this->success($category);
+    }
+
+    /**
+     * 获取文章分类线
+     *
+     * @param Request $request
+     * @return void
+     * @author chendaye
+     */
+    public function categoryLine(Request $request)
+    {
+        $article_id = $request->input('article_id');
+        $articleModel = Article::find($article_id);
+        if (!$articleModel) require $this->error('没找到文章！');
+        $category = $articleModel->categorys;
         return $this->success($category);
     }
 
@@ -228,6 +245,7 @@ class ArticleController extends AuthController
     {
         $article_id = $request->input('article_id');
         $articleModel = Article::find($article_id);
+        if (!$articleModel) require $this->error('没找到文章！');
         $list = $articleModel->tags;
         $tag = $list->map(function ($item) {
             return $item->id;

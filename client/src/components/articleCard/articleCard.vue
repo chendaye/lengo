@@ -14,8 +14,13 @@
       <div class="article-info">
         <i class="iconfont icon-calendar" />
         发表于 {{ article.created_at }} •
-        <!-- <i class="iconfont icon-folder" />
-        <span class="classify" @click="toList('category', article.id)">{{ article.title }}</span> • -->
+        <i class="iconfont icon-folder" />
+        <span
+          v-for="(category, index) in categorys"
+          :key="index"
+          class="classify"
+          @click="toList('category', category.id)"
+        >{{ category.desc }}</span> •
         <i class="iconfont icon-eye" />
         {{ article.view }}次浏览
       </div>
@@ -48,7 +53,8 @@ export default {
     return {
       baseApi: process.env.VUE_APP_PIC,
       defaultCover: require("@/assets/logo.jpg"),
-      tags: []
+      tags: [],
+      categorys: []
     }
   },
   computed: {
@@ -60,6 +66,12 @@ export default {
     wtuCrud.get('tags', { article_id: this.article.id }).then(res => {
       if (res.status === 200) {
         this.tags = res.data.data.list;
+      }
+    });
+
+    wtuCrud.get('categoryLine', { article_id: this.article.id }).then(res => {
+      if (res.status === 200) {
+        this.categorys = res.data.data;
       }
     });
   },
