@@ -6,11 +6,13 @@
         <div class="article-info">
           <i class="iconfont icon-calendar" />
           发表于 {{ article.created_at }} •
-          <!--<i class="iconfont icon-folder" />
-           <span
+          <i class="iconfont icon-folder" />
+          <span
+            v-for="(category, index) in categorys"
+            :key="index"
             class="classify"
-            @click="toList('category', article.abstract)"
-          >{{ article.abstract }}</span> • -->
+            @click="toList('category', category.id)"
+          >{{ category.desc }}</span> •
           <i class="iconfont icon-eye" />
           {{ article.view }}次围观
         </div>
@@ -25,11 +27,11 @@
         <transition name="slide-fade">
           <div v-show="showQrcode" class="qrcode-wrap">
             <span class="qrcode">
-              <img src="../../../assets/weixin.png" >
+              <img src="../../../assets/weixin.png">
               <p>微信支付</p>
             </span>
             <span class="qrcode">
-              <img src="../../../assets/alipay.png" >
+              <img src="../../../assets/alipay.png">
               <p>支付宝支付</p>
             </span>
           </div>
@@ -67,8 +69,8 @@
         </span>
       </div>
       <!-- 评论 -->
-      <comments :id="article.id" :author="article.user_id"/>
-    </div> 
+      <comments :id="article.id" :author="article.user_id" />
+    </div>
     <no-data v-if="!article.id" text="没有找到该文章~" />
   </div>
 </template>
@@ -83,17 +85,17 @@ const wtuCrud = crud.factory("blog", "client");
 
 export default {
   name: "ArticleContent",
-  mixins: [toPath],
   components: {
     mdPreview,
     noData,
     comments
   },
+  mixins: [toPath],
   data() {
     return {
       showQrcode: false,
       article: {},
-      category: {},
+      categorys: {},
       tags: [],
       pn: {},
       loading: false
@@ -110,7 +112,7 @@ export default {
   methods: {
     initData() {
       this.article = {};
-      this.category = {};
+      this.categorys = [];
       this.tags = [];
       this.qrcode = {};
       this.pn = {};
@@ -122,7 +124,7 @@ export default {
           .then(res => {
             if (res.data.status === true) {
               this.article = res.data.data;
-              this.category = res.data.data.categorys;
+              this.categorys = res.data.data.categorys;
               this.tags = res.data.data.tags;
               this.pn = res.data.data.pn; // 下一篇文章
               this.loading = false;
