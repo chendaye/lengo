@@ -2,12 +2,12 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo()" class="sidebar-logo">
+        <img v-if="logo" :src="avatar" class="sidebar-logo">
         <!-- <img v-if="logo" src="../../../assets/logo.jpg" class="sidebar-logo"> -->
         <h1 v-else class="sidebar-title">{{ title }}</h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" src="../../../assets/logo.jpg" class="sidebar-logo">
+        <img v-if="logo" :src="avatar" class="sidebar-logo">
         <h1 class="sidebar-title">{{ title }}</h1>
       </router-link>
     </transition>
@@ -26,13 +26,20 @@ export default {
   data() {
     return {
       title: 'Lengo',
-      logo: '../../../assets/logo.jpg'
+      baseApi: process.env.VUE_APP_PIC,
+      logo: require('../../../assets/logo.jpg')
     };
   },
-  methods: {
-    Logo() {
-      return this.$store.state.admin.avatar ? this.$store.state.admin.avatar : this.logo;
+  computed: {
+    avatar: function() {
+      return this.$store.state.admin.avatar ? this.baseApi + this.$store.state.admin.avatar : this.logo;
     }
+  },
+  created() {
+    console.log('头像', this.avatar)
+  },
+  methods: {
+
   }
 };
 </script>

@@ -12,7 +12,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="pic" class="user-avatar">
+          <img :src="avatar" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -48,7 +48,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['admin_sidebar', 'admin_avatar'])
+    ...mapGetters(['admin_sidebar', 'admin_avatar']),
+    avatar: function() {
+      return this.$store.state.admin.avatar ? this.baseApi + this.$store.state.admin.avatar : this.pic;
+    }
   },
   methods: {
     toggleSideBar() {
