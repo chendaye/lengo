@@ -92,6 +92,15 @@ export default [
         }
       },
       {
+        path: 'write',
+        name: 'Write',
+        component: () => import('@/views/admin/wtu/article/write'),
+        hidden: true,
+        meta: {
+          title: 'Write'
+        }
+      },
+      {
         path: 'archives',
         name: 'Archives',
         component: () => import('@/views/client/archives/index'),

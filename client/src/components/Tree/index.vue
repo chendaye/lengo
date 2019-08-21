@@ -186,7 +186,7 @@ export default {
         this.treeData = res.data.data;
         // todo: 文章分类详情
         if (this.articleId !== null) {
-          wtuCrud
+          this.api
             .get("categorys", {
               article_id: this.articleId
             })
@@ -254,7 +254,7 @@ export default {
         }
       )
         .then(() => {
-          wtuCrud
+          this.api
             .post("delCategory", {
               where: { id: { op: "=", va: data.id, ex: "cp" }}
             })
@@ -297,7 +297,7 @@ export default {
     },
     // 添加根分类
     submitCategory() {
-      wtuCrud.post("addCategory", this.categoryForm).then(res => {
+      this.api.post("addCategory", this.categoryForm).then(res => {
         if (res.status === 200) {
           const tmp = res.data.data;
           this.treeData.push(tmp);
@@ -317,7 +317,7 @@ export default {
     },
     // 添加子分类
     submitSon() {
-      wtuCrud.post("addCategory", this.categoryForm).then(res => {
+      this.api.post("addCategory", this.categoryForm).then(res => {
         if (res.status === 200) {
           const tmp = res.data.data;
           // 添加节点
@@ -340,7 +340,7 @@ export default {
 
     // 编辑分类
     submitEdit() {
-      wtuCrud
+      this.api
         .post("updateCategory", {
           data: { desc: this.categoryForm.desc },
           where: { id: { op: "=", va: this.categoryForm.id, ex: "cp" }}
@@ -379,7 +379,7 @@ export default {
             ? 0
             : dropNode.parent.data.id;
       if (id !== undefined && pid !== undefined) {
-        wtuCrud
+        this.api
           .post("updateCategory", {
             data: { pid: pid },
             where: { id: { op: "=", va: id, ex: "cp" }}
