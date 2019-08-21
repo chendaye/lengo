@@ -5,7 +5,7 @@
     </el-header>
     <el-main class="cover">
       <el-row>
-        <el-col :span="24">
+        <el-col :md="24">
           <div class="grid-content bg-purple">
             <el-input v-model="article.title" placeholder="请输入内容" @blur="title">
               <template slot="prepend">文章标题：</template>
@@ -14,7 +14,7 @@
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="24">
+        <el-col :md="24">
           <div class="grid-content bg-purple">
             <el-input v-model="article.abstract" placeholder="请输入内容">
               <template slot="prepend">文章摘要：</template>
@@ -23,7 +23,7 @@
         </el-col>
       </el-row>
       <el-row :gutter="20">
-        <el-col :span="8">
+        <el-col :md="8">
           <div class="grid-content bg-purple">
             <el-card class="box-card">
               <div slot="header" class="clearfix">
@@ -34,7 +34,7 @@
             </el-card>
           </div>
         </el-col>
-        <el-col :span="8">
+        <el-col :md="8">
           <div class="grid-content bg-purple">
             <el-card class="box-card">
               <div slot="header" class="clearfix">
@@ -51,7 +51,7 @@
             </el-card>
           </div>
         </el-col>
-        <el-col :span="8">
+        <el-col :md="8">
           <div class="grid-content bg-purple">
             <el-card class="box-card">
               <div slot="header" class="clearfix">
@@ -83,11 +83,11 @@
       </div>
     </el-main>
     <el-footer>
-      <el-button v-if="articleId === null" type="success" round plain @click="submit(0)">
-        上传文章
+      <el-button v-if="articleId === null" type="success" round plain @click="submit(0, true)">
+        发布文章
         <i class="el-icon-upload el-icon--right" />
       </el-button>
-      <el-button v-else type="success" round plain @click="update()">
+      <el-button v-else type="success" round plain @click="update(0, true)">
         更新文章
         <i class="el-icon-upload el-icon--right" />
       </el-button>
@@ -105,6 +105,7 @@ import crud from "@/api/crud";
 import { findIndex } from "@/utils/index";
 import { markdown } from '@/utils/markdown'
 const wtuCrud = crud.factory("wtu");
+const blogCrud = crud.factory("blog", "client");
 
 export default {
   name: "Markdown",
@@ -143,11 +144,21 @@ export default {
       }
     };
   },
+  computed: {
+    isApi: function() {
+      return this.$route.path.indexOf('admin') > -1
+    },
+    redirectPath: function() {
+      return this.isApi ? "/admin/wtu/note/noteManage" : "/home";
+    }
+  },
   created() {
-    if (this.$route.params.id) {
+    // todo: 查询接口
+    this.isApi ? this.api = wtuCrud : this.api = blogCrud;
+    if (this.$route.query.id) {
       // 文章id
-      this.articleId = this.$route.params.id;
-      wtuCrud
+      this.articleId = this.$route.query.id;
+      this.api
         .get("detailArticle", {
           where: {
             id: { op: "=", va: this.articleId, ex: "cp" }
@@ -169,8 +180,9 @@ export default {
       var formdata = new FormData();
       formdata.append("file", $file);
 
-      wtuCrud.post("markDownPic", formdata).then(res => {
+      this.api.post("markDownPic", formdata).then(res => {
         if (res.status === 200) {
+          console.log('tup', res.data.url)
           this.$refs.md.$img2Url(pos, res.data.url);
         }
       });
@@ -178,7 +190,7 @@ export default {
     // 删除图片
     $imgDel($file) {
       const sort = $file[0].replace(process.env.VUE_APP_PIC, "");
-      wtuCrud.post("imgDel", { sort: sort }).then(res => {
+      this.api.post("imgDel", { sort: sort }).then(res => {
         if (res.data.data) {
           this.$message.success("原有图片已经删除！");
         }
@@ -187,11 +199,10 @@ export default {
     // 存草稿
     $save() {
       if (this.articleId === null) {
-        // 新文章保存
-        this.submit(1);
+        this.submit(1, false);
       } else {
         // 更新操作
-        this.update();
+        this.update(1, false);
       }
     },
     change(value, render) {
@@ -203,7 +214,7 @@ export default {
       return markdown(str)
     },
     // update 更新文章
-    update() {
+    update(draft = 0, publish = true) {
       if (this.articleId !== null) {
         // 更新文章
         const article = {
@@ -216,23 +227,32 @@ export default {
           categorys: this.categorys,
           categorysNew: this.categorysNew, // 要更新的分类
           title: this.article.title,
+          draft: publish ? 0 : draft,
           abstract: this.article.abstract
         };
         console.log("更新内容", article);
-        wtuCrud.post("updateArticle", article).then(res => {
+        this.api.post("updateArticle", article).then(res => {
           if (res.status === 200) {
             const info = res.data.data;
             // 保存最新的的数据库里的值
             this.checks = info[0].tagsNew;
             this.categorys = info[0].categorysNew;
-            this.$message({
-              message: '"笔记更新成功！"',
-              type: "success",
-              duration: 1000,
-              onClose: () => {
-                this.$router.push({ path: "/admin/wtu/note/noteManage" });
-              }
-            });
+            if (draft === 1) {
+              this.$message({
+                message: '已保存!',
+                type: "success",
+                duration: 1000
+              });
+            } else {
+              this.$message({
+                message: '笔记更新成功!',
+                type: "success",
+                duration: 1000,
+                onClose: () => {
+                  this.$router.push({ path: this.redirectPath });
+                }
+              });
+            }
           }
         });
       } else {
@@ -244,7 +264,7 @@ export default {
     },
 
     // 提交文章
-    submit(draft) {
+    submit(draft = 0, publish = true) {
       if (!this.article.title || !this.article.abstract) {
         this.$notify.info({
           title: "消息",
@@ -284,28 +304,27 @@ export default {
           category: this.categorys,
           title: this.article.title,
           abstract: this.article.abstract,
-          draft: draft
+          draft: publish ? 0 : draft
         };
-        wtuCrud.post("article", article).then(res => {
+        this.api.post("article", article).then(res => {
           // 文章已经保存，生成文章id
           this.articleId = res.data.data.article.id;
-          if(draft !== 1){
+          if (draft === 1) {
             this.$message({
-              message: '笔记创建成功，开始新的知识之旅吧！',
-              type: "success",
-              duration: 1000,
-              onClose: () => {
-                this.$router.push({ path: "/admin/wtu/note/noteManage" });
-              }
-            });
-          }else{
-            this.$message({
-              message: '笔记保存成功！',
+              message: '已保存！',
               type: "success",
               duration: 1000
             });
+          } else {
+            this.$message({
+              message: 'Success，开始新的知识之旅吧！',
+              type: "success",
+              duration: 1000,
+              onClose: () => {
+                this.$router.push({ path: this.redirectPath });
+              }
+            });
           }
-
         });
       }
     },
@@ -315,7 +334,7 @@ export default {
       // todo： 注意浏览器图片缓存
       if (this.coverImg.sortUrl) {
         // 上传图片 删除原有图片
-        wtuCrud.post("imgDel", { sort: this.coverImg.sortUrl }).then(res => {
+        this.api.post("imgDel", { sort: this.coverImg.sortUrl }).then(res => {
           if (res.data.data) {
             this.$message.success("原有图片已经删除！");
           }
@@ -384,7 +403,7 @@ export default {
     // 检查标题是否重复
     title(data) {
       if (this.articleId === null) {
-        wtuCrud.get("title", { title: this.article.title }).then(res => {
+        this.api.get("title", { title: this.article.title }).then(res => {
           if (res.status && res.data.data) {
             this.$message({
               message: "标题重复！",
@@ -427,7 +446,7 @@ export default {
 }
 .box-card {
   width: 100%;
-  min-width: 400px;
+  /* min-width: 400px; */
 }
 
 .content-title {

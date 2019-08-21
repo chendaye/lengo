@@ -86,11 +86,11 @@ export default {
           to: 'about'
         },
 
-        // {
-        //   name: '更多',
-        //   icon: 'icon-more',
-        //   to: 'morefunc'
-        // },
+        {
+          name: '写文章',
+          icon: 'icon-more',
+          to: 'write'
+        },
         {
           name: '搜索',
           icon: 'icon-search',

@@ -52,10 +52,15 @@ export default {
   methods: {
     getList() {
       this.loading = true;
+      this.listQuery.where.draft = {
+        op: '=',
+        va: 0,
+        ex: 'cp'
+      }
       wtuCrud
         .get("indexArticle", this.listQuery)
         .then(data => {
-          if (data.status === 200) {
+          if (data.status === 200 && data.data.total > 0) {
             this.total = data.data.total;
             this.articleList = data.data.data;
             this.loading = false;

@@ -30,7 +30,7 @@ class Article extends Model
     public function categorys()
     {
         // 自动维护中间表的时间戳
-        return $this->belongsToMany(Category::class, 'article_has_categorys', 'article_id', 'category_id')->whereNull('article_has_categorys.deleted_at')->withTimestamps();
+        return $this->belongsToMany(Category::class, 'article_has_categorys', 'article_id', 'category_id')->whereNull('article_has_categorys.deleted_at')->orderBy('level', 'asc')->withTimestamps();
     }
 
     /**
@@ -71,7 +71,11 @@ class Article extends Model
             }
         }
 
-        $data = $query->orderBy('articles.updated_at', 'desc')->paginate($limit, ['*'], 'page',  $page);
+        if(!empty($where) && !isset($where['tag']) && !isset($where['category'])){
+            $query = $this->conditions($where);
+        }
+        $data = $query->orderBy('articles.updated_at', 'desc')->orderBy('articles.view', 'desc')->paginate($limit, ['*'], 'page',  $page);
         return $data;
     }
+
 }

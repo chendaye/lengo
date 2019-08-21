@@ -111,7 +111,7 @@ class ArticleController extends AuthController
     {
         $data = $this->json($request->all());
         // 文章内容
-        $user =  Auth::guard('api')->user();
+        $user =  Auth::guard('api')->user() ?? Auth::guard('client')->user();
         $article = [
             'title' => $data['title'],
             'abstract' => $data['abstract'],
@@ -167,7 +167,8 @@ class ArticleController extends AuthController
             'cover' => $data['cover']['sortUrl'],
             'content' => $data['markdown'],
             'html' => $data['html'],
-            'user_id' => Auth::guard('api')->id()
+            'draft' => $data['draft'],
+            'user_id' => Auth::guard('api')->id() ?? Auth::guard('client')->id()
         ];
         //更新
         $status = $this->model->where('id', '=', $data['id'])->update($article);
@@ -211,9 +212,26 @@ class ArticleController extends AuthController
     {
         $article_id = $request->input('article_id');
         $articleModel = Article::find($article_id);
+        if(!$articleModel) require $this->error('没找到文章！');
         $category = $articleModel->categorys->map(function ($item) {
             return $item->id;
         });
+        return $this->success($category);
+    }
+
+    /**
+     * 获取文章分类线
+     *
+     * @param Request $request
+     * @return void
+     * @author chendaye
+     */
+    public function categoryLine(Request $request)
+    {
+        $article_id = $request->input('article_id');
+        $articleModel = Article::find($article_id);
+        if (!$articleModel) require $this->error('没找到文章！');
+        $category = $articleModel->categorys;
         return $this->success($category);
     }
 
@@ -228,6 +246,7 @@ class ArticleController extends AuthController
     {
         $article_id = $request->input('article_id');
         $articleModel = Article::find($article_id);
+        if (!$articleModel) require $this->error('没找到文章！');
         $list = $articleModel->tags;
         $tag = $list->map(function ($item) {
             return $item->id;

@@ -81,6 +81,7 @@
 // import data2blob from '../ImageCropper/utils/data2blob.js'
 import crud from "@/api/crud";
 const wtuCrud = crud.factory("wtu");
+const blogCrud = crud.factory("blog", "client");
 import { VueCropper } from "vue-cropper";
 
 export default {
@@ -121,9 +122,11 @@ export default {
     };
   },
   created() {
+    // todo: 查询接口
+    this.$route.path.indexOf('admin') > -1 ? this.api = wtuCrud : this.api = blogCrud;
     // 文章id-> 封面
     if (this.articleId !== null) {
-      wtuCrud.get('detailArticle', {
+      this.api.get('detailArticle', {
         where: {
           id: { op: '=', va: this.articleId, ex: 'cp' }
         }
@@ -280,7 +283,7 @@ export default {
           var img = window.URL.createObjectURL(data);
           const fmData = new FormData();
           fmData.append("cover", img);
-          wtuCrud.post("cover", fmData).then(res => {
+          this.api.post("cover", fmData).then(res => {
             if (res.status === 200) {
               this.modelSrc = res.data.data.url;
               this.$notify({
@@ -304,7 +307,7 @@ export default {
         this.$refs.cropper.getCropData(data => {
           const fmData = new FormData();
           fmData.append("cover", data);
-          wtuCrud.post("cover", fmData).then(res => {
+          this.api.post("cover", fmData).then(res => {
             if (res.status === 200) {
               this.modelSrc = res.data.data.url;
               this.$notify({

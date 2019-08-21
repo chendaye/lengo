@@ -14,10 +14,21 @@
       <div class="article-info">
         <i class="iconfont icon-calendar" />
         发表于 {{ article.created_at }} •
-        <!-- <i class="iconfont icon-folder" />
-        <span class="classify" @click="toList('category', article.id)">{{ article.title }}</span> • -->
+        <i class="iconfont icon-folder" />
+        <span
+          v-for="(category, index) in categorys"
+          :key="index"
+          class="classify"
+          @click="toList('category', category.id)"
+        >{{ category.desc }}</span> •
         <i class="iconfont icon-eye" />
         {{ article.view }}次浏览
+        <i class="iconfont icon-eye" />
+        <span
+          class="classify"
+          @click="toEdit(article.id)"
+        >编辑</span>
+
       </div>
       <div class="article-sub-message">{{ article.abstract }}</div>
       <div v-if="tags.length > 0" class="tags">
@@ -27,7 +38,7 @@
           class="tag"
           @click="toList('tag', tag.id)"
         >
-          <i class="iconfont icon-tag" />
+          <i class="iconfont icon-tag" @click="toEdit(article.id)" />
           {{ tag.tag }}
         </div>
       </div>
@@ -48,7 +59,8 @@ export default {
     return {
       baseApi: process.env.VUE_APP_PIC,
       defaultCover: require("@/assets/logo.jpg"),
-      tags: []
+      tags: [],
+      categorys: []
     }
   },
   computed: {
@@ -60,6 +72,12 @@ export default {
     wtuCrud.get('tags', { article_id: this.article.id }).then(res => {
       if (res.status === 200) {
         this.tags = res.data.data.list;
+      }
+    });
+
+    wtuCrud.get('categoryLine', { article_id: this.article.id }).then(res => {
+      if (res.status === 200) {
+        this.categorys = res.data.data;
       }
     });
   },

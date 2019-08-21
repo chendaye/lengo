@@ -93,7 +93,7 @@
         <template slot-scope="{row}">
           <el-button v-if="row.draft === 1" type="success" size="mini" @click="handlePublish(row)">Publish</el-button>
           <el-button type="primary" size="mini">
-            <router-link :to="{ name: 'NoteCreate', params: { id: row.id }}">Edit</router-link>
+            <router-link :to="{ name: 'NoteCreate', query: {id: row.id }}">Edit</router-link>
           </el-button>
           <el-button size="mini" type="danger" @click="handleDelete(row)">Delete</el-button>
         </template>

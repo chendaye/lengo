@@ -1,16 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Routing\Controller as BaseController;
 
-class TestController extends Controller
+class TestController extends BaseController
 {
-    public function index()
+    public function test()
     {
         $f = new \FastDFS();
-
         // 测试跟踪服务器
         $tracker = $f->tracker_get_connection();
-        dump($tracker);
+        dd($tracker);
 
 
         $server = $f->connect_server($tracker['ip_addr'], $tracker['port']);

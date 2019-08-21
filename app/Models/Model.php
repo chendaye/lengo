@@ -65,7 +65,7 @@ class Model extends BaseModel
      * @return $this
      * @author long
      */
-    private function conditions(array $where)
+    protected function conditions(array $where)
     {
         $query = $this;
         foreach ($where as $key => $val) {

@@ -48,6 +48,8 @@ $api->version('v1', function ($api) {
                 $api->get('linkList', 'LinkController@show');
                 // 获取文章绑定的标签
                 $api->get('tags', 'ArticleController@tags');
+                // 获取文章绑定的分类
+                $api->get('categoryLine', 'ArticleController@categoryLine');
                 // 获取分类树
                 $api->get('tree', 'CategoryController@tree');
                 // 文章归档
@@ -56,6 +58,29 @@ $api->version('v1', function ($api) {
                 $api->post('view', 'ArticleController@viewBlog');
                 // 文章数量信息
                 $api->get('number', 'ArticleController@number');
+                // 获取文章详情
+                $api->get('detailArticle', 'ArticleController@detail');
+                // 上传文章封面
+                $api->post('cover', 'ArticleController@cover');
+                // 上传插图
+                $api->post('markDownPic', 'ArticleController@markDownPic');
+                // 标题是否重复
+                $api->get('title', 'ArticleController@checkTitle');
+                // 保存文章
+                $api->post('article', 'ArticleController@article');
+                // 删除图片
+                $api->post('imgDel', 'ArticleController@imgDel');
+                // 更新文章
+                $api->post('updateArticle', 'ArticleController@updateArticle');
+                // 获取文章绑定的分类
+                $api->get('categorys', 'ArticleController@categorys');
+                // 删除分类
+                $api->post('delCategory', 'CategoryController@delete');
+                // 添加分类
+                $api->post('addCategory', 'CategoryController@add');
+                // 编辑分类
+                $api->post('updateCategory', 'CategoryController@update');
+
             });
         });
     });

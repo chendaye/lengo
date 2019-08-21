@@ -28,6 +28,14 @@ var toPath = {
           id: id
         }
       })
+    },
+    toEdit(id) {
+      this.$router.push({
+        name: 'Write',
+        query: {
+          id: id
+        }
+      })
     }
   }
 }

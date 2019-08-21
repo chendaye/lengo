@@ -258,6 +258,9 @@ export default {
           wtuCrud.post('addLink', this.dataForm).then(res => {
             if (res.status === 200) {
               updateItem(this.list, res.data.data);
+              if(res.data.data.pid === 0){
+                updateItem(this.parents, res.data.data);
+              }
               this.dialogVisible = false;
               this.$message({
                 message: '创建链接成功！',
