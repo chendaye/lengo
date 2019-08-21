@@ -83,11 +83,11 @@
       </div>
     </el-main>
     <el-footer>
-      <el-button v-if="articleId === null" type="success" round plain @click="submit(0)">
-        上传文章
+      <el-button v-if="articleId === null" type="success" round plain @click="submit(0, true)">
+        发布文章
         <i class="el-icon-upload el-icon--right" />
       </el-button>
-      <el-button v-else type="success" round plain @click="update(0)">
+      <el-button v-else type="success" round plain @click="update(0, true)">
         更新文章
         <i class="el-icon-upload el-icon--right" />
       </el-button>
@@ -144,9 +144,17 @@ export default {
       }
     };
   },
+  computed: {
+    isApi: function() {
+      return this.$route.path.indexOf('admin') > -1
+    },
+    redirectPath: function() {
+      return this.isApi ? "/admin/wtu/note/noteManage" : "/home";
+    }
+  },
   created() {
     // todo: 查询接口
-    this.$route.path.indexOf('admin') > -1 ? this.api = wtuCrud : this.api = blogCrud;
+    this.isApi ? this.api = wtuCrud : this.api = blogCrud;
     if (this.$route.query.id) {
       // 文章id
       this.articleId = this.$route.query.id;
@@ -191,10 +199,10 @@ export default {
     // 存草稿
     $save() {
       if (this.articleId === null) {
-        this.submit(1);
+        this.submit(1, false);
       } else {
         // 更新操作
-        this.update(1);
+        this.update(1, false);
       }
     },
     change(value, render) {
@@ -206,7 +214,7 @@ export default {
       return markdown(str)
     },
     // update 更新文章
-    update(draft = 0) {
+    update(draft = 0, publish = true) {
       if (this.articleId !== null) {
         // 更新文章
         const article = {
@@ -219,6 +227,7 @@ export default {
           categorys: this.categorys,
           categorysNew: this.categorysNew, // 要更新的分类
           title: this.article.title,
+          draft: publish ? 0 : draft,
           abstract: this.article.abstract
         };
         console.log("更新内容", article);
@@ -240,7 +249,7 @@ export default {
                 type: "success",
                 duration: 1000,
                 onClose: () => {
-                  this.$router.push({ path: "/admin/wtu/note/noteManage" });
+                  this.$router.push({ path: this.redirectPath });
                 }
               });
             }
@@ -255,7 +264,7 @@ export default {
     },
 
     // 提交文章
-    submit(draft = 0) {
+    submit(draft = 0, publish = true) {
       if (!this.article.title || !this.article.abstract) {
         this.$notify.info({
           title: "消息",
@@ -295,7 +304,7 @@ export default {
           category: this.categorys,
           title: this.article.title,
           abstract: this.article.abstract,
-          draft: draft
+          draft: publish ? 0 : draft
         };
         this.api.post("article", article).then(res => {
           // 文章已经保存，生成文章id
@@ -308,11 +317,11 @@ export default {
             });
           } else {
             this.$message({
-              message: '笔记更新成功，开始新的知识之旅吧！',
+              message: 'Success，开始新的知识之旅吧！',
               type: "success",
               duration: 1000,
               onClose: () => {
-                this.$router.push({ path: "/admin/wtu/note/noteManage" });
+                this.$router.push({ path: this.redirectPath });
               }
             });
           }

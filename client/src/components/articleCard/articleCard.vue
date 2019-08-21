@@ -23,6 +23,12 @@
         >{{ category.desc }}</span> •
         <i class="iconfont icon-eye" />
         {{ article.view }}次浏览
+        <i class="iconfont icon-eye" />
+        <span
+          class="classify"
+          @click="toEdit(article.id)"
+        >编辑</span>
+
       </div>
       <div class="article-sub-message">{{ article.abstract }}</div>
       <div v-if="tags.length > 0" class="tags">
@@ -32,7 +38,7 @@
           class="tag"
           @click="toList('tag', tag.id)"
         >
-          <i class="iconfont icon-tag" />
+          <i class="iconfont icon-tag" @click="toEdit(article.id)" />
           {{ tag.tag }}
         </div>
       </div>

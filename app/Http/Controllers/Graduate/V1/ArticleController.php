@@ -111,7 +111,7 @@ class ArticleController extends AuthController
     {
         $data = $this->json($request->all());
         // 文章内容
-        $user =  Auth::guard('api')->user();
+        $user =  Auth::guard('api')->user() ?? Auth::guard('client')->user();
         $article = [
             'title' => $data['title'],
             'abstract' => $data['abstract'],
@@ -167,7 +167,8 @@ class ArticleController extends AuthController
             'cover' => $data['cover']['sortUrl'],
             'content' => $data['markdown'],
             'html' => $data['html'],
-            'user_id' => Auth::guard('api')->id()
+            'draft' => $data['draft'],
+            'user_id' => Auth::guard('api')->id() ?? Auth::guard('client')->id()
         ];
         //更新
         $status = $this->model->where('id', '=', $data['id'])->update($article);

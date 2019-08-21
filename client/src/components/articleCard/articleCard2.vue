@@ -15,6 +15,11 @@
         >{{ category.desc }}</span> •
         <i class="iconfont icon-eye" />
         {{ article.view }}次围观
+        <i class="iconfont icon-eye" />
+        <span
+          class="classify"
+          @click="toEdit(article.id)"
+        >编辑</span>
       </div>
       <div class="article-sub-message">{{ article.abstract }}</div>
       <div class="tags">
