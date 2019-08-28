@@ -75,6 +75,7 @@
           v-model="content"
           :ishljs="true"
           style="min-height: 600px"
+          code-style="dracula"
           @imgAdd="$imgAdd"
           @imgDel="$imgDel"
           @save="$save"
