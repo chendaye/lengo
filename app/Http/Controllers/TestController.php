@@ -39,8 +39,8 @@ class TestController extends BaseController
 
     public function redis()
     {
-        dd(env('REDIS_PASSWORD'));
-        dd(config('database.redis.default'));
+        // dd(env('REDIS_PASSWORD'));
+        // dd(config('database.redis.default'));
         Redis::set('name', 'Taylor');
         $name = Redis::get('name');
         dump($name);
