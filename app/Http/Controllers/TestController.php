@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Redis;
 
@@ -34,10 +35,12 @@ class TestController extends BaseController
         $file_info = $f->storage_upload_by_filename("/etc/fdfs/client.conf");
 
         dump($file_info);
-
     }
 
-    public function redis(){
+    public function redis()
+    {
+        dd(env('REDIS_PASSWORD'));
+        dd(config('database.redis.default'));
         Redis::set('name', 'Taylor');
         $name = Redis::get('name');
         dump($name);
