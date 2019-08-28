@@ -46,13 +46,13 @@ class TestController extends BaseController
         dump($name);
 
         //phpredis
-        // $redis = new \Redis();
-        // $redis->connect('long-redis', 6379); //连接Redis
-        // $redis->auth('long'); //密码验证
+        $redis = new \Redis();
+        $redis->connect(env('REDIS_HOST'), 6379); //连接Redis
+        $redis->auth(env('REDIS_PASSWORD')); //密码验证
 
-        // $redis->set('name', '98k');
+        $redis->set('name', '98k');
 
-        // echo $redis->get('name');
+        echo $redis->get('name');
 
     }
 }
