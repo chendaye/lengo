@@ -17,4 +17,5 @@ Route::get('/', function () {
     dd($a->storage_file_exist('group1', 'aa'));
 });
 
-Route::get('test', '\App\Http\Controllers\TestController@test');
+Route::get('fastdfs', '\App\Http\Controllers\TestController@fastdfs');
+Route::get('redis', '\App\Http\Controllers\TestController@redis');

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Redis;
 
 class TestController extends BaseController
 {
-    public function test()
+    public function fastdfs()
     {
         $f = new \FastDFS();
         // 测试跟踪服务器
@@ -33,6 +34,22 @@ class TestController extends BaseController
         $file_info = $f->storage_upload_by_filename("/etc/fdfs/client.conf");
 
         dump($file_info);
+
+    }
+
+    public function redis(){
+        Redis::set('name', 'Taylor');
+        $name = Redis::get('name');
+        dump($name);
+
+        //phpredis
+        // $redis = new \Redis();
+        // $redis->connect('long-redis', 6379); //连接Redis
+        // $redis->auth('long'); //密码验证
+
+        // $redis->set('name', '98k');
+
+        // echo $redis->get('name');
 
     }
 }
