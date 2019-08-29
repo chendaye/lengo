@@ -10,6 +10,8 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Traits\Response;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use Illuminate\Support\Facades\Redis;
+use Lib\Redis\Rds;
 
 class Controller extends BaseController
 {
@@ -188,6 +190,8 @@ class Controller extends BaseController
     public function del(Request $request)
     {
         $query = $request->input('where');
+        // 删除缓存
+        Redis::del($this->redisKey($query['id']));
         return $this->model->del($query);
     }
 
@@ -201,6 +205,8 @@ class Controller extends BaseController
     {
         $query = $request->input('where');
         $data = $request->input('data');
+        // 删除缓存
+        Redis::del($this->redisKey($query['id']));
         return $this->model->alert($data, $query);
     }
 
@@ -224,6 +230,18 @@ class Controller extends BaseController
     }
 
     /**
+     * 详情缓存键
+     *
+     * @param [type] $id
+     * @return void
+     * @author chendaye
+     */
+    public function redisKey($id)
+    {
+        return $this->namespace . ':' . $id . ':Detail';
+    }
+
+    /**
      * 获取某一条记录
      *
      * @param Request $request
@@ -233,10 +251,15 @@ class Controller extends BaseController
     public function detail(Request $request)
     {
         $where = $request->input('where');
-        // 获取的请求数据 只是把第一层转化维数组了， 第二层需要手动转换
-        $where = $this->json($where);
-
-        return $this->model->detail($where);
+        if(Redis::exists($this->redisKey($where['id']))){
+            $detail = Rds::get($this->redisKey($where['id']));
+        }else{
+            // 获取的请求数据 只是把第一层转化维数组了， 第二层需要手动转换
+            $where = $this->json($where);
+            $detail = $this->model->detail($where);
+            Rds::set($this->redisKey($where['id']), $detail);
+        }
+        return $detail;
     }
 
     /**

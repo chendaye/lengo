@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Graduate\V1;
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Http\Request;
 use App\Models\Tag;
-use phpDocumentor\Reflection\Types\Boolean;
 use App\Models\ArticleHasTag;
+use Illuminate\Support\Facades\Redis;
+use Lib\Redis\Rds;
 
 class TagController extends AuthController
 {
