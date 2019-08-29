@@ -6,6 +6,8 @@ use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\ArticleHasCategory;
+use Illuminate\Support\Facades\Redis;
+use Lib\Redis\Rds;
 
 class CategoryController extends AuthController
 {
@@ -21,7 +23,13 @@ class CategoryController extends AuthController
      */
     public function nextNode(int $pid)
     {
-        return $this->model->where('pid', $pid)->orderBy('created_at', 'asc')->get();
+        if(Redis::exists(Rds::categoryNext($pid))){
+            $next = Rds::get(Rds::categoryNext($pid));
+        }else{
+            $next = $this->model->where('pid', $pid)->orderBy('created_at', 'asc')->get();
+            Rds::set(Rds::categoryNext($pid), $next);
+        }
+        return $next;
     }
 
     /**
@@ -84,13 +92,18 @@ class CategoryController extends AuthController
     public function tree()
     {
         $tree = [];
-        $root = $this->nextNode(0)->toArray();
-        foreach ($root as $val) {
-            // 合并为一个数组
-            $val['label'] = $val['desc'];
-            $val['children'] = $this->nodeTree($val['id']);
-            $tree = array_merge($tree, [$val]);
-            // $tree[] = $this->nodeTree($val['id']);
+        if(Redis::exists(Rds::categoryTree())){
+            $tree = Rds::get(Rds::categoryTree());
+        }else{
+            $root = $this->nextNode(0)->toArray();
+            foreach ($root as $val) {
+                // 合并为一个数组
+                $val['label'] = $val['desc'];
+                $val['children'] = $this->nodeTree($val['id']);
+                $tree = array_merge($tree, [$val]);
+                // $tree[] = $this->nodeTree($val['id']);
+            }
+            Rds::set(Rds::categoryTree(), $tree);
         }
         return $this->success($tree);
     }
@@ -128,10 +141,14 @@ class CategoryController extends AuthController
                 ])->update(['deleted_at' => date('Y-m-d H:i:s')]);
             });
         }
-
-
         // 删除
         $res = $this->model->whereIn('id', $son)->delete();
+        // 删除分类缓存
+        foreach($son as $v){
+            Redis::del(Rds::categoryNext($v));
+            Redis::del($this->redisKey($v));
+        }
+        Redis::del(Rds::categoryTree());
         if ($res) {
             return $this->success('分类删除成功！');
         } else {

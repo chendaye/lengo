@@ -12,6 +12,8 @@ use App\Models\Article;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Tag;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Redis;
+use Lib\Redis\Rds;
 
 class ArticleController extends AuthController
 {
@@ -198,6 +200,8 @@ class ArticleController extends AuthController
             $articleModel->categorys()->detach($category['del']);  // 删除标分类关联
             $catogoryModel->countPlus($category['del'], false);
         }
+        // 删除缓存，下次获取自动更新
+        Redis::del(Rds::articleDetail($data['id']));
         return $this->success([$data, $tag, $category]);
     }
 
@@ -211,11 +215,16 @@ class ArticleController extends AuthController
     public function categorys(Request $request)
     {
         $article_id = $request->input('article_id');
-        $articleModel = Article::find($article_id);
-        if(!$articleModel) require $this->error('没找到文章！');
-        $category = $articleModel->categorys->map(function ($item) {
-            return $item->id;
-        });
+        if(Redis::exists(Rds::articleCategoryKey($article_id))){
+            $category = Rds::get(Rds::articleCategoryKey($article_id));
+        }else{
+            $articleModel = Article::find($article_id);
+            if (!$articleModel) require $this->error('没找到文章！');
+            $category = $articleModel->categorys->map(function ($item) {
+                return $item->id;
+            });
+            Rds::set(Rds::articleCategoryKey($article_id), $category);
+        }
         return $this->success($category);
     }
 
@@ -229,9 +238,14 @@ class ArticleController extends AuthController
     public function categoryLine(Request $request)
     {
         $article_id = $request->input('article_id');
-        $articleModel = Article::find($article_id);
-        if (!$articleModel) require $this->error('没找到文章！');
-        $category = $articleModel->categorys;
+        if(Redis::exists(Rds::articleCategoryDetail($article_id))){
+            $category = Rds::get(Rds::articleCategoryDetail($article_id));
+        }else{
+            $articleModel = Article::find($article_id);
+            if (!$articleModel) require $this->error('没找到文章！');
+            $category = $articleModel->categorys;
+            Rds::set(Rds::articleCategoryDetail($article_id), $category);
+        }
         return $this->success($category);
     }
 
@@ -245,13 +259,19 @@ class ArticleController extends AuthController
     public function tags(Request $request)
     {
         $article_id = $request->input('article_id');
-        $articleModel = Article::find($article_id);
-        if (!$articleModel) require $this->error('没找到文章！');
-        $list = $articleModel->tags;
-        $tag = $list->map(function ($item) {
-            return $item->id;
-        });
-        return $this->success(['tag' => $tag, 'list' => $list]);
+        if(Redis::exists(Rds::articleTagDetail($article_id))){
+            $tagDetail = Rds::get(Rds::articleTagDetail($article_id));
+        }else{
+            $articleModel = Article::find($article_id);
+            if (!$articleModel) require $this->error('没找到文章！');
+            $list = $articleModel->tags;
+            $tag = $list->map(function ($item) {
+                return $item->id;
+            });
+            $tagDetail = ['tag' => $tag, 'list' => $list];
+            Rds::set(Rds::articleTagDetail($article_id), $tagDetail);
+        }
+        return $this->success($tagDetail);
     }
 
     /**
@@ -323,19 +343,22 @@ class ArticleController extends AuthController
         // 文章id
         $id = $request->input('id');
         if(!$id) return $this->error('参数错误！');
-        // 文章内容
-        $article = $this->model->find($id);
-        // 文章标签
-        $article->tags;
-        // 文章分类
-        $article->categorys;
-        // 文章评论
-        // 下一篇文章 前一篇文章
-        $pn['next'] = $this->model->where('id', '>', $article->id)->orderBy('id', 'desc')->first();
-        $pn['pre'] = $this->model->where('id', '<', $article->id)->orderBy('id', 'desc')->first();
-
-        $article['pn'] = $pn ?? null;
-
+        if(Redis::exists(Rds::articleDetail($id))){
+            $article = Rds::get(Rds::articleDetail($id));
+        }else{
+            // 文章内容
+            $article = $this->model->find($id);
+            // 文章标签
+            $article->tags;
+            // 文章分类
+            $article->categorys;
+            // 文章评论
+            // 下一篇文章 前一篇文章
+            $pn['next'] = $this->model->where('id', '>', $article->id)->orderBy('id', 'desc')->first();
+            $pn['pre'] = $this->model->where('id', '<', $article->id)->orderBy('id', 'desc')->first();
+            $article['pn'] = $pn ?? null;
+            Rds::set(Rds::articleDetail($id), $article);
+        }
         return $this->success($article);
     }
 
@@ -392,16 +415,22 @@ class ArticleController extends AuthController
      * @author chendaye
      */
     public function number(){
-        $category = new Category();
-        $tag = new Tag();
-        $article = new Article();
-        $articleCount = $article->count();
-        $categoryCount = $category->count();
-        $tagCount = $tag->count();
-        return $this->success([
-            'articleCount'=> $articleCount,
-            'categoryCount'=> $categoryCount,
-            'tagCount'=> $tagCount,
-        ]);
+        if(Redis::exists(Rds::articleCount())){
+            $count = Rds::get(Rds::articleCount());
+        }else{
+            $category = new Category();
+            $tag = new Tag();
+            $article = new Article();
+            $articleCount = $article->count();
+            $categoryCount = $category->count();
+            $tagCount = $tag->count();
+            $count = [
+                'articleCount' => $articleCount,
+                'categoryCount' => $categoryCount,
+                'tagCount' => $tagCount,
+            ];
+            Rds::set(Rds::articleCount(), $count, 7200);
+        }
+        return $this->success($count);
     }
 }

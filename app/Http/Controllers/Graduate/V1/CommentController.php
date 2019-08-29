@@ -10,7 +10,8 @@ namespace App\Http\Controllers\Graduate\V1;
 use App\Http\Controllers\Auth\AuthController;
 use App\Models\Comment;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Redis;
+use Lib\Redis\Rds;
 
 class CommentController extends AuthController
 {
@@ -25,19 +26,20 @@ class CommentController extends AuthController
     public function comments(Request $request, Comment $model)
     {
         $article_id = $request->input('id');
-        if($article_id){
+        if (Redis::exists(Rds::commentArticle($article_id))) {
+            $comment = Rds::get(Rds::commentArticle($article_id));
+        } else {
             $comment = $model->where('article_id', $article_id)->where('pid', 0)->orderBy('id', 'desc')->get();
-            if($comment = $comment->toArray()){
-                foreach ($comment as $key => $item){
-                    $comment[$key]['children'] =$this->nextComment($item['id'], []);
+            if ($comment = $comment->toArray()) {
+                foreach ($comment as $key => $item) {
+                    $comment[$key]['children'] = $this->nextComment($item['id'], []);
                 }
-                return $this->success($comment);
+            }else{
+                $comment = [];
             }
-
-            return $this->success([]);
-        }else{
-            return $this->error('article_id is none');
+            Rds::set(Rds::commentArticle($article_id), $comment);
         }
+        return $this->success($comment);
     }
 
     /**
