@@ -59,6 +59,16 @@ class Rds
         return 'Article:' . $id . ':Detail';
    }
 
+   /**
+    * 文章归档信息
+    *
+    * @return void
+    * @author chendaye
+    */
+   static public function articleArchives()
+   {
+       return 'Article:Archives';
+   }
 
    /**
     * 文章数量统计信息
@@ -84,6 +94,29 @@ class Rds
    }
 
    /**
+    * 整个分类树
+    *
+    * @return void
+    * @author chendaye
+    */
+   static public function categoryTree()
+   {
+        return 'Category:Tree';
+   }
+
+   /**
+    * 递归获取所有子分类
+    *
+    * @param [type] $id
+    * @return void
+    * @author chendaye
+    */
+   static public function categoryAllNext($id)
+   {
+        return 'Category:' . $id . 'All:Next';
+   }
+
+   /**
     * 文章评论
     *
     * @param [type] $id
@@ -106,7 +139,6 @@ class Rds
        return 'Friends:Link';
    }
 
- 
    /**
     * 序列化数据，已字符串保存
     *
