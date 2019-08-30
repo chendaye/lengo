@@ -202,6 +202,7 @@ class ArticleController extends AuthController
         }
         // 删除缓存，下次获取自动更新
         Redis::del(Rds::articleDetail($data['id']));
+        Redis::del($this->redisKey($data['id']));
         if($tag['add'] || $tag['del']){
             Redis::del(Rds::articleTagDetail($data['id']));
         }
