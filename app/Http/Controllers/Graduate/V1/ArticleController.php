@@ -202,6 +202,13 @@ class ArticleController extends AuthController
         }
         // 删除缓存，下次获取自动更新
         Redis::del(Rds::articleDetail($data['id']));
+        if($tag['add'] || $tag['del']){
+            Redis::del(Rds::articleTagDetail($data['id']));
+        }
+        if($category['add'] || $category['del']){
+            Redis::del(Rds::articleCategoryKey($data['id']));
+            Redis::del(Rds::articleCategoryDetail($data['id']));
+        }
         return $this->success([$data, $tag, $category]);
     }
 
@@ -370,30 +377,37 @@ class ArticleController extends AuthController
         $where = $request->input('time');
         $from = $where[0] ?? '2019-01-01';
         $to = $where[1] ?? '2032-12-31';
-        $content = [];
-        $count = 0;
-        $year = ['2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032',];
-        $month = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 
-        foreach ($year as $y){
-            foreach ($month as $m){
-                $tmp = $y.'-'.$m;
-                $current = Carbon::parse($tmp);
-                if($current->gte($from) && $current->lte($to)){
-                    $data = $this->model->select('id', 'title', 'abstract', 'cover', 'view', 'comment', 'user_id', 'user_name', 'created_at', 'updated_at')->where([
-                        ['created_at', '>=', $from],
-                        ['created_at', '<=', $to],
-                        ['created_at', '>=', $tmp.'-01'],
-                        ['created_at', '<=', $tmp.'-31'],
-                    ])->orderBy('created_at', 'desc')->get();
-                    if($data->count() > 0){
-                        $content[$y][$m] = $data;
-                        $count+=$data->count();
+        if($from == '2019-01-01' && $to == '2032-12-31' && Redis::exists(Rds::articleArchives())){
+            $archives = Rds::get(Rds::articleArchives());
+        }else{
+            $content = [];
+            $count = 0;
+            $year = ['2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032',];
+            $month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+
+            foreach ($year as $y) {
+                foreach ($month as $m) {
+                    $tmp = $y . '-' . $m;
+                    $current = Carbon::parse($tmp);
+                    if ($current->gte($from) && $current->lte($to)) {
+                        $data = $this->model->select('id', 'title', 'abstract', 'cover', 'view', 'comment', 'user_id', 'user_name', 'created_at', 'updated_at')->where([
+                            ['created_at', '>=', $from],
+                            ['created_at', '<=', $to],
+                            ['created_at', '>=', $tmp . '-01'],
+                            ['created_at', '<=', $tmp . '-31'],
+                        ])->orderBy('created_at', 'desc')->get();
+                        if ($data->count() > 0) {
+                            $content[$y][$m] = $data;
+                            $count += $data->count();
+                        }
                     }
                 }
             }
+            $archives = ['blog' => $content, 'total' => $count];
+            Rds::set(Rds::articleArchives(), $archives);
         }
-        return $this->success(['blog' => $content, 'total' => $count]);
+        return $this->success($archives);
     }
 
     /**
