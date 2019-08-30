@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\ArticleHasCategory;
 use Illuminate\Support\Facades\Redis;
 use Lib\Redis\Rds;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends AuthController
 {
@@ -23,12 +24,7 @@ class CategoryController extends AuthController
      */
     public function nextNode(int $pid)
     {
-        if(Redis::exists(Rds::categoryNext($pid))){
-            $next = Rds::get(Rds::categoryNext($pid));
-        }else{
-            $next = $this->model->where('pid', $pid)->orderBy('created_at', 'asc')->get();
-            Rds::set(Rds::categoryNext($pid), $next);
-        }
+        $next = $this->model->where('pid', $pid)->orderBy('created_at', 'asc')->get();
         return $next;
     }
 
@@ -154,5 +150,22 @@ class CategoryController extends AuthController
         } else {
             return $this->error('分类删除失败！');
         }
+    }
+
+
+    /**
+     * 新增一条记录
+     *
+     * @param Request $request
+     */
+    public function add(Request $request)
+    {
+        $payload = $request->input();
+        // 当前登录用户
+        $payload['user_id'] = Auth::guard($this->guard)->id();
+        // 插入数据
+        $res = $this->model->add($payload);
+        Redis::del(Rds::categoryTree());
+        return $this->success($res);
     }
 }

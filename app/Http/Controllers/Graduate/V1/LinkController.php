@@ -7,7 +7,6 @@ use App\Models\Link;
 use Illuminate\Support\Facades\Redis;
 use Lib\Redis\Rds;
 use Illuminate\Http\Request;
-use App\Traits\Response;
 use Illuminate\Support\Facades\Auth;
 
 class LinkController extends AuthController
