@@ -380,7 +380,7 @@ class ArticleController extends AuthController
                 $tmp = $y.'-'.$m;
                 $current = Carbon::parse($tmp);
                 if($current->gte($from) && $current->lte($to)){
-                    $data = $this->model->where([
+                    $data = $this->model->select('id', 'title', 'abstract', 'cover', 'view', 'comment', 'user_id', 'user_name', 'created_at', 'updated_at')->where([
                         ['created_at', '>=', $from],
                         ['created_at', '<=', $to],
                         ['created_at', '>=', $tmp.'-01'],

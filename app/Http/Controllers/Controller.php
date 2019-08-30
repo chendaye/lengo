@@ -251,13 +251,14 @@ class Controller extends BaseController
     public function detail(Request $request)
     {
         $where = $request->input('where');
-        if(Redis::exists($this->redisKey($where['id']))){
-            $detail = Rds::get($this->redisKey($where['id']));
+        $cache = json_decode($where, true);
+        if(Redis::exists($this->redisKey($cache['id']['va']))){
+            $detail = Rds::get($this->redisKey($cache['id']['va']));
         }else{
             // 获取的请求数据 只是把第一层转化维数组了， 第二层需要手动转换
             $where = $this->json($where);
             $detail = $this->model->detail($where);
-            Rds::set($this->redisKey($where['id']), $detail);
+            Rds::set($this->redisKey($cache['id']['va']), $detail);
         }
         return $detail;
     }
