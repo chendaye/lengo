@@ -148,7 +148,7 @@ class Rds
     * @return void
     * @author chendaye
     */
-   static public function set($key, $data, $ttl = 72000)
+   static public function set($key, $data, $ttl = 144000)
    {
         Redis::setEx($key, $ttl, serialize($data));
    }
