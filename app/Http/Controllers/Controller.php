@@ -191,7 +191,7 @@ class Controller extends BaseController
     {
         $query = $request->input('where');
         // 删除缓存
-        Redis::del($this->redisKey($query['id']));
+        Redis::del($this->redisKey($query['id']['va']));
         return $this->model->del($query);
     }
 
@@ -206,7 +206,7 @@ class Controller extends BaseController
         $query = $request->input('where');
         $data = $request->input('data');
         // 删除缓存
-        Redis::del($this->redisKey($query['id']));
+        Redis::del($this->redisKey($query['id']['va']));
         return $this->model->alert($data, $query);
     }
 

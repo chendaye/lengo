@@ -6,6 +6,9 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Models\Link;
 use Illuminate\Support\Facades\Redis;
 use Lib\Redis\Rds;
+use Illuminate\Http\Request;
+use App\Traits\Response;
+use Illuminate\Support\Facades\Auth;
 
 class LinkController extends AuthController
 {
@@ -37,4 +40,19 @@ class LinkController extends AuthController
         return $p;
     }
 
+    /**
+     * 新增一条记录
+     *
+     * @param Request $request
+     */
+    public function add(Request $request)
+    {
+        $payload = $request->input();
+        // 当前登录用户
+        $payload['user_id'] = Auth::guard($this->guard)->id();
+        // 插入数据
+        $res = $this->model->add($payload);
+        Redis::del(Rds::friendsLink());
+        return $this->success($res);
+    }
 }
