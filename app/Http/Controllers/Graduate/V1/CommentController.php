@@ -37,7 +37,7 @@ class CommentController extends AuthController
             }else{
                 $comment = [];
             }
-            Rds::set(Rds::commentArticle($article_id), $comment);
+            if($comment)Rds::set(Rds::commentArticle($article_id), $comment);
         }
         return $this->success($comment);
     }
@@ -88,6 +88,8 @@ class CommentController extends AuthController
             $data['created_at'] = date('Y-m-d H:i:s', time());
             $data['updated_at'] = date('Y-m-d H:i:s', time());
             $comment_id = $this->model->insertGetId($data);
+            // 删掉评论缓存
+            Redis::del(Rds::commentArticle($data['article_id']));
             if($comment_id) return $this->success($comment_id);
             return $this->error('评论插入失败！');
 
