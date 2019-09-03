@@ -13,7 +13,10 @@
         </a>
       </p>
       <p>
-        本站由 @{{ blogInfo.blogName || '博客' }} 创建 - © 2019. 粤ICP备17139665号-1
+        本站由 @{{ blogInfo.blogName || '博客' }} 创建 - © 鄂ICP备19021421号
+      </p>
+      <p>
+        <img src="../../../assets/beian.png">    鄂公网安备 42010202002256号
       </p>
     </div>
   </div>
