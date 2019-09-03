@@ -94,7 +94,7 @@ class CommentController extends AuthController
             return $this->error('评论插入失败！');
 
         }else{
-            return $this->error('验证码验证未通过：'.$verify['err_msg']);
+            return $this->error('验证码验证未通过：'.json_encode([$verify, $tx]));
         }
     }
 
