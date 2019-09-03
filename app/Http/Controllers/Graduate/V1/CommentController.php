@@ -81,7 +81,7 @@ EOT;
         $tx['UserIP'] = $request->getClientIp();
         $verify = $this->curl_get_https('https://ssl.captcha.qq.com/ticket/verify', $tx);
         $verify = $this->json($verify); // json字符串转为数组
-
+        return $this->success($verify);
         if($verify['err_msg'] === 'OK'){
             // 验证通过
             unset($data['ticket']);
