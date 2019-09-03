@@ -70,10 +70,11 @@ class CommentController extends AuthController
     {
         $data = $request->input('params');
         // todo: 腾讯验证码验证
-        $tx['aid'] = getenv('APP_ID');
-        $tx['AppSecretKey'] = <<<EOT
-0wt-IbkrRHHb5eEmViY9Rvg**
-EOT;
+        $tx['aid'] = getenv('TX_ID');
+        $tx['AppSecretKey'] = getenv('TX_KEY');
+//         $tx['AppSecretKey'] = <<<EOT
+// 0wt-IbkrRHHb5eEmViY9Rvg**
+// EOT;
         $tx['Ticket'] = $data['ticket'];
         $tx['Randstr'] = $data['randstr'];
         $tx['UserIP'] = $request->getClientIp();
