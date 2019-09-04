@@ -29,8 +29,8 @@ class Lm extends \FastDFS
      */
     public function url(string $group, string $fileId)
     {
-        $host = getenv('FDFS_URL');
-        $port = getenv('FDFS_WEB_PORT');
+        $host = getenv('FDFS_URL') ?? 'http://www.chendaye666.top';
+        $port = getenv('FDFS_WEB_PORT') ?? '8888';
         if ($host && $port && $group && $fileId) {
             return $host . ':' . $port . '/' . $group . '/' . $fileId;
         } else {
