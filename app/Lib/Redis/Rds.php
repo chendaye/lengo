@@ -140,6 +140,17 @@ class Rds
    }
 
    /**
+    * 文章封面
+    *
+    * @return void
+    * @author chendaye
+    */
+   static public function coverPic()
+   {
+        return 'Cover:Pic';
+   }
+
+   /**
     * 序列化数据，已字符串保存
     *
     * @param [type] $key

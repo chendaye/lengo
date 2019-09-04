@@ -39,42 +39,42 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Cover" width="100">
+      <el-table-column label="Cover" width="150">
         <template slot-scope="{row}">
           <img :src="baseApi+row.cover" style="width: 65px;hight:65px">
         </template>
       </el-table-column>
-      <el-table-column label="Title" width="150" align="center">
+      <el-table-column label="Title" width="200" align="center">
         <template slot-scope="{row}">
           <span>{{ row.title }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Abstract" width="225" align="center">
+      <el-table-column label="Abstract" width="275" align="center">
         <template slot-scope="{row}">
           <span>{{ row.abstract }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Markdown" width="300" align="center">
+      <!-- <el-table-column label="Markdown" width="300" align="center">
         <template slot-scope="{row}">
           <span>{{ row.content | spliceArticle }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="View" width="60" align="center">
+      </el-table-column> -->
+      <el-table-column label="View" width="110" align="center">
         <template slot-scope="{row}">
           <span>{{ row.view }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="评论" width="60" align="center">
+      <el-table-column label="评论" width="110" align="center">
         <template slot-scope="{row}">
           <span>{{ row.comment }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="作者" width="120" align="center">
+      <el-table-column label="作者" width="170" align="center">
         <template slot-scope="{row}">
           <span>{{ row.user_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Status" class-name="status-col" width="100">
+      <el-table-column label="Status" class-name="status-col" width="150">
         <template slot-scope="{row}">
           <el-tag :type="row.draft | statusFilter">{{ row.draft | statusName }}</el-tag>
         </template>
@@ -139,7 +139,11 @@ export default {
       return statusMap[status];
     },
     spliceArticle(data) {
-      return data.substring(0, 32) + "......";
+      if (data.length > 32) {
+        return data.substring(0, 32) + "......";
+      } else {
+        return data;
+      }
     }
   },
   data() {
@@ -189,6 +193,7 @@ export default {
     getList() {
       this.listLoading = true;
       wtuCrud.get("indexArticle", this.listQuery).then(res => {
+        console.log('fuck', res)
         this.list = res.data.data;
         this.total = res.data.total;
         this.listLoading = false;

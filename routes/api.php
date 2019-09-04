@@ -81,6 +81,9 @@ $api->version('v1', function ($api) {
                 // 编辑分类
                 $api->post('updateCategory', 'CategoryController@update');
 
+                // 所有封面
+                $api->get('showCover', 'CoverController@show');
+
             });
         });
     });
@@ -143,6 +146,17 @@ $api->version('v1', function ($api) {
                 $api->post('delLink', 'LinkController@del');
                 // 链接列表
                 $api->get('indexLink', 'LinkController@index');
+
+                // 创建封面
+                $api->post('addCover', 'CoverController@add');
+                // 更新封面
+                $api->post('updateCover', 'CoverController@update');
+                // 删除封面
+                $api->post('delCover', 'CoverController@del');
+                // 封面列表
+                $api->get('indexCover', 'CoverController@index');
+                // 所有封面
+                $api->get('showCover', 'CoverController@show');
 
                 // 上传文章封面
                 $api->post('cover', 'ArticleController@cover');

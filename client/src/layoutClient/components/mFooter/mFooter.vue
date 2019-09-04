@@ -2,14 +2,11 @@
   <div id="m-footer">
     <div class="footer-wrap">
       <p>
-        本博客已萌萌哒运行<span>{{ runningTime }}</span><span class="time-jump">(●'◡'●)ﾉ♥</span>
-      </p>
-      <p>
-        @{{ blogInfo.blogName || '博客' }}:{{ blogInfo.sign }}
+        <b>{{ blogInfo.blogName || '博客' }}:{{ blogInfo.sign }}</b> <span>{{ runningTime }}</span><span class="time-jump"/>
       </p>
       <p>
         本站点采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">
-        国立武汉大学研究生 署名-非商业性使用-禁止演绎 4.0 国际 许可协议
+          国立武汉大学研究生 署名-非商业性使用-禁止演绎 4.0 国际 许可协议
         </a>
       </p>
       <p>
@@ -47,7 +44,7 @@ export default {
   methods: {
     running() {
       const startTime = new Date('2019/07/01 00:00:00')
-      const timer = setInterval(() => {
+      setInterval(() => {
         const time = new Date() - startTime
         const day = parseInt(time / 1000 / 60 / 60 / 24, 10)
         const hour = parseInt(time / 1000 / 60 / 60 % 24, 10)

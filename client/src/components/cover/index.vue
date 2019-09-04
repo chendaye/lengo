@@ -1,5 +1,15 @@
 <template>
   <div>
+    <div v-if="selectCover && allCovers.length > 0" width="80%">
+      <el-select v-model="selectpic" filterable placeholder="常用封面" size="mini">
+        <el-option
+          v-for="item in allCovers"
+          :key="item.id"
+          :label="item.desc"
+          :value="item.url"
+        />
+      </el-select>
+    </div>
     <div v-if="modelSrc === null" class="cover" @click="dialogVisible = true">
       <i class="el-icon-plus avatar-uploader-icon" />
     </div>
@@ -7,7 +17,7 @@
       <img width="100%" :src="modelSrc" alt="">
     </div>
 
-    <el-dialog title="裁剪图片" :visible.sync="dialogVisible" width="50%">
+    <el-dialog title="裁剪图片" :visible.sync="dialogVisible" width="50%" :modal="false">
       <div v-show="model" class="model" @click="model = false">
         <div class="model-show">
           <img :src="modelSrc" alt>
@@ -92,11 +102,21 @@ export default {
     articleId: {
       type: Number,
       default: null
+    },
+    cover: {
+      type: String,
+      default: null
+    },
+    selectCover: {
+      type: Boolean,
+      default: true
     }
   },
   data: function() {
     return {
       baseUrl: process.env.VUE_APP_PIC,
+      allCovers: [], // 常用图片
+      selectpic: null,
       dialogVisible: false,
       model: false,
       modelSrc: null,
@@ -121,6 +141,29 @@ export default {
       show: true
     };
   },
+  watch: {
+    cover: function(val) {
+      if (val !== null) {
+        const img = this.baseUrl + val;
+        this.modelSrc = img;
+      } else {
+        this.modelSrc = null;
+      }
+    },
+    selectpic: function(val) {
+      if (val !== null) {
+        const img = this.baseUrl + val;
+        this.modelSrc = img;
+        // 父组件回调
+        this.$emit('upcover', {
+          filename: "",
+          group_name: "",
+          sortUrl: val,
+          url: ""
+        });
+      }
+    }
+  },
   created() {
     // todo: 查询接口
     this.$route.path.indexOf('admin') > -1 ? this.api = wtuCrud : this.api = blogCrud;
@@ -143,6 +186,13 @@ export default {
         }
       });
     }
+    // 常用封面
+    if (this.cover !== null) {
+      const img = this.baseUrl + this.cover;
+      this.modelSrc = img;
+    }
+    // 所有常用封面
+    this.getAllCovers();
   },
   mounted: function() {
     this.$nextTick(function() {
@@ -151,6 +201,19 @@ export default {
     })
   },
   methods: {
+    resetUrl() {
+      this.modelSrc = null;
+    },
+    setUrl(url) {
+      this.modelSrc = this.baseUrl + url;
+    },
+    getAllCovers() {
+      this.api.get('showCover', {}).then(res => {
+        if (res.status === 200) {
+          this.allCovers = res.data;
+        }
+      });
+    },
     startCrop() {
       // start 截图 鼠标显示截图框
       this.crap = true;

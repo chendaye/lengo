@@ -39,7 +39,7 @@ class Article extends Model
     public function list($page = 1, $limit = 10, $where = [], $order = ['id' => 'desc'])
     {
         $query = $this;
-        $query = $query->select('id', 'title', 'abstract', 'cover', 'view', 'comment', 'user_id', 'user_name', 'created_at', 'updated_at');
+        $query = $query->select('id', 'title', 'abstract', 'cover', 'view', 'comment', 'user_id', 'user_name','draft', 'created_at', 'updated_at');
         // 根据标题搜搜
         if (isset($where['title']) && !empty($where['title'])) {
             $query = $query->where([

@@ -130,6 +130,26 @@ export default [{
         }
       }]
     },
+    // 封面
+    {
+      path: 'cover',
+      component: () => import('@/views/admin/wtu/cover/index'),
+      name: 'Cover',
+      meta: {
+        title: '封面',
+        icon: 'eye'
+      },
+      redirect: '/admin/wtu/cover',
+      children: [{
+        path: 'coverManage',
+        component: () => import('@/views/admin/wtu/cover/coverManage'),
+        name: 'CoverManage',
+        meta: {
+          title: '封面',
+          icon: 'eye'
+        }
+      }]
+    },
     // 文章
     {
       path: 'note',

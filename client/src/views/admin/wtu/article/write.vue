@@ -343,7 +343,6 @@ export default {
       }
       this.coverImg = data;
     },
-
     // 选中分类树 一次性获取
     handchecked(data) {
       // 半选和全选都存入数据库
