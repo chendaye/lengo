@@ -197,7 +197,7 @@ export default {
       // 删除图片
       wtuCrud.post("imgDel", { sort: url }).then(res => {
         if (res.data.data) {
-          this.$message.success("原有图片已经删除！");
+          this.$message.success("封面已经删除！");
         }
       });
     },

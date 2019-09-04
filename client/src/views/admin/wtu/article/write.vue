@@ -193,7 +193,7 @@ export default {
       const sort = $file[0].replace(process.env.VUE_APP_PIC, "");
       this.api.post("imgDel", { sort: sort }).then(res => {
         if (res.data.data) {
-          this.$message.success("原有图片已经删除！");
+          this.$message.success("原有插图已经删除！");
         }
       });
     },
@@ -333,11 +333,11 @@ export default {
     // 封面上传
     upcover(data) {
       // todo： 注意浏览器图片缓存
-      if (this.coverImg.sortUrl) {
+      if (this.coverImg.sortUrl  && this.coverImg.filename) {
         // 上传图片 删除原有图片
         this.api.post("imgDel", { sort: this.coverImg.sortUrl }).then(res => {
           if (res.data.data) {
-            this.$message.success("原有图片已经删除！");
+            this.$message.success("旧封面已经删除！");
           }
         });
       }
