@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
       <el-button type="success" class="filter-item" icon="el-icon-edit" @click="handleCreate">Add Link</el-button>
-      <el-select v-model="listQuery.pid" placeholder="请选分类" @change="handleFilter">
+      <el-select v-model="listQuery.pid" class="filter-item" placeholder="请选分类" @change="handleFilter">
         <el-option v-for="item in parents" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
       <el-input
@@ -258,7 +258,7 @@ export default {
           wtuCrud.post('addLink', this.dataForm).then(res => {
             if (res.status === 200) {
               updateItem(this.list, res.data.data);
-              if(res.data.data.pid === 0){
+              if (res.data.data.pid === 0) {
                 updateItem(this.parents, res.data.data);
               }
               this.dialogVisible = false;

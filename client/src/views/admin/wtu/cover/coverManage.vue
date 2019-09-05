@@ -16,7 +16,13 @@
         icon="el-icon-search"
         @click="handleFilter"
       >Search</el-button>
-
+      <el-button
+        v-waves
+        class="filter-item"
+        type="warning"
+        icon="el-icon-delete"
+        @click="dialogDelVisible = true"
+      >删除图片</el-button>
     </div>
 
     <el-table
@@ -101,7 +107,29 @@
           <el-button type="info" plain @click="resetUrl()">重置</el-button>
           <el-button type="warning" plain @click="dialogVisible = false">取 消</el-button>
         </div>
-      </div></el-dialog>
+      </div>
+    </el-dialog>
+    <!-- Cover弹窗 -->
+    <!-- 删除图片 -->
+    <el-dialog title="删除图片" :visible.sync="dialogDelVisible" width="50%" hight="50%">
+      <el-form ref="dataDelForm" :model="dataDelForm" :rules="rulesDel" label-width="80px" label-position="top">
+        <el-form-item label="图片地址" prop="url">
+          <el-input v-model="dataDelForm.url" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <div slot="footer" class="dialog-footer">
+          <el-button
+            type="primary"
+            plain
+            @click="submitDelForm('dataDelForm')"
+          >删除</el-button>
+          <el-button type="warning" plain @click="dialogDelVisible = false">取 消</el-button>
+        </div>
+      </div>
+    </el-dialog>
+    <!-- 删除图片 -->
+
   </div>
 </template>
 
@@ -121,6 +149,7 @@ export default {
     return {
       baseApi: process.env.VUE_APP_PIC,
       dialogVisible: false,
+      dialogDelVisible: false,
       dialogTitle: {
         update: '更新封面',
         create: '上传封面'
@@ -129,8 +158,14 @@ export default {
         url: null,
         desc: null
       },
+      dataDelForm: {
+        url: null
+      },
       rules: {
         desc: [{ required: true, message: '请输封面描述', trigger: 'blur' }]
+      },
+      rulesDel: {
+        url: [{ required: true, message: '请输入图片地址', trigger: 'blur' }]
       },
       // table
       list: null,
@@ -157,6 +192,21 @@ export default {
       } else {
         this.updateData();
       }
+    },
+    submitDelForm(formName) {
+      this.dialogDelVisible = true;
+      this.$refs['dataDelForm'].validate(valid => {
+        if (valid) {
+          this.imgDel(this.dataDelForm.url); // 删除原图
+          this.$notify({
+            title: 'Success',
+            message: 'Delete Successfully',
+            type: 'success',
+            duration: 2000
+          });
+          this.dialogDelVisible = true;
+        }
+      });
     },
     // 表格颜色
     tableRowClassName({ row, rowIndex }) {
@@ -197,7 +247,7 @@ export default {
       // 删除图片
       wtuCrud.post("imgDel", { sort: url }).then(res => {
         if (res.data.data) {
-          this.$message.success("封面已经删除！");
+          this.$message.success("图片已经删除！");
         }
       });
     },
