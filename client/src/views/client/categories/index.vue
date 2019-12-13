@@ -31,10 +31,12 @@
 <script>
 import crud from "@/api/crud";
 const wtuCrud = crud.factory("blog", "client");
+import { toPath } from '../mixins/blog'
 
 export default {
   name: "Categories",
   components: {},
+  mixins: [toPath],
   data() {
     return {
       categories: [],
@@ -51,7 +53,7 @@ export default {
     // 获取所有分类
     getBlogCategoryList() {
       this.loading = true;
-      wtuCrud.get("listCategory", {}).then(res => {
+      wtuCrud.get("listCategory", { order: { count: 'desc' }}).then(res => {
         if (res.status === 200) {
           this.categories = res.data;
           this.loading = false;
@@ -61,7 +63,7 @@ export default {
     // 获取所有标签
     getBlogTagList() {
       this.loading = true;
-      wtuCrud.get("listTag", {}).then(res => {
+      wtuCrud.get("listTag", { order: { count: 'desc' }}).then(res => {
         if (res.status === 200) {
           this.tags = res.data;
           this.loading = false;
@@ -97,15 +99,6 @@ export default {
         alpha = 1;
       }
       return "rgba(38, 42, 48, " + alpha + ")";
-    },
-    toList(type, id) {
-      this.$router.push({
-        name: "List",
-        query: {
-          type: type,
-          id: id
-        }
-      });
     }
   }
 };

@@ -54,11 +54,6 @@
           <span>{{ row.abstract }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="Markdown" width="300" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.content | spliceArticle }}</span>
-        </template>
-      </el-table-column> -->
       <el-table-column label="View" width="110" align="center">
         <template slot-scope="{row}">
           <span>{{ row.view }}</span>
@@ -180,7 +175,6 @@ export default {
       }
     },
     tag: function() {
-      console.log('tag', this.tag);
       this.listQuery.where.tag = this.tag;
       this.handleFilter();
     }
@@ -192,7 +186,6 @@ export default {
     // table
     getList() {
       this.listLoading = true;
-      console.log('kkk', this.listQuery)
       wtuCrud.get("indexArticle", this.listQuery).then(res => {
         this.list = res.data.data;
         this.total = res.data.total;

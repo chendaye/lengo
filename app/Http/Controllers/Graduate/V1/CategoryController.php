@@ -24,7 +24,7 @@ class CategoryController extends AuthController
      */
     public function nextNode(int $pid)
     {
-        $next = $this->model->where('pid', $pid)->orderBy('created_at', 'asc')->get();
+        $next = $this->model->where('pid', $pid)->where('user_id', Auth::id())->orderBy('count', 'asc')->orderBy('created_at', 'asc')->get();
         return $next;
     }
 
@@ -97,7 +97,6 @@ class CategoryController extends AuthController
                 $val['label'] = $val['desc'];
                 $val['children'] = $this->nodeTree($val['id']);
                 $tree = array_merge($tree, [$val]);
-                // $tree[] = $this->nodeTree($val['id']);
             }
             Rds::set(Rds::categoryTree(), $tree);
         }

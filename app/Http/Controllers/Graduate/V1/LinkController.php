@@ -24,11 +24,11 @@ class LinkController extends AuthController
         if(Redis::exists(Rds::friendsLink())){
             $p = Rds::get(Rds::friendsLink());
         }else{
-            $p = $this->model->where('pid', 0)->orderBy('id', 'desc')->get();
+            $p = $this->model->where('pid', 0)->where('user_id', Auth::id())->orderBy('id', 'desc')->get();
             if ($p) {
                 $p = $p->toArray();
                 foreach ($p as $key => $item) {
-                    $tmp = $this->model->where('pid', $item['id'])->orderBy('id', 'desc')->get();
+                    $tmp = $this->model->where('pid', $item['id'])->where('user_id', Auth::id())->orderBy('id', 'desc')->get();
                     $p[$key]['list'] = $tmp ? $tmp->toArray() : [];
                 }
                 Rds::set(Rds::friendsLink(), $p);

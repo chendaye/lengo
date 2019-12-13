@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model as BaseModel;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Model extends BaseModel
 {
@@ -53,6 +54,7 @@ class Model extends BaseModel
     public function lists($where, $order = [])
     {
         $query = $this->conditions($where);
+        $query = $query->where('user_id', Auth::id());
         $query = $this->sort($order, $query);
         $data = $query->get();
         return $data;

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rules\Exists;
 
@@ -71,11 +72,10 @@ class Article extends Model
                 $query = $query->whereIn('id', $articles->pluck('article_id'));
             }
         }
-
-        if(!empty($where) && !isset($where['tag']) && !isset($where['category'])){
-            // $query = $this->conditions($where);
-        }
-        $data = $query->orderBy('articles.updated_at', 'desc')->orderBy('articles.view', 'desc')->paginate($limit, ['*'], 'page',  $page);
+        $data = $query->where('user_id', Auth::id())
+        ->orderBy('articles.updated_at', 'desc')
+        ->orderBy('articles.view', 'desc')
+        ->paginate($limit, ['*'], 'page',  $page);
         return $data;
     }
 

@@ -1,14 +1,6 @@
 <template>
   <div id="search" v-loading="loading">
     <div class="search-input-wrap">
-      <!-- <input
-        id="search-input"
-        v-model="searchValue"
-        type="search"
-        placeholder="输入关键字搜索..."
-        class="search-real-input"
-        @keyup.enter="toSearch()"
-      >-->
       <el-row :gutter="10">
         <el-col :span="8">
           <div class="grid-content bg-purple" />
@@ -48,6 +40,7 @@ import { scroll } from "@/layoutClient/mixin/scroll";
 import { findIndex } from "@/utils/index";
 import category from "@/components/Tree/index";
 import tag from "@/components/Tag/tagFilter";
+import { toPath } from '../mixins/blog'
 
 export default {
   name: "Search",
@@ -56,7 +49,7 @@ export default {
     category,
     tag
   },
-  mixins: [scroll],
+  mixins: [scroll, toPath],
   data() {
     return {
       show: false,

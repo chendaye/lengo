@@ -74,7 +74,7 @@ export default {
     // 获取标签
     this.api
       .get("listTag", {
-        order: { id: "desc", created_at: "asc" },
+        order: { count: "desc", id: "desc", created_at: "asc" },
         where: { created_at: { op: "!=", va: "", ex: "cp" }}
       })
       .then(res => {
