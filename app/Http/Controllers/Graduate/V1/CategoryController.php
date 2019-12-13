@@ -24,7 +24,7 @@ class CategoryController extends AuthController
      */
     public function nextNode(int $pid)
     {
-        $next = $this->model->where('pid', $pid)->where('user_id', Auth::id())->orderBy('count', 'asc')->orderBy('created_at', 'asc')->get();
+        $next = $this->model->where('pid', $pid)->where('user_id', Auth::id())->orderBy('count', 'desc')->orderBy('created_at', 'asc')->get();
         return $next;
     }
 
