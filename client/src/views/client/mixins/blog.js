@@ -11,31 +11,34 @@ var toPath = {
         id: this.article.id
       }).then(res => {
         if (res.data.data === true) {
-          this.$router.push({
+          const { href } = this.$router.resolve({
             name: 'Article',
             query: {
               id: this.article.id
             }
           })
+          window.open(href, '_blank')
         }
       })
     },
     toList(type, id) {
-      this.$router.push({
+      const { href } = this.$router.resolve({
         name: 'List',
         query: {
           type: type,
           id: id
         }
       })
+      window.open(href, '_blank')
     },
     toEdit(id) {
-      this.$router.push({
+      const { href } = this.$router.resolve({
         name: 'Write',
         query: {
           id: id
         }
       })
+      window.open(href, '_blank')
     }
   }
 }

@@ -40,13 +40,13 @@ class Article extends Model
     {
         $query = $this;
         $query = $query->select('id', 'title', 'abstract', 'cover', 'view', 'comment', 'user_id', 'user_name','draft', 'created_at', 'updated_at');
-        // 根据标题搜搜
+        //todo: 根据标题搜索
         if (isset($where['title']) && !empty($where['title'])) {
             $query = $query->where([
                 ['title', 'like', '%' . $where['title'] . '%']
             ]);
         }
-        //根据分类搜索
+        //todo：根据分类搜索
         if (isset($where['category']) && !empty($where['category'])) {
             $categoryHasArticle = new ArticleHasCategory();
             if(isset($where['categorySon']) && $where['categorySon'] == true){
@@ -61,7 +61,7 @@ class Article extends Model
                 $query = $query->whereIn('id', $articles->pluck('article_id'));
             }
         }
-        // 根据标签搜索
+        //todo： 根据标签搜索
         if (isset($where['tag']) && !empty($where['tag'])) {
             $tagHasArticle = new ArticleHasTag();
             $articles = $tagHasArticle->whereIn('tag_id', $where['tag'])
@@ -73,7 +73,7 @@ class Article extends Model
         }
 
         if(!empty($where) && !isset($where['tag']) && !isset($where['category'])){
-            $query = $this->conditions($where);
+            // $query = $this->conditions($where);
         }
         $data = $query->orderBy('articles.updated_at', 'desc')->orderBy('articles.view', 'desc')->paginate($limit, ['*'], 'page',  $page);
         return $data;

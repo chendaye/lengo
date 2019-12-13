@@ -192,8 +192,8 @@ export default {
     // table
     getList() {
       this.listLoading = true;
+      console.log('kkk', this.listQuery)
       wtuCrud.get("indexArticle", this.listQuery).then(res => {
-        console.log('fuck', res)
         this.list = res.data.data;
         this.total = res.data.total;
         this.listLoading = false;
