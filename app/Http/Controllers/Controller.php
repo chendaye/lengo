@@ -207,6 +207,9 @@ class Controller extends BaseController
         $data = $request->input('data');
         // 删除缓存
         Redis::del($this->redisKey($query['id']['va']));
+        // 删除分类 友链缓存
+        if($this->namespace == LinkController::class) Redis::del(Rds::friendsLink());
+        if($this->namespace == CategoryController::class) Redis::del(Rds::categoryTree());
         return $this->model->alert($data, $query);
     }
 

@@ -227,6 +227,7 @@ export default {
     },
     // 添加子分类
     addSon(data) {
+      this.dialogTitle.son = `添加【${data.desc}】的子分类`;
       this.categoryForm.desc = "";
       this.categoryForm.pid = data.id;
       this.categoryForm.level = data.level + 1;
@@ -236,6 +237,7 @@ export default {
     },
     // 编辑分类
     editNode(node, data) {
+      this.dialogTitle.edit = `编辑分类【${data.desc}】`;
       this.nodeData = node; // 保存整棵树的属性
       this.categoryForm = data; // 保存整棵树的数据
       this.rootVisible = true;
