@@ -98,7 +98,7 @@
 
 <script>
 import { mavonEditor } from "@/components/mavon-editor";
-import "@/components/mavon-editor/dist/css/index.css";
+import "@/components/mavon-editor/css/index.css";
 import cover from "@/components/cover/index";
 import category from "@/components/Tree/index";
 import tag from "@/components/Tag/tagFilter";
