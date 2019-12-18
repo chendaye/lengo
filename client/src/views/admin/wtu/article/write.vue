@@ -74,7 +74,7 @@
           ref="md"
           v-model="content"
           :ishljs="true"
-          style="min-height: 600px"
+          style="min-height: 700px"
           code-style="dracula"
           @imgAdd="$imgAdd"
           @imgDel="$imgDel"
@@ -97,8 +97,8 @@
 </template>
 
 <script>
-import { mavonEditor } from "mavon-editor";
-import "mavon-editor/dist/css/index.css";
+import { mavonEditor } from "@/components/mavon-editor";
+import "@/components/mavon-editor/dist/css/index.css";
 import cover from "@/components/cover/index";
 import category from "@/components/Tree/index";
 import tag from "@/components/Tag/tagFilter";
