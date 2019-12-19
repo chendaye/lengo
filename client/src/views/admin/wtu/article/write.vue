@@ -74,7 +74,7 @@
           ref="md"
           v-model="content"
           :ishljs="true"
-          style="min-height: 700px"
+          style="min-height: 800px"
           code-style="dracula"
           @imgAdd="$imgAdd"
           @imgDel="$imgDel"
