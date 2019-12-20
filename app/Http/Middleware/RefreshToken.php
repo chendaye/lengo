@@ -21,6 +21,7 @@ class RefreshToken extends BaseMiddleware
      */
     public function handle($request, Closure $next)
     {
+        throw new TokenExpiredException('jwt-auth:fuck！');
         // todo: 测试
         if(false){
             // 测试token刷新
