@@ -101,7 +101,6 @@ class Controller extends BaseController
         }
         // guard:api  验证成功 返回token
         if ($token = $this->guard()->attempt($credentials)) {
-            $token = $this->guard()->parseToken()->refresh();
             return $this->respondWithToken($token);
         }
         // 验证失败
