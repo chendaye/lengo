@@ -124,7 +124,7 @@ class Controller extends BaseController
      */
     public function logout()
     {
-        $this->guard()->logout();
+        // $this->guard()->logout();
         // 登出
         return $this->response->array(['message' => '退出成功！']);
     }
