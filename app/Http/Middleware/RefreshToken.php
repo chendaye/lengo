@@ -23,7 +23,7 @@ class RefreshToken extends BaseMiddleware
     {
         try{
             $this->auth->parseToken()->authenticate();
-        }catch(\Exception $e){
+        }catch(TokenBlacklistedException $e){
             throw new TokenExpiredException('fuck'.$e);
         }
 
