@@ -95,17 +95,14 @@ class Controller extends BaseController
         if($request->input('name')){
             // 后台姓名登录
             $credentials = $request->only('name', 'password');
-            // guard:api  验证成功 返回token
-            if ($token = $this->guard('api')->attempt($credentials)) {
-                return $this->respondWithToken($token);
-            }
         }else{
             // 前台邮箱登录
             $credentials = $request->only('email', 'password');
-            // guard:api  验证成功 返回token
-            if ($token = $this->guard('client')->attempt($credentials)) {
-                return $this->respondWithToken($token);
-            }
+        }
+        // guard:api  验证成功 返回token
+        if ($token = $this->guard()->attempt($credentials)) {
+            $token = $this->guard()->parseToken()->refresh();
+            return $this->respondWithToken($token);
         }
         // 验证失败
         return $this->response()->errorUnauthorized('登录失败');

@@ -18,6 +18,7 @@ class RefreshToken extends BaseMiddleware
      * @param Closure $next
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response|mixed
      * @throws JWTException
+     * https://learnku.com/articles/10885/full-use-of-jwt
      */
     public function handle($request, Closure $next)
     {
