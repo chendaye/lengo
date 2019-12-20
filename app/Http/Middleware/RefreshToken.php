@@ -22,23 +22,18 @@ class RefreshToken extends BaseMiddleware
     public function handle($request, Closure $next)
     {
         try{
-            $this->auth->parseToken()->authenticate();
-        }catch(TokenBlacklistedException $e){
-            throw new TokenExpiredException('fuck'.$e->getMessage(). json_encode($request));
-        }
-
-        try{
             //todo： 检查此次请求中是否带有 token
             $this->checkForToken($request);
         }catch(UnauthorizedHttpException $e){
             throw new UnauthorizedHttpException('jwt-auth', '请求头没有提供Token！');
         }
         try {
-            //todo: 检测用户的登录状态，token 是否正常，如果正常则通过
-            if ($this->auth->parseToken()->authenticate()) {
+            try {
+                //todo: 检测用户的登录状态，token 是否正常，如果正常则通过
+                $this->auth->parseToken()->authenticate();
                 return $next($request);
-            }else{
-                throw new TokenExpiredException('jwt-auth:token验证失败！');
+            } catch (TokenBlacklistedException $e) {
+                throw new TokenExpiredException('token 已经被列入黑名单！' . $e->getMessage());
             }
         } catch (TokenExpiredException $exception) {
             try {
