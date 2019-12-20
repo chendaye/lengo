@@ -33,7 +33,7 @@ class RefreshToken extends BaseMiddleware
                 $this->auth->parseToken()->authenticate();
                 return $next($request);
             } catch (TokenBlacklistedException $e) {
-                throw new TokenExpiredException('token 已经被列入黑名单！' . $e->getMessage().'['. substr($this->auth->getToken(), 0, 10).']');
+                throw new TokenExpiredException('token 已经被列入黑名单！' . $e->getMessage().'['. substr($this->auth->getToken(), -10, 10).']');
             }
         } catch (TokenExpiredException $exception) {
             try {
@@ -49,7 +49,7 @@ class RefreshToken extends BaseMiddleware
                 return $this->setAuthenticationHeader($next($request), $token);
             } catch (JWTException $exception) {
                //todo: refresh 过期了，用户无法刷新令牌，需要重新登录，加入黑名单了 JWTException TokenBlacklistedException
-                throw new UnauthorizedHttpException('jwt-auth', 'Token: 刷新时间已过：'.$exception->getMessage()."[". substr($this->auth->getToken(), 0, 10)."]");
+                throw new UnauthorizedHttpException('jwt-auth', 'Token: 刷新时间已过：'.$exception->getMessage()."[". substr($this->auth->getToken(), -10, 10)."]");
             }
         }
     }
