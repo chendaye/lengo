@@ -21,17 +21,16 @@ class RefreshToken extends BaseMiddleware
      */
     public function handle($request, Closure $next)
     {
-        // todo: 测试
-        if(false){
-            // 测试token刷新
-            $token = $this->auth->parseToken()->refresh();
-            return $this->setAuthenticationHeader($next($request), $token);
+        try{
+            $this->auth->parseToken()->authenticate();
+        }catch(\Exception $e){
+            throw new TokenExpiredException('fuck'.$e);
         }
+
         try{
             //todo： 检查此次请求中是否带有 token
             $this->checkForToken($request);
         }catch(UnauthorizedHttpException $e){
-            throw new TokenExpiredException('jwt-auth:fuck-b');
             throw new UnauthorizedHttpException('jwt-auth', '请求头没有提供Token！');
         }
         try {
