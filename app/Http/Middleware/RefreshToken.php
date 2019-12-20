@@ -44,6 +44,7 @@ class RefreshToken extends BaseMiddleware
             try {
                 //todo: token过期
                 $token = $this->auth->parseToken()->refresh();
+                throw new TokenExpiredException($token);
                 if(strstr($request->url(), 'admin')){
                     // 后台请求
                     Auth::guard('api')->onceUsingId($this->auth->manager()->getPayloadFactory()->buildClaimsCollection()->toPlainArray()['sub']);
