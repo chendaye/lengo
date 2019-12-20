@@ -51,6 +51,7 @@
                 <i class="iconfont icon-github" />
                 github
               </a>
+              <span  class="logout-item" @click="logout">Logout</span>
             </div>
           </div>
         </transition>
@@ -193,6 +194,10 @@ export default {
   mounted() {},
   methods: {
     ...mapActions("blog", ["setShowRightNav", "setArticleMenu"]),
+    async logout() {
+      await this.$store.dispatch('client/logout');
+      this.$router.push(`client/login?redirect=${this.$route.fullPath}`);
+    },
     // 抽屉开关
     toggle() {
       // 是否打开抽屉头部
@@ -347,6 +352,7 @@ export default {
 
           .social-item {
             padding: 8px;
+            margin-right:20px;
             border: 1px solid #fc6423;
             border-radius: 5px;
             font-size: 14px;
@@ -357,6 +363,26 @@ export default {
 
             &:hover {
               background-color: #fc6423;
+              color: $color-white;
+            }
+
+            .iconfont {
+              font-size: 14px;
+            }
+          }
+
+          .logout-item {
+            padding: 8px;
+            border: 1px solid #1E90FF;
+            border-radius: 5px;
+            font-size: 14px;
+            line-height: 1;
+            color: #1E90FF;
+            transition: all 0.3s;
+            cursor: pointer;
+
+            &:hover {
+              background-color: #1E90FF;
               color: $color-white;
             }
 
