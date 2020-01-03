@@ -200,6 +200,11 @@ class ArticleController extends AuthController
             $articleModel->categorys()->detach($category['del']);  // 删除标分类关联
             $catogoryModel->countPlus($category['del'], false);
         }
+        // 更新时分类没变化
+        if(!$category['add'] && !$category['del']){
+            $articleModel->categorys()->attach($category['common']);    // 增加分类关联
+            $catogoryModel->countPlus($category['common']);
+        }
         // 删除缓存，下次获取自动更新
         Redis::del(Rds::articleDetail($data['id']));
         Redis::del($this->redisKey($data['id']));
