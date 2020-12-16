@@ -65,7 +65,7 @@ return [
     |
     */
     'fdfs_url' => env('FDFS_URL', 'http://www.chendaye666.top'),
-    'fdfs_ip' => env('FDFS_IP', '172.16.0.11'),
+    'fdfs_ip' => env('FDFS_IP', '172.17.0.16'),
     'fdfs_web_port' => env('FDFS_WEB_PORT', '8888'),
     'fdfs_port' => env('FDFS_PORT', '22122'),
 
