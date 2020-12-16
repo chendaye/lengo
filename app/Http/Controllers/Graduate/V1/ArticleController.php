@@ -91,7 +91,7 @@ class ArticleController extends AuthController
             $ext = $ext[1];
         }
 
-        $imageName = date("His", time()) . "_" . time() . '.' . $ext;
+        $imageName = date("His", time()) . "_" . time() . '.' . ($ext??'png');
 
         $imageSrc = "/tmp/" . $imageName; //图片名字
         $r = file_put_contents($imageSrc, base64_decode($image)); //返回的是字节数
